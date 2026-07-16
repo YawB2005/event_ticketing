@@ -1,142 +1,333 @@
 .page {
-  --background: #fafafa;
-  --foreground: #fff;
-
-  --text-primary: #000;
-  --text-secondary: #666;
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
-
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
 }
 
-.main {
+/* --- HERO SECTION --- */
+.hero {
+  position: relative;
+  min-height: 100vh;
   display: flex;
-  flex: 1;
-  width: 100%;
-  max-width: 800px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 1;
+  padding-top: 80px;
+}
+
+/* Abstract Wavy Background */
+.heroWavyBg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: repeating-radial-gradient(
+    circle at 100% 0%, 
+    transparent 0,
+    transparent 60px,
+    rgba(0,0,0,0.03) 60px,
+    rgba(0,0,0,0.03) 61px
+  );
+  z-index: 0;
+}
+
+/* Scattered Stars */
+.star {
+  position: absolute;
+  z-index: 0;
+  opacity: 0.8;
+  font-family: var(--font-yeseva);
+}
+.star1 { top: 25%; left: 15%; color: #2b00ff; font-size: 1.5rem; transform: rotate(15deg); }
+.star2 { top: 15%; right: 25%; color: #2b00ff; font-size: 1.2rem; transform: rotate(-10deg); }
+.star3 { bottom: 35%; right: 10%; color: #000; font-size: 1rem; }
+.star4 { bottom: 20%; left: 25%; color: #38bdf8; font-size: 2.5rem; transform: rotate(45deg); }
+.star5 { bottom: 10%; right: 35%; color: #000; font-size: 1.2rem; }
+
+/* Main Content Container */
+.heroContent {
+  position: relative;
+  z-index: 3;
+  display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.heroContent h1 {
+  font-size: clamp(4rem, 8vw, 7.5rem);
+  line-height: 1.1;
+  color: #111;
+  font-weight: 400;
+  margin-bottom: 2rem;
+}
+
+/* 
+  Custom Image Shapes 
+*/
+
+/* 1. The Figure 8 text clip trick */
+.shapeEight {
+  position: absolute;
+  left: 2%;
+  top: 55%;
+  transform: translateY(-50%);
+  font-size: clamp(20rem, 40vw, 45rem);
+  line-height: 0.75;
+  font-family: var(--font-yeseva);
+  font-weight: 400;
+  background-image: url('https://images.unsplash.com/photo-1540039155732-d674d6e120a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 2. Clover-like Blob shape */
+.shapeClover {
+  position: absolute;
+  top: 15%;
+  right: 12%;
+  width: 260px;
+  height: 260px;
+  background-image: url('https://images.unsplash.com/photo-1533174000243-ea821bb4627b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+  background-size: cover;
+  background-position: center;
+  /* Complex border-radius to look like a clover/blob */
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  z-index: 2;
+  border: 8px solid #fff;
+  transition: transform 0.5s ease;
+}
+
+.shapeClover:hover {
+  transform: rotate(5deg) scale(1.05);
+}
+
+/* 3. Pill shape */
+.shapePill {
+  position: absolute;
+  bottom: 15%;
+  right: 8%;
+  width: 380px;
+  height: 220px;
+  background-image: url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+  background-size: cover;
+  background-position: center;
+  border-radius: 110px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  z-index: 2;
+  border: 6px solid #fff;
+}
+
+/* Decorative Arrow SVG container */
+.arrowDoodle {
+  position: absolute;
+  top: 45%;
+  right: 32%;
+  width: 50px;
+  height: 50px;
+  opacity: 0.8;
+  z-index: 2;
+}
+
+@media (max-width: 1024px) {
+  .shapeEight { font-size: 25rem; left: -5%; }
+  .shapeClover { width: 180px; height: 180px; top: 10%; right: 5%; }
+  .shapePill { width: 280px; height: 160px; bottom: 10%; right: 5%; }
+}
+
+@media (max-width: 768px) {
+  .shapeEight { display: none; }
+  .shapeClover { display: none; }
+  .shapePill { display: none; }
+  .heroContent h1 { font-size: 3rem; }
+}
+
+/* --- SECTION STYLES --- */
+.section {
+  position: relative;
+  padding: 6rem 0;
+  z-index: 2;
+}
+
+.sectionWavyBg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: repeating-radial-gradient(
+    circle at 0% 100%, 
+    transparent 0,
+    transparent 60px,
+    rgba(0,0,0,0.02) 60px,
+    rgba(0,0,0,0.02) 61px
+  );
+  z-index: 0;
+  pointer-events: none;
+}
+
+.sectionHeader {
+  position: relative;
+  z-index: 2;
+  display: flex;
   justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 120px 60px;
+  align-items: flex-end;
+  margin-bottom: 4rem;
 }
 
-.intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
+.sectionTitle {
+  font-family: var(--font-yeseva);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: #000;
+  position: relative;
 }
 
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
-  font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
+.sectionTitle .star {
+  font-size: 1.5rem;
+  color: var(--accent-primary);
+  top: -10px;
+  right: -30px;
 }
 
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
+.viewAll {
   color: var(--text-secondary);
-}
-
-.intro a {
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.ctas {
+  font-weight: 600;
   display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
 }
 
-.ctas a {
+.viewAll:hover {
+  color: var(--accent-primary);
+}
+
+.eventGrid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+/* Categories Section */
+.categoryGrid {
+  position: relative;
+  z-index: 2;
   display: flex;
   justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.categoryCard {
+  position: relative;
+  display: flex;
   align-items: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  transition: transform 0.4s ease;
   cursor: pointer;
-  width: fit-content;
-  font-weight: 500;
+  border: 4px solid #fff;
 }
 
-a.primary {
-  background: var(--text-primary);
-  color: var(--background);
-  gap: 8px;
+.categoryCard:hover {
+  transform: translateY(-10px) scale(1.02);
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+.categoryCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  transition: background 0.4s ease;
+  z-index: 1;
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
+.categoryCard:hover::before {
+  background: rgba(0,0,0,0.1);
 }
 
-@media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
-  }
-
-  .intro {
-    gap: 16px;
-  }
-
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
-  }
+.categoryBg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+  transition: transform 0.6s ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
+.categoryCard:hover .categoryBg {
+  transform: scale(1.1);
+}
 
-  .page {
-    --background: #000;
-    --foreground: #000;
+.categoryCard span {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  font-family: var(--font-yeseva);
+  font-size: 2rem;
+  text-align: center;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
 
-    --text-primary: #ededed;
-    --text-secondary: #999;
+/* Category Shapes */
+.catMusic {
+  width: 280px; height: 280px;
+  border-radius: 50%;
+}
+.catTech {
+  width: 250px; height: 320px;
+  border-radius: 100px;
+}
+.catArts {
+  width: 260px; height: 260px;
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+}
+.catComedy {
+  width: 320px; height: 200px;
+  border-radius: 40px;
+}
 
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
-  }
+/* CTA Section */
+.ctaSection {
+  text-align: center;
+  padding: 8rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaBg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(circle at center, rgba(43, 0, 255, 0.05) 0%, transparent 60%);
+  z-index: 0;
+}
+
+.ctaContent {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.ctaContent h2 {
+  font-family: var(--font-yeseva);
+  font-size: clamp(3rem, 6vw, 5rem);
+  color: #000;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.ctaContent p {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
 }

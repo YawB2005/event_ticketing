@@ -1,0 +1,215 @@
+.authContainer {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg-primary);
+  overflow: hidden;
+}
+
+/* LEFT SIDE - MAGIC */
+.magicSide {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #fdf4ff; /* slight pink hue for signup */
+}
+
+.wavyBg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: repeating-radial-gradient(
+    circle at 0% 100%, 
+    transparent 0,
+    transparent 60px,
+    rgba(0,0,0,0.03) 60px,
+    rgba(0,0,0,0.03) 61px
+  );
+  z-index: 0;
+}
+
+.magicShape {
+  position: relative;
+  width: 60%;
+  height: 80%;
+  background-image: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+  background-size: cover;
+  background-position: center;
+  border-radius: 200px; /* Pill shape */
+  z-index: 2;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+  border: 10px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.magicShape::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(168, 85, 247, 0.2); /* Purple tint */
+}
+
+.magicText {
+  position: relative;
+  z-index: 3;
+  color: #fff;
+  font-family: var(--font-yeseva);
+  font-size: clamp(3rem, 5vw, 6rem);
+  text-align: center;
+  line-height: 1.1;
+  text-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.star {
+  position: absolute;
+  color: #a855f7;
+  font-size: 2rem;
+  z-index: 1;
+}
+
+/* RIGHT SIDE - FORM */
+.formSide {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem;
+  background: #fff;
+  position: relative;
+  z-index: 5;
+  box-shadow: -20px 0 40px rgba(0,0,0,0.02);
+  overflow-y: auto; /* Since signup has more fields */
+}
+
+.formWrapper {
+  max-width: 450px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.title {
+  font-family: var(--font-yeseva);
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  color: #000;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.formGroup {
+  margin-bottom: 1.25rem;
+}
+
+.formGroup label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #000;
+}
+
+.input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: 2px solid #f1f3f5;
+  border-radius: 50px;
+  font-family: var(--font-inter);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #a855f7;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+}
+
+.roleSelect {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.roleOption {
+  flex: 1;
+  text-align: center;
+  padding: 1rem;
+  border: 2px solid #f1f3f5;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.roleOption:hover {
+  border-color: #d8b4fe;
+  background: #fdf4ff;
+}
+
+/* This class would theoretically be applied dynamically via JS, 
+   but we'll just style it here for now */
+.roleOptionActive {
+  border-color: #a855f7;
+  background: #fdf4ff;
+  color: #a855f7;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 50px;
+  background: #000; /* Distinct from login */
+  color: #fff;
+  border: none;
+  font-family: var(--font-inter);
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-top: 1rem;
+}
+
+.submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.loginPrompt {
+  margin-top: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.loginPrompt a {
+  color: #a855f7;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.loginPrompt a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .authContainer {
+    flex-direction: column;
+  }
+  
+  .magicSide {
+    display: none;
+  }
+  
+  .formSide {
+    padding: 2rem;
+  }
+}

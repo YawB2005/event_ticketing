@@ -1,0 +1,275 @@
+/* MAIN CONTENT */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.header h1 {
+  font-family: var(--font-yeseva);
+  font-size: 2rem;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.header p {
+  color: #64748b;
+  font-size: 1rem;
+}
+
+/* TOP METRICS GRID */
+.topMetricsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.topMetricCard {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.03);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.metricIconWrap {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.metricInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.metricLabel {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.metricValue {
+  font-family: var(--font-yeseva);
+  font-size: 1.75rem;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+/* WIDGET PANELS */
+.widgetGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.widget {
+  background: #ffffff;
+  border-radius: 30px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.widgetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.widgetTitle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.widgetIcon {
+  width: 40px;
+  height: 40px;
+  background: #f1f5f9;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.widgetTitle h2 {
+  font-family: var(--font-yeseva);
+  font-size: 1.5rem;
+  color: #0f172a;
+}
+
+.widgetTitle p {
+  color: #64748b;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* REVENUE TRACKER CHART */
+.chartContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+}
+
+.mainStat {
+  font-family: var(--font-yeseva);
+  font-size: 3rem;
+  color: #0f172a;
+  margin-top: 1rem;
+}
+
+.subStat {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 3rem;
+}
+
+.pillChart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 200px;
+  padding-bottom: 2rem;
+}
+
+.pillCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pillNode {
+  width: 10px;
+  height: 10px;
+  background: #94a3b8;
+  border-radius: 50%;
+}
+
+.pillBar {
+  width: 8px;
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.pillDay {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.pillCol.active .pillNode {
+  background: #0f172a;
+}
+
+.pillCol.active .pillBar {
+  background: #e2e8f0;
+}
+
+.pillCol.active .pillDay {
+  background: #0f172a;
+  color: #fff;
+}
+
+.chartValueTooltip {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* RECENT EVENTS LIST */
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.eventItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.eventItemLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.eventSquare {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.eventDetails h4 {
+  color: #0f172a;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.eventDetails p {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.eventPill {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 0.35rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.eventPill.paid {
+  background: #0f172a;
+  color: #fff;
+}
+
+@media (max-width: 1024px) {
+  .appLayout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    display: none;
+  }
+  .topMetricsGrid {
+    grid-template-columns: 1fr;
+  }
+  .widgetGrid {
+    grid-template-columns: 1fr;
+  }
+}
