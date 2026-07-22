@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { createClient } from '@/utils/supabase/client';
 import styles from './login.module.css';
 
 const fadeUp = {
@@ -10,6 +13,32 @@ const fadeUp = {
 };
 
 export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    } else {
+      router.push('/');
+      router.refresh();
+    }
+  };
+
   return (
     <div className={styles.authContainer}>
       
@@ -53,15 +82,32 @@ export default function Login() {
           <motion.h2 variants={fadeUp} className={styles.title}>Welcome back</motion.h2>
           <motion.p variants={fadeUp} className={styles.subtitle}>Log in to access your tickets and events.</motion.p>
 
-          <form onSubmit={(e) => e.preventDefault()}>
+          <form onSubmit={handleLogin}>
+            {error && <motion.div variants={fadeUp} style={{ color: '#ff4d4d', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</motion.div>}
             <motion.div variants={fadeUp} className={styles.formGroup}>
               <label htmlFor="email">Email</label>
-              <input type="email" id="email" className={styles.input} placeholder="name@example.com" />
+              <input 
+                type="email" 
+                id="email" 
+                className={styles.input} 
+                placeholder="name@example.com" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </motion.div>
 
             <motion.div variants={fadeUp} className={styles.formGroup}>
               <label htmlFor="password">Password</label>
-              <input type="password" id="password" className={styles.input} placeholder="••••••••" />
+              <input 
+                type="password" 
+                id="password" 
+                className={styles.input} 
+                placeholder="••••••••" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </motion.div>
 
             <motion.div variants={fadeUp} className={styles.options}>
@@ -71,8 +117,8 @@ export default function Login() {
               <Link href="#" className={styles.forgotLink}>Forgot password?</Link>
             </motion.div>
 
-            <motion.button variants={fadeUp} type="submit" className={styles.submitBtn}>
-              Log In
+            <motion.button variants={fadeUp} type="submit" className={styles.submitBtn} disabled={loading}>
+              {loading ? 'Logging in...' : 'Log In'}
             </motion.button>
           </form>
 

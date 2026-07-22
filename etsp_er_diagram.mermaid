@@ -1,0 +1,138 @@
+erDiagram
+    PROFILES ||--o| ORGANIZER_PROFILES : "extends (if organizer)"
+    PROFILES ||--o{ EVENTS : "creates"
+    PROFILES ||--o{ ORDERS : "places"
+    PROFILES ||--o{ TICKETS : "owns"
+    PROFILES ||--o{ ADMIN_ACTION_LOG : "performs (if admin)"
+    PROFILES ||--o{ EVENT_MODERATION : "reviews (if admin)"
+    PROFILES ||--o{ NOTIFICATIONS : "receives"
+
+    CATEGORIES ||--o{ EVENTS : "classifies"
+
+    EVENTS ||--o{ TICKET_TYPES : "offers"
+    EVENTS ||--o{ ORDERS : "sold for"
+    EVENTS ||--o{ TICKETS : "issued for"
+    EVENTS ||--o{ EVENT_CHANGE_LOG : "tracks edits"
+    EVENTS ||--o{ EVENT_MODERATION : "submitted for review"
+
+    TICKET_TYPES ||--o{ ORDER_ITEMS : "purchased as"
+    TICKET_TYPES ||--o{ TICKETS : "generates"
+
+    ORDERS ||--|{ ORDER_ITEMS : "contains"
+    ORDERS ||--o{ NOTIFICATIONS : "triggers"
+
+    ORDER_ITEMS ||--o{ TICKETS : "produces"
+
+    TICKETS ||--o{ TICKET_SCAN_LOG : "scanned in"
+
+    PROFILES {
+        uuid id PK "FK to auth.users(id)"
+        string full_name
+        string phone_number
+        enum role "organizer, attendee, admin"
+        enum status "active, suspended"
+    }
+
+    ORGANIZER_PROFILES {
+        uuid profile_id PK,FK
+        string business_name
+        string payout_account_number
+        boolean identity_verified
+    }
+
+    CATEGORIES {
+        int id PK
+        string name UK
+    }
+
+    EVENTS {
+        uuid id PK
+        uuid organizer_id FK
+        int category_id FK
+        string title
+        text description
+        string venue_name
+        timestamptz start_datetime
+        enum status "draft, pending_review, published..."
+    }
+
+    TICKET_TYPES {
+        uuid id PK
+        uuid event_id FK
+        string name "Regular, VIP"
+        decimal price
+        int quantity_total
+        int quantity_sold
+        timestamptz sales_start
+        timestamptz sales_end
+    }
+
+    ORDERS {
+        uuid id PK
+        string order_reference UK
+        uuid attendee_id FK
+        uuid event_id FK
+        decimal total_amount
+        enum status "pending, completed, failed..."
+        string paystack_reference UK "from Paystack init"
+        enum paystack_status "success, failed, abandoned"
+        timestamptz paid_at
+    }
+
+    ORDER_ITEMS {
+        uuid id PK
+        uuid order_id FK
+        uuid ticket_type_id FK
+        int quantity
+        decimal unit_price
+    }
+
+    TICKETS {
+        uuid id PK
+        uuid order_item_id FK
+        uuid event_id FK
+        uuid ticket_type_id FK
+        uuid attendee_id FK
+        string ticket_code UK
+        string qr_verification_hash
+        enum status "valid, scanned, void"
+    }
+
+    TICKET_SCAN_LOG {
+        uuid id PK
+        uuid ticket_id FK
+        uuid scanned_by FK
+        string result
+        timestamptz scanned_at
+    }
+
+    NOTIFICATIONS {
+        uuid id PK
+        uuid order_id FK
+        uuid recipient_id FK
+        enum channel "sms, email"
+        enum status
+        int attempt_count
+    }
+
+    EVENT_CHANGE_LOG {
+        uuid id PK
+        uuid event_id FK
+        uuid changed_by FK
+        string field_name
+    }
+
+    EVENT_MODERATION {
+        uuid id PK
+        uuid event_id FK
+        uuid admin_id FK
+        enum decision
+    }
+
+    ADMIN_ACTION_LOG {
+        uuid id PK
+        uuid admin_id FK
+        string action_type
+        string target_type
+        uuid target_id
+    }

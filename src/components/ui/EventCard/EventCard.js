@@ -6,25 +6,20 @@ export default function EventCard({ event, onClick }) {
   const CardContent = (
     <>
       <div className={styles.imageContainer}>
-        {/* Using a solid color or gradient as fallback if image isn't available */}
-        <div className={styles.imagePlaceholder} style={{ background: event.color || 'var(--bg-tertiary)' }}>
-          <span className={styles.category}>{event.category}</span>
-        </div>
+        {event.image ? (
+          <img src={event.image} alt={event.title} className={styles.eventImage} />
+        ) : (
+          <div className={styles.imagePlaceholder} style={{ background: event.color || '#f1f5f9' }}></div>
+        )}
       </div>
       <div className={styles.content}>
-        <div className={styles.dateInfo}>
-          <span className={styles.month}>{event.month}</span>
-          <span className={styles.day}>{event.day}</span>
-        </div>
-        <div className={styles.details}>
-          <h3 className={styles.title}>{event.title}</h3>
-          {event.organizer && <p className={styles.organizer}>Hosted by {event.organizer}</p>}
-          <p className={styles.location}>{event.location}</p>
-          <div className={styles.footer}>
-            <span className={styles.price}>{event.price}</span>
-            <span className={styles.availability}>{event.availability}</span>
-          </div>
-        </div>
+        <span className={styles.availabilityPill}>{event.availability}</span>
+        <h3 className={styles.title}>{event.title}</h3>
+        <p className={styles.dateTime}>
+          {event.date} • {event.time}
+        </p>
+        <p className={styles.location}>{event.location}</p>
+        <p className={styles.price}>{event.price}</p>
       </div>
     </>
   );
