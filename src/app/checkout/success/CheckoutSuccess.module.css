@@ -1,0 +1,156 @@
+.container {
+  min-height: 100vh;
+  padding: 100px 1.5rem 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  max-width: 650px;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 32px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+.successIconBadge {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #10b981;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+}
+
+.title {
+  font-family: var(--font-yeseva);
+  font-size: 2.2rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #94a3b8;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.orderBox {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.orderRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.95rem;
+}
+
+.orderRow:last-child {
+  border-bottom: none;
+}
+
+.label {
+  color: #94a3b8;
+}
+
+.value {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Ticket QR Box */
+.qrBox {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 20px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.qrImage {
+  width: 160px;
+  height: 160px;
+}
+
+.qrRefText {
+  color: #0f172a;
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btnPrimary {
+  flex: 1;
+  background: #4f46e5;
+  color: #ffffff;
+  padding: 0.9rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+}
+
+.btnPrimary:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+}
+
+.btnSecondary {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 0.9rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btnSecondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 600px) {
+  .actions {
+    flex-direction: column;
+  }
+}
