@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 import styles from './Events.module.css';
 import { Plus, Music, Mic, Palette, Calendar, BarChart2, Settings, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -63,9 +64,11 @@ export default function EventsPage() {
           <h1>Event Analytics</h1>
           <p>Track revenue and ticket sales for specific events</p>
         </div>
-        <button className={styles.createBtn}>
-          <Plus size={20} /> Create Event
-        </button>
+        <Link href="/organizer/events/new" style={{ textDecoration: 'none' }}>
+          <button className={styles.createBtn}>
+            <Plus size={20} /> Create Event
+          </button>
+        </Link>
       </div>
 
       <div className={styles.filterRow}>

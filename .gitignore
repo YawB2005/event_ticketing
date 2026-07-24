@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+Frontend_Plan.md
+Frontend_Progress.md
+Project_Frontend.md
