@@ -1,0 +1,117 @@
+.page {
+  padding: 2.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  color: #f8fafc;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+}
+
+.subText {
+  color: #94a3b8;
+  font-size: 1rem;
+}
+
+.profileCard {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.banner {
+  height: 180px;
+  background: linear-gradient(135deg, #0284c7, #6366f1);
+  position: relative;
+}
+
+.avatarWrapper {
+  position: absolute;
+  bottom: -40px;
+  left: 2rem;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #0f172a;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #38bdf8;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.profileContent {
+  padding: 3.5rem 2rem 2rem 2rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputGroup label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.inputGroup input,
+.inputGroup textarea {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  color: white;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.inputGroup input:focus,
+.inputGroup textarea:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.saveBtn {
+  background: linear-gradient(135deg, #0284c7, #2563eb);
+  border: none;
+  color: white;
+  padding: 0.85rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+
+.saveBtn:hover {
+  transform: translateY(-2px);
+}

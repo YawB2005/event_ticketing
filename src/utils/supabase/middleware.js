@@ -31,9 +31,10 @@ export async function updateSession(request) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protect /organizer and /checkout routes
+  // Protect /checkout routes when no user, but allow /organizer for development/preview
   if (
     !user &&
+    process.env.NODE_ENV === 'production' &&
     (request.nextUrl.pathname.startsWith('/organizer') || request.nextUrl.pathname.startsWith('/checkout'))
   ) {
     const url = request.nextUrl.clone()

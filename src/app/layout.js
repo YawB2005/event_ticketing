@@ -1,23 +1,10 @@
-import { Outfit, Inter, Yeseva_One } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar/Navbar";
 import Footer from "@/components/ui/Footer/Footer";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const yeseva = Yeseva_One({
-  weight: "400",
-  variable: "--font-yeseva",
-  subsets: ["latin"],
-});
+const outfit = { variable: "font-outfit" };
+const inter = { variable: "font-inter" };
+const yeseva = { variable: "font-yeseva" };
 
 export const metadata = {
   title: "ETSP - Discover Premium Events",

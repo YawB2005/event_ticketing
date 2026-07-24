@@ -7,6 +7,8 @@ import {
   LayoutDashboard, 
   MessageSquare, 
   Ticket, 
+  FileText,
+  User,
   Settings, 
   Globe,
   LogOut
@@ -23,11 +25,17 @@ export default function OrganizerSidebar() {
         <Link href="/organizer" className={`${styles.navItem} ${pathname === '/organizer' ? styles.active : ''}`}>
           <LayoutDashboard size={20} /> Dashboard
         </Link>
+        <Link href="/organizer/events" className={`${styles.navItem} ${pathname.startsWith('/organizer/events') ? styles.active : ''}`}>
+          <Ticket size={20} /> Events
+        </Link>
+        <Link href="/organizer/reports" className={`${styles.navItem} ${pathname.startsWith('/organizer/reports') ? styles.active : ''}`}>
+          <FileText size={20} /> Reports
+        </Link>
         <Link href="/organizer/messages" className={`${styles.navItem} ${pathname.startsWith('/organizer/messages') ? styles.active : ''}`}>
           <MessageSquare size={20} /> Messages
         </Link>
-        <Link href="/organizer/events" className={`${styles.navItem} ${pathname.startsWith('/organizer/events') ? styles.active : ''}`}>
-          <Ticket size={20} /> Events
+        <Link href="/organizer/profile" className={`${styles.navItem} ${pathname === '/organizer/profile' ? styles.active : ''}`}>
+          <User size={20} /> Profile
         </Link>
         <Link href="/organizer/settings" className={`${styles.navItem} ${pathname.startsWith('/organizer/settings') ? styles.active : ''}`}>
           <Settings size={20} /> Settings

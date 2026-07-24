@@ -136,15 +136,21 @@ export default function EventsPage() {
               </div>
 
               <div className={styles.actions}>
-                <button className={`${styles.actionBtn} ${styles.primary}`}>
-                  <BarChart2 size={18} /> Deep Dive
-                </button>
-                <button className={styles.actionBtn}>
-                  <Settings size={18} /> Manage
-                </button>
-                <button className={styles.actionBtn}>
-                  <Users size={18} /> Attendees
-                </button>
+                <Link href={`/organizer/events/${event.id}/analytics`} style={{ textDecoration: 'none' }}>
+                  <button className={`${styles.actionBtn} ${styles.primary}`}>
+                    <BarChart2 size={18} /> Deep Dive
+                  </button>
+                </Link>
+                <Link href={`/organizer/events/${event.id}/edit`} style={{ textDecoration: 'none' }}>
+                  <button className={styles.actionBtn}>
+                    <Settings size={18} /> Manage
+                  </button>
+                </Link>
+                <Link href={`/organizer/events/${event.id}/attendees`} style={{ textDecoration: 'none' }}>
+                  <button className={styles.actionBtn}>
+                    <Users size={18} /> Attendees
+                  </button>
+                </Link>
               </div>
             </motion.div>
           );
