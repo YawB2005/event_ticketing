@@ -132,3 +132,15 @@
   border-radius: 50px;
   font-weight: 600;
 }
+
+.available {
+  background: #22c55e;
+}
+
+.limited {
+  background: #f59e0b;
+}
+
+.soldOut {
+  background: #6b7280;
+}

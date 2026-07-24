@@ -68,7 +68,7 @@ export default function Login() {
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', margin: 0, fontWeight: 500 }}>
                 <input type="checkbox" /> Remember me
               </label>
-              <Link href="#" className={styles.forgotLink}>Forgot password?</Link>
+              <Link href="/forgot-password" className={styles.forgotLink}>Forgot password?</Link>
             </motion.div>
 
             <motion.button variants={fadeUp} type="submit" className={styles.submitBtn}>

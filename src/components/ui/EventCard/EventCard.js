@@ -2,6 +2,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './EventCard.module.css';
 
+function getAvailabilityClass(availability) {
+  if (!availability) return '';
+  const lower = availability.toLowerCase();
+  if (lower.includes('sold out')) return styles.soldOut;
+  if (lower.includes('almost') || lower.includes('selling fast') || lower.includes('filling fast')) {
+    return styles.limited;
+  }
+  if (lower.includes('unlimited') || lower.includes('available')) return styles.available;
+  return '';
+}
+
 export default function EventCard({ event, onClick }) {
   const CardContent = (
     <>
@@ -22,7 +33,9 @@ export default function EventCard({ event, onClick }) {
           <p className={styles.location}>{event.location}</p>
           <div className={styles.footer}>
             <span className={styles.price}>{event.price}</span>
-            <span className={styles.availability}>{event.availability}</span>
+            <span className={`${styles.availability} ${getAvailabilityClass(event.availability)}`}>
+              {event.availability}
+            </span>
           </div>
         </div>
       </div>

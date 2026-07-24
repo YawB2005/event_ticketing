@@ -25,8 +25,8 @@ export default function Footer() {
         <div className={styles.linksCol}>
           <h3>Explore</h3>
           <Link href="/events">Upcoming Events</Link>
-          <Link href="/categories">Categories</Link>
-          <Link href="/venues">Venues</Link>
+          <Link href="/about">About</Link>
+          <Link href="/contact">Contact</Link>
         </div>
         <div className={styles.linksCol}>
           <h3>Organize</h3>
