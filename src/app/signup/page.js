@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
+import { initializeUserProfile } from '@/app/actions/profile';
 import styles from './signup.module.css';
 
 const fadeUp = {
@@ -12,54 +13,89 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 }
 };
 
+const slideLeft = {
+  hidden: { opacity: 0, x: 50 },
+  visible: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -50 }
+};
+
 export default function Signup() {
+  const [step, setStep] = useState(1);
   const [role, setRole] = useState('');
+  
+  // Basic info
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  
+  // Organizer info
+  const [businessName, setBusinessName] = useState('');
+
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  
   const router = useRouter();
   const supabase = createClient();
 
-  const handleSignup = async (e) => {
+  const handleRoleSelect = (selectedRole) => {
+    setRole(selectedRole);
+    setError(null);
+    setStep(2);
+  };
+
+  const handleNextStep = (e) => {
     e.preventDefault();
+    setError(null);
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    
+    // If attendee, submit directly
+    if (role === 'attendee') {
+      submitSignup();
+    } else {
+      // If organizer, go to step 3
+      setStep(3);
+    }
+  };
+
+  const submitSignup = async (e) => {
+    if (e) e.preventDefault();
     setLoading(true);
     setError(null);
     setSuccess(false);
 
-    if (!role) {
-      setError("Please select whether you want to buy tickets or host events.");
+    if (role === 'organizer' && !businessName.trim()) {
+      setError("Business Name is required for organizers");
       setLoading(false);
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      setLoading(false);
-      return;
-    }
-    
-    const { error } = await supabase.auth.signUp({
+    const { data, error: signupError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: name,
           role: role,
+          business_name: businessName // only used if organizer
         }
       }
     });
 
-    if (error) {
-      setError(error.message);
+    if (signupError) {
+      setError(signupError.message);
       setLoading(false);
     } else {
+      if (data?.session) {
+        await initializeUserProfile(data.user);
+      }
       setSuccess(true);
       setLoading(false);
-      // Wait a bit before redirecting or show a success message to check email
     }
   };
 
@@ -89,106 +125,177 @@ export default function Signup() {
 
       {/* RIGHT SIDE - FORM */}
       <div className={styles.formSide}>
-        <motion.div 
-          className={styles.formWrapper}
-          initial="hidden" animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.3 } }
-          }}
-        >
-          <motion.div variants={fadeUp}>
-            <Link href="/" style={{ display: 'inline-block', marginBottom: '2rem', fontWeight: 600, color: '#888' }}>
-              ← Back to Home
-            </Link>
+        <div className={styles.formWrapper}>
+          <motion.div initial="hidden" animate="visible" variants={fadeUp}>
+            {step > 1 && !success ? (
+               <button onClick={() => setStep(step - 1)} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', marginBottom: '2rem', fontWeight: 600, color: '#888', display: 'flex', alignItems: 'center', fontSize: '1rem' }}>
+                 ← Back
+               </button>
+            ) : (
+               <Link href="/" style={{ display: 'inline-block', marginBottom: '2rem', fontWeight: 600, color: '#888' }}>
+                 ← Back to Home
+               </Link>
+            )}
           </motion.div>
 
-          <motion.h2 variants={fadeUp} className={styles.title}>Create account</motion.h2>
-          <motion.p variants={fadeUp} className={styles.subtitle}>Start discovering or hosting unforgettable events.</motion.p>
+          <motion.h2 initial="hidden" animate="visible" variants={fadeUp} className={styles.title}>
+             {step === 1 ? 'Create account' : step === 2 ? 'Your details' : 'Organization info'}
+          </motion.h2>
+          <motion.p initial="hidden" animate="visible" variants={fadeUp} className={styles.subtitle}>
+             {step === 1 ? 'Start discovering or hosting unforgettable events.' : step === 2 ? 'Let us know who you are.' : 'What do you call your business?'}
+          </motion.p>
 
-          <form onSubmit={handleSignup}>
-            {error && <motion.div variants={fadeUp} style={{ color: '#ff4d4d', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</motion.div>}
-            {success && <motion.div variants={fadeUp} style={{ color: '#4caf50', marginBottom: '1rem', fontSize: '0.9rem' }}>Account created! Check your email to confirm.</motion.div>}
-            
-            <motion.div variants={fadeUp} className={styles.roleSelect}>
-              <div 
-                className={`${styles.roleOption} ${role === 'attendee' ? styles.roleOptionActive : ''}`}
-                onClick={() => setRole('attendee')}
-              >
-                I want to buy tickets
-              </div>
-              <div 
-                className={`${styles.roleOption} ${role === 'organizer' ? styles.roleOptionActive : ''}`}
-                onClick={() => setRole('organizer')}
-              >
-                I want to host events
-              </div>
-            </motion.div>
+          <div style={{ position: 'relative' }}>
+            <AnimatePresence mode="wait">
+              
+              {/* STEP 1: ROLE SELECTION */}
+              {step === 1 && (
+                <motion.div 
+                  key="step1"
+                  initial="hidden" animate="visible" exit="exit"
+                  variants={slideLeft}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className={styles.roleSelect} style={{ marginTop: '2rem' }}>
+                    <div 
+                      className={`${styles.roleOption} ${role === 'attendee' ? styles.roleOptionActive : ''}`}
+                      onClick={() => handleRoleSelect('attendee')}
+                    >
+                      I want to buy tickets
+                    </div>
+                    <div 
+                      className={`${styles.roleOption} ${role === 'organizer' ? styles.roleOptionActive : ''}`}
+                      onClick={() => handleRoleSelect('organizer')}
+                    >
+                      I want to host events
+                    </div>
+                  </div>
+                </motion.div>
+              )}
 
-            <motion.div variants={fadeUp} className={styles.formGroup}>
-              <label htmlFor="name">Full Name</label>
-              <input 
-                type="text" 
-                id="name" 
-                className={styles.input} 
-                placeholder="John Doe" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </motion.div>
+              {/* STEP 2: BASIC INFO */}
+              {step === 2 && (
+                <motion.form 
+                  key="step2"
+                  initial="hidden" animate="visible" exit="exit"
+                  variants={slideLeft}
+                  transition={{ duration: 0.3 }}
+                  onSubmit={handleNextStep}
+                  style={{ marginTop: '2rem' }}
+                >
+                  {error && <div style={{ color: '#ff4d4d', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</div>}
+                  {success && <div style={{ color: '#4caf50', marginBottom: '1rem', fontSize: '0.9rem' }}>Account created! Check your email to confirm.</div>}
+                  
+                  {!success && (
+                    <>
+                      <div className={styles.formGroup}>
+                        <label htmlFor="name">Full Name</label>
+                        <input 
+                          type="text" 
+                          id="name" 
+                          className={styles.input} 
+                          placeholder="John Doe" 
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          required
+                        />
+                      </div>
 
-            <motion.div variants={fadeUp} className={styles.formGroup}>
-              <label htmlFor="email">Email</label>
-              <input 
-                type="email" 
-                id="email" 
-                className={styles.input} 
-                placeholder="name@example.com" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </motion.div>
+                      <div className={styles.formGroup}>
+                        <label htmlFor="email">Email</label>
+                        <input 
+                          type="email" 
+                          id="email" 
+                          className={styles.input} 
+                          placeholder="name@example.com" 
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                        />
+                      </div>
 
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <motion.div variants={fadeUp} className={styles.formGroup} style={{ flex: 1 }}>
-                <label htmlFor="password">Password</label>
-                <input 
-                  type="password" 
-                  id="password" 
-                  className={styles.input} 
-                  placeholder="••••••••" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </motion.div>
+                      <div style={{ display: 'flex', gap: '1rem' }}>
+                        <div className={styles.formGroup} style={{ flex: 1 }}>
+                          <label htmlFor="password">Password</label>
+                          <input 
+                            type="password" 
+                            id="password" 
+                            className={styles.input} 
+                            placeholder="••••••••" 
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            minLength={6}
+                          />
+                        </div>
 
-              <motion.div variants={fadeUp} className={styles.formGroup} style={{ flex: 1 }}>
-                <label htmlFor="confirmPassword">Confirm</label>
-                <input 
-                  type="password" 
-                  id="confirmPassword" 
-                  className={styles.input} 
-                  placeholder="••••••••" 
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
-              </motion.div>
-            </div>
+                        <div className={styles.formGroup} style={{ flex: 1 }}>
+                          <label htmlFor="confirmPassword">Confirm</label>
+                          <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            className={styles.input} 
+                            placeholder="••••••••" 
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                            minLength={6}
+                          />
+                        </div>
+                      </div>
 
-            <motion.button variants={fadeUp} type="submit" className={styles.submitBtn} disabled={loading}>
-              {loading ? 'Creating account...' : 'Sign Up'}
-            </motion.button>
-          </form>
+                      <button type="submit" className={styles.submitBtn} disabled={loading}>
+                        {loading ? 'Processing...' : role === 'organizer' ? 'Next Step →' : 'Complete Sign Up'}
+                      </button>
+                    </>
+                  )}
+                </motion.form>
+              )}
 
-          <motion.div variants={fadeUp} className={styles.loginPrompt}>
+              {/* STEP 3: ORGANIZER INFO */}
+              {step === 3 && (
+                <motion.form 
+                  key="step3"
+                  initial="hidden" animate="visible" exit="exit"
+                  variants={slideLeft}
+                  transition={{ duration: 0.3 }}
+                  onSubmit={submitSignup}
+                  style={{ marginTop: '2rem' }}
+                >
+                  {error && <div style={{ color: '#ff4d4d', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</div>}
+                  {success && <div style={{ color: '#4caf50', marginBottom: '1rem', fontSize: '0.9rem' }}>Account created! Check your email to confirm.</div>}
+                  
+                  {!success && (
+                    <>
+                      <div className={styles.formGroup}>
+                        <label htmlFor="businessName">Business Name / Organization Name</label>
+                        <input 
+                          type="text" 
+                          id="businessName" 
+                          className={styles.input} 
+                          placeholder="e.g. Rave Culture Ltd" 
+                          value={businessName}
+                          onChange={(e) => setBusinessName(e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      <button type="submit" className={styles.submitBtn} disabled={loading}>
+                        {loading ? 'Creating account...' : 'Complete Sign Up'}
+                      </button>
+                    </>
+                  )}
+                </motion.form>
+              )}
+
+            </AnimatePresence>
+          </div>
+
+          <motion.div initial="hidden" animate="visible" variants={fadeUp} className={styles.loginPrompt} style={{ marginTop: '2rem' }}>
             Already have an account? 
             <Link href="/login">Log in</Link>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
 
     </div>
