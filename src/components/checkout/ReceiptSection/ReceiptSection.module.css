@@ -1,0 +1,43 @@
+.receipt {
+  padding: 1.75rem;
+  text-align: left;
+}
+
+.title {
+  font-size: 1.1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.95rem;
+}
+
+.row dt {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.row dd {
+  font-weight: 500;
+  text-align: right;
+  word-break: break-word;
+}
+
+@media (max-width: 480px) {
+  .row {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .row dd { text-align: left; }
+}

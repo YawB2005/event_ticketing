@@ -1,0 +1,108 @@
+.page {
+  padding: 120px 0 5rem;
+  min-height: 100vh;
+}
+
+.content {
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.iconWrap {
+  color: #dc2626;
+  margin-bottom: 1.25rem;
+  animation: shakeIn 0.5s ease-out;
+}
+
+.heading {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.message {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.reasons {
+  padding: 1.5rem;
+  text-align: left;
+  margin-bottom: 0.5rem;
+}
+
+.reasons h2 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.reasons ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.reasons li {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  padding-left: 1.25rem;
+  position: relative;
+}
+
+.reasons li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #dc2626;
+  opacity: 0.6;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.btnSecondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.btnSecondary:hover { background: var(--bg-secondary); }
+
+.btnOutline {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+}
+
+.btnOutline:hover { background: var(--bg-secondary); }
+
+.btnGhost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.btnGhost:hover { color: var(--text-primary); }
+
+@keyframes shakeIn {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+@media (max-width: 480px) {
+  .heading { font-size: 1.5rem; }
+}

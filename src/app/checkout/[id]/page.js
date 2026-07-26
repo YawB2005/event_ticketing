@@ -1,3 +1,4 @@
+import PayButton from '@/components/checkout/PayButton/PayButton';
 import styles from './Checkout.module.css';
 
 const mockOrder = {
@@ -72,7 +73,7 @@ export default function Checkout({ params }) {
             </div>
           </div>
 
-          <button className={`btn btn-primary ${styles.payBtn}`}>Pay ${order.total.toFixed(2)}</button>
+          <PayButton order={order} />
         </div>
 
         {/* Right Col: Order Summary */}
