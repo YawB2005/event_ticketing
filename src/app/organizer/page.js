@@ -1,18 +1,22 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import styles from './Organizer.module.css';
 import { motion } from 'framer-motion';
-import { createClient } from '@/utils/supabase/client';
-import EventCard from '@/components/ui/EventCard/EventCard';
-import LoadingSpinner from '@/components/ui/LoadingSpinner/LoadingSpinner';
 import { 
   Ticket, 
   TrendingUp, 
   Music, 
+  Mic, 
+  Palette,
+  Eye,
   CalendarDays,
-  DollarSign
+  DollarSign,
+  Plus,
+  ArrowUpRight
 } from 'lucide-react';
+import { getEvents } from '@/utils/eventStore';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -20,53 +24,38 @@ const fadeUp = {
 };
 
 export default function OrganizerDashboard() {
-  const [user, setUser] = useState(null);
-  const [summary, setSummary] = useState({ totalTicketsSold: 0, totalRevenue: 0 });
-  const [trend, setTrend] = useState([]);
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadData() {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-
-      try {
-        const [summaryRes, trendRes, eventsRes] = await Promise.all([
-          fetch('/api/organizer/analytics/summary'),
-          fetch('/api/organizer/analytics/trend?period=daily'),
-          fetch('/api/organizer/events')
-        ]);
-
-        if (summaryRes.ok) setSummary(await summaryRes.json());
-        if (trendRes.ok) {
-          const res = await trendRes.json();
-          setTrend(res.trend || []);
-        }
-        if (eventsRes.ok) setEvents(await eventsRes.json());
-      } catch (err) {
-        console.error("Failed to load dashboard data", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
+    setEvents(getEvents());
   }, []);
 
-  const businessName = user?.user_metadata?.full_name || 'Organizer';
+  const totalRevenueNumeric = events.reduce((sum, e) => {
+    const num = parseInt((e.revenue || '0').replace(/[^0-9]/g, ''), 10) || 0;
+    return sum + num;
+  }, 0);
+
+  const totalSold = events.reduce((sum, e) => sum + (e.ticketsSold || 0), 0);
+  const totalCapacity = events.reduce((sum, e) => sum + (e.capacity || 0), 0);
+  const liveCount = events.filter(e => e.status === 'Live').length;
+  const draftCount = events.filter(e => e.status === 'Draft').length;
+  const endedCount = events.filter(e => e.status === 'Ended').length;
 
   return (
-    <>
+    <div className={styles.container}>
       {/* HEADER */}
       <motion.div 
         className={styles.header}
         initial="hidden" animate="visible" variants={fadeUp} transition={{ duration: 0.5 }}
       >
         <div>
-          <h1>Organizer Dashboard</h1>
-          <p>Welcome back, {businessName}</p>
+          <h1 className={styles.headerTitle}>Organizer Dashboard</h1>
+          <p className={styles.headerSub}>Welcome back, Rave Culture Ltd 👋 Here is your event performance summary.</p>
         </div>
+
+        <Link href="/organizer/events/new" className={styles.createBtn}>
+          <Plus size={18} /> Create New Event
+        </Link>
       </motion.div>
 
       {/* TOP METRICS ROW */}
@@ -75,32 +64,54 @@ export default function OrganizerDashboard() {
         initial="hidden" animate="visible" variants={fadeUp} transition={{ duration: 0.5, delay: 0.1 }}
       >
         <div className={styles.topMetricCard}>
-          <div className={styles.metricIconWrap}>
-            <Ticket size={24} />
-          </div>
-          <div className={styles.metricInfo}>
-            <span className={styles.metricLabel}>Tickets Sold</span>
-            <span className={styles.metricValue}>{loading ? '...' : summary.totalTicketsSold}</span>
-          </div>
-        </div>
-
-        <div className={styles.topMetricCard}>
-          <div className={styles.metricIconWrap}>
-            <DollarSign size={24} />
+          <div className={styles.metricIconWrap} style={{ background: '#ecfdf5', color: '#059669' }}>
+            <DollarSign size={26} />
           </div>
           <div className={styles.metricInfo}>
             <span className={styles.metricLabel}>Total Revenue</span>
-            <span className={styles.metricValue}>{loading ? '...' : `GH₵ ${summary.totalRevenue.toLocaleString()}`}</span>
+            <span className={styles.metricValue}>GH₵ {totalRevenueNumeric.toLocaleString()}</span>
+            <span className={`${styles.metricTrend} ${styles.positive}`}>
+              <ArrowUpRight size={14} /> Live Settlements
+            </span>
           </div>
         </div>
 
         <div className={styles.topMetricCard}>
-          <div className={styles.metricIconWrap}>
-            <CalendarDays size={24} />
+          <div className={styles.metricIconWrap} style={{ background: '#eff6ff', color: '#2563eb' }}>
+            <Ticket size={26} />
+          </div>
+          <div className={styles.metricInfo}>
+            <span className={styles.metricLabel}>Tickets Sold</span>
+            <span className={styles.metricValue}>{totalSold} / {totalCapacity}</span>
+            <span className={`${styles.metricTrend} ${styles.positive}`}>
+              <ArrowUpRight size={14} /> {totalCapacity > 0 ? Math.round((totalSold / totalCapacity) * 100) : 0}% Capacity
+            </span>
+          </div>
+        </div>
+
+        <div className={styles.topMetricCard}>
+          <div className={styles.metricIconWrap} style={{ background: '#f5f3ff', color: '#7c3aed' }}>
+            <Eye size={26} />
+          </div>
+          <div className={styles.metricInfo}>
+            <span className={styles.metricLabel}>Profile Views</span>
+            <span className={styles.metricValue}>5,410</span>
+            <span className={`${styles.metricTrend} ${styles.positive}`}>
+              <ArrowUpRight size={14} /> +18.5% traffic
+            </span>
+          </div>
+        </div>
+
+        <div className={styles.topMetricCard}>
+          <div className={styles.metricIconWrap} style={{ background: '#fffbeb', color: '#b45309' }}>
+            <CalendarDays size={26} />
           </div>
           <div className={styles.metricInfo}>
             <span className={styles.metricLabel}>Active Events</span>
-            <span className={styles.metricValue}>{loading ? '...' : events.filter(e => e.status !== 'draft').length}</span>
+            <span className={styles.metricValue}>{events.length} Listed</span>
+            <span className={`${styles.metricTrend} ${styles.positive}`}>
+              {liveCount} Live • {draftCount} Draft • {endedCount} Ended
+            </span>
           </div>
         </div>
       </motion.div>
@@ -108,53 +119,61 @@ export default function OrganizerDashboard() {
       {/* MAIN WIDGET GRID */}
       <div className={styles.widgetGrid}>
         
-        {/* REVENUE TRACKER (LEFT WIDGET) */}
+        {/* REVENUE TRACKER */}
         <motion.div 
           className={styles.widget}
           initial="hidden" animate="visible" variants={fadeUp} transition={{ duration: 0.5, delay: 0.2 }}
         >
           <div className={styles.widgetHeader}>
             <div className={styles.widgetTitle}>
-              <div className={styles.widgetIcon}>
-                <TrendingUp size={20} color="#0f172a" />
-              </div>
               <div>
-                <h2>Revenue Tracker</h2>
-                <p>Track changes in revenue over time</p>
+                <h2>Revenue Growth Tracker</h2>
+                <p>Daily sales performance for active events across the week</p>
               </div>
+            </div>
+            <div style={{ background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0', padding: '0.4rem 0.85rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 700 }}>
+              +20.4% vs last week
             </div>
           </div>
 
           <div className={styles.chartContainer}>
-            <h3 className={styles.mainStat}>GH₵ {loading ? '...' : summary.totalRevenue.toLocaleString()}</h3>
-            <p className={styles.subStat}>Total revenue to date</p>
+            <h3 className={styles.mainStat}>GH₵ 2,567.00 <span style={{ fontSize: '1rem', color: '#64748b', fontWeight: 500 }}>today</span></h3>
+            <p className={styles.subStat}>Peak ticket conversions recorded on Tuesday & Thursday night</p>
 
             <div className={styles.pillChart}>
-              {loading ? (
-                 <LoadingSpinner text="Loading chart data..." />
-              ) : trend.length === 0 ? (
-                 <p style={{textAlign: 'center', width: '100%', color: '#888'}}>No sales data yet.</p>
-              ) : (
-                trend.slice(-7).map((t, i, arr) => {
-                  const maxRev = Math.max(...arr.map(x => x.revenue)) || 1;
-                  const height = Math.max(20, (t.revenue / maxRev) * 120);
-                  const isLast = i === arr.length - 1;
-                  const dayStr = new Date(t.period).toLocaleDateString('en-US', { weekday: 'short' })[0];
-                  
-                  return (
-                    <div key={t.period} className={`${styles.pillCol} ${isLast ? styles.active : ''}`}>
-                      <div className={styles.pillNode}></div>
-                      <div className={styles.pillBar} style={{ height: `${height}px` }} title={`GH₵ ${t.revenue}`}></div>
-                      <div className={styles.pillDay}>{dayStr}</div>
-                    </div>
-                  );
-                })
-              )}
+              <div className={styles.pillCol}>
+                <div className={styles.pillBar} style={{ height: '50px' }}></div>
+                <div className={styles.pillDay}>Sun</div>
+              </div>
+              <div className={styles.pillCol}>
+                <div className={styles.pillBar} style={{ height: '80px' }}></div>
+                <div className={styles.pillDay}>Mon</div>
+              </div>
+              <div className={`${styles.pillCol} ${styles.active}`}>
+                <div className={styles.pillBar} style={{ height: '140px' }}></div>
+                <div className={styles.pillDay}>Tue</div>
+              </div>
+              <div className={styles.pillCol}>
+                <div className={styles.pillBar} style={{ height: '100px' }}></div>
+                <div className={styles.pillDay}>Wed</div>
+              </div>
+              <div className={`${styles.pillCol} ${styles.active}`}>
+                <div className={styles.pillBar} style={{ height: '160px' }}></div>
+                <div className={styles.pillDay}>Thu</div>
+              </div>
+              <div className={styles.pillCol}>
+                <div className={styles.pillBar} style={{ height: '90px' }}></div>
+                <div className={styles.pillDay}>Fri</div>
+              </div>
+              <div className={styles.pillCol}>
+                <div className={styles.pillBar} style={{ height: '110px' }}></div>
+                <div className={styles.pillDay}>Sat</div>
+              </div>
             </div>
           </div>
         </motion.div>
 
-        {/* YOUR EVENTS (RIGHT WIDGET) */}
+        {/* YOUR EVENTS */}
         <motion.div 
           className={styles.widget}
           initial="hidden" animate="visible" variants={fadeUp} transition={{ duration: 0.5, delay: 0.3 }}
@@ -162,67 +181,41 @@ export default function OrganizerDashboard() {
           <div className={styles.widgetHeader}>
             <div className={styles.widgetTitle}>
               <div>
-                <h2>Your Events</h2>
-                <p>Recent events and their status</p>
+                <h2>Your Hosted Events</h2>
+                <p>Status & management overview</p>
               </div>
             </div>
+            <Link href="/organizer/events" style={{ color: '#2563eb', fontSize: '0.85rem', fontWeight: 600, textDecoration: 'none' }}>
+              Manage All →
+            </Link>
           </div>
 
           <div className={styles.eventList}>
-            {loading ? (
-              <LoadingSpinner text="Loading events..." />
-            ) : events.length === 0 ? (
-              <p style={{padding: '1rem', color: '#888'}}>No events created yet.</p>
-            ) : (
-              events.map((evt) => {
-                const dateObj = evt.start_datetime ? new Date(evt.start_datetime) : null;
-                const isLive = evt.status !== 'draft';
-                let priceStr = "Free";
-                let minPrice = 0;
-                let availabilityStr = "Available";
-      
-                if (evt.ticket_types && evt.ticket_types.length > 0) {
-                  const prices = evt.ticket_types.map(t => parseFloat(t.price));
-                  minPrice = Math.min(...prices);
-                  priceStr = minPrice === 0 ? "Free" : `From GH₵ ${minPrice.toLocaleString()}`;
-                  
-                  const totalQty = evt.ticket_types.reduce((acc, t) => acc + (t.quantity_total || 0), 0);
-                  const soldQty = evt.ticket_types.reduce((acc, t) => acc + (t.quantity_sold || 0), 0);
-                  
-                  if (totalQty > 0) {
-                    if (soldQty >= totalQty) availabilityStr = "Sold Out";
-                    else if (soldQty > totalQty * 0.8) availabilityStr = "Going Fast";
-                  }
-                }
+            {events.map(event => {
+              const Icon = event.category.includes('Comedy') ? Mic : event.category.includes('Art') ? Palette : Music;
+              let statusClass = styles.statusEnded;
+              if (event.status === 'Live') statusClass = styles.statusLive;
+              if (event.status === 'Draft') statusClass = styles.statusDraft;
 
-                const eventCardData = {
-                  id: evt.id,
-                  title: evt.title,
-                  image: evt.image_url,
-                  color: "#f1f5f9",
-                  availability: availabilityStr,
-                  date: dateObj ? dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD',
-                  time: dateObj ? dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '',
-                  location: evt.venue_name || "TBA",
-                  price: priceStr,
-                  category: evt.status,
-                  href: `/organizer/events/${evt.id}/edit`
-                };
-
-                return (
-                  <div key={evt.id} style={{ marginBottom: '1.5rem', position: 'relative' }}>
-                    <EventCard event={eventCardData} />
-                    <span className={`${styles.eventPill} ${isLive ? styles.paid : ''}`} style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10, background: isLive ? '#ef4444' : '#10b981', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 600 }}>
-                      {evt.status}
-                    </span>
+              return (
+                <div key={event.id} className={styles.eventItem}>
+                  <div className={styles.eventItemLeft}>
+                    <div className={styles.eventSquare} style={{ background: event.color || '#2563eb', color: 'white' }}>
+                      <Icon size={22} color="#fff" />
+                    </div>
+                    <div className={styles.eventDetails}>
+                      <h4>{event.title}</h4>
+                      <p>{event.date} • {event.ticketsSold} / {event.capacity} sold</p>
+                    </div>
                   </div>
-                );
-              })
-            )}
+                  <div className={`${styles.eventPill} ${statusClass}`}>{event.status}</div>
+                </div>
+              );
+            })}
           </div>
         </motion.div>
 
       </div>
-    </>
+    </div>
   );
 }

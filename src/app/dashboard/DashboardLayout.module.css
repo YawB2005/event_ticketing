@@ -1,7 +1,8 @@
 .page {
   min-height: 100vh;
-  background: var(--dash-bg);
-  color: var(--dash-text-dark);
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: var(--font-inter), sans-serif;
 }
 
 .appLayout {
@@ -11,16 +12,13 @@
 .mainContent {
   flex: 1;
   min-width: 0;
-  background: var(--dash-bg);
+  background: #f8fafc;
   min-height: 100vh;
-  padding: 2rem;
-  margin-left: 260px; /* Offset for fixed sidebar */
+  padding: 2.5rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .mainContent {
-    margin-left: 0;
-    padding: 1rem;
-    padding-bottom: 90px; /* Space for bottom nav */
+    padding: 1.5rem 1rem;
   }
 }

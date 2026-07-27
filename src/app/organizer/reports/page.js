@@ -27,7 +27,7 @@ export default function OrganizerReportsPage() {
     { 
       label: 'Platform Fees (5%)', 
       value: 'GH₵ 4,075.50', 
-      color: '#4f46e5', 
+      color: '#6d28d9', 
       bg: '#f5f3ff',
       badge: 'Standard 5% Rate' 
     },
@@ -41,7 +41,7 @@ export default function OrganizerReportsPage() {
     { 
       label: 'Pending Settlement', 
       value: 'GH₵ 6,750.00', 
-      color: '#d97706', 
+      color: '#b45309', 
       bg: '#fffbeb',
       badge: 'Processing (24h)' 
     }
@@ -104,7 +104,7 @@ export default function OrganizerReportsPage() {
           </button>
         </div>
 
-        <div className={styles.tableContainer}>
+        <div className={styles.tableWrapper}>
           <table className={styles.table}>
             <thead>
               <tr>
@@ -125,7 +125,7 @@ export default function OrganizerReportsPage() {
                   <td style={{ fontWeight: 600, color: '#0f172a' }}>{rep.name}</td>
                   <td style={{ color: '#64748b' }}>{rep.date}</td>
                   <td style={{ fontWeight: 700, color: '#059669' }}>{rep.gross}</td>
-                  <td style={{ color: '#4f46e5', fontWeight: 600 }}>-{rep.fee}</td>
+                  <td style={{ color: '#6d28d9', fontWeight: 600 }}>-{rep.fee}</td>
                   <td style={{ color: '#2563eb', fontWeight: 700 }}>{rep.net}</td>
                   <td>
                     <span className={styles.statusCompleted}>✓ {rep.status}</span>
