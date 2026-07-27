@@ -1,7 +1,7 @@
 .page {
   min-height: 100vh;
-  background: #090d16;
-  color: #f8fafc;
+  background: #f8fafc;
+  color: #0f172a;
   font-family: var(--font-inter), sans-serif;
 }
 
@@ -12,8 +12,7 @@
 .mainContent {
   flex: 1;
   min-width: 0;
-  background: radial-gradient(circle at 50% -20%, rgba(56, 189, 248, 0.12) 0%, rgba(99, 102, 241, 0.05) 40%, transparent 80%),
-              radial-gradient(circle at 100% 60%, rgba(236, 72, 153, 0.05) 0%, transparent 50%);
+  background: #f8fafc;
   min-height: 100vh;
   padding: 2.5rem;
 }

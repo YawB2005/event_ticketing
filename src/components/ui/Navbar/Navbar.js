@@ -7,7 +7,7 @@ import styles from './Navbar.module.css';
 export default function Navbar() {
   const pathname = usePathname();
   const isAuthPage = pathname === '/login' || pathname === '/signup';
-  const isDashboard = pathname.startsWith('/home') || pathname.startsWith('/organizer');
+  const isDashboard = pathname.startsWith('/home') || pathname.startsWith('/organizer') || pathname.startsWith('/dashboard');
 
   // Completely hide the Navbar on dashboard views to maintain the app aesthetic
   if (isDashboard) {

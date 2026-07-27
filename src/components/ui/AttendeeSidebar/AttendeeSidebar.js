@@ -19,7 +19,7 @@ export default function AttendeeSidebar() {
   return (
     <aside className={styles.sidebar}>
       <Link href="/" className={styles.brandLogo}>
-        ETSP Pass
+        ETSP
       </Link>
 
       <nav className={styles.sidebarNav}>

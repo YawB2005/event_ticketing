@@ -1,14 +1,14 @@
 .page {
   max-width: 850px;
   margin: 0 auto;
-  color: #f8fafc;
+  color: #0f172a;
 }
 
 .backBtn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: #94a3b8;
+  color: #64748b;
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
@@ -17,21 +17,19 @@
 }
 
 .backBtn:hover {
-  color: #38bdf8;
+  color: #2563eb;
 }
 
 .ticketContainer {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 28px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .ticketHeader {
-  background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   padding: 2.25rem;
   color: white;
   text-align: center;
@@ -46,7 +44,7 @@
 
 .ticketBadge {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.2);
   padding: 0.35rem 0.95rem;
   border-radius: 9999px;
   font-size: 0.85rem;
@@ -63,10 +61,11 @@
 }
 
 .qrWrapper {
-  background: white;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   padding: 1.5rem;
-  border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
   margin-bottom: 1.5rem;
 }
 
@@ -80,7 +79,7 @@
   font-family: monospace;
   font-size: 1.15rem;
   font-weight: 800;
-  color: #38bdf8;
+  color: #2563eb;
   margin-bottom: 2rem;
   letter-spacing: 0.1em;
 }
@@ -90,7 +89,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.75rem;
-  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+  border-top: 1px dashed #e2e8f0;
   padding-top: 2rem;
   margin-bottom: 2.25rem;
 }
@@ -103,21 +102,21 @@
 
 .infoLabel {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: #64748b;
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .infoValue {
   font-size: 1.1rem;
-  color: #ffffff;
+  color: #0f172a;
   font-weight: 700;
 }
 
 .downloadBtn {
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  color: #38bdf8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
   padding: 0.9rem 2.25rem;
   border-radius: 14px;
   font-weight: 700;
@@ -130,6 +129,6 @@
 }
 
 .downloadBtn:hover {
-  background: rgba(56, 189, 248, 0.3);
+  background: #dbeafe;
   transform: translateY(-2px);
 }

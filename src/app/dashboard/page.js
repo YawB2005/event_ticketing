@@ -36,7 +36,7 @@ export default function AttendeeDashboardPage() {
 
       <div className={styles.metricsGrid}>
         <motion.div className={styles.metricCard} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <div className={styles.iconWrapper} style={{ background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8' }}>
+          <div className={styles.iconWrapper} style={{ background: '#eff6ff', color: '#2563eb' }}>
             <Ticket size={24} />
           </div>
           <div className={styles.metricInfo}>
@@ -46,7 +46,7 @@ export default function AttendeeDashboardPage() {
         </motion.div>
 
         <motion.div className={styles.metricCard} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <div className={styles.iconWrapper} style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10b981' }}>
+          <div className={styles.iconWrapper} style={{ background: '#ecfdf5', color: '#059669' }}>
             <ShoppingBag size={24} />
           </div>
           <div className={styles.metricInfo}>
@@ -56,7 +56,7 @@ export default function AttendeeDashboardPage() {
         </motion.div>
 
         <motion.div className={styles.metricCard} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <div className={styles.iconWrapper} style={{ background: 'rgba(168, 85, 247, 0.15)', color: '#a855f7' }}>
+          <div className={styles.iconWrapper} style={{ background: '#f5f3ff', color: '#7c3aed' }}>
             <Calendar size={24} />
           </div>
           <div className={styles.metricInfo}>
@@ -86,7 +86,7 @@ export default function AttendeeDashboardPage() {
                   <div className={styles.metaItem}>
                     <MapPin size={15} /> {tkt.venue}
                   </div>
-                  <div className={styles.metaItem} style={{ color: '#38bdf8', fontWeight: 600 }}>
+                  <div className={styles.metaItem} style={{ color: '#2563eb', fontWeight: 600 }}>
                     <Ticket size={15} /> Tier: {tkt.tier}
                   </div>
                 </div>
