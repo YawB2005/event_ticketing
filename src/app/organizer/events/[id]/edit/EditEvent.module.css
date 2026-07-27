@@ -1,5 +1,4 @@
 .page {
-  padding: 2.5rem;
   max-width: 1200px;
   margin: 0 auto;
   color: #0f172a;
@@ -50,14 +49,14 @@
 
 .live {
   background: #fef2f2;
-  color: #ef4444;
+  color: #dc2626;
   border: 1px solid #fca5a5;
 }
 
 .draft {
   background: #ecfdf5;
-  color: #10b981;
-  border: 1px solid #6ee7b7;
+  color: #059669;
+  border: 1px solid #a7f3d0;
 }
 
 .ended {
@@ -79,14 +78,16 @@
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .saveDraftBtn:hover {
   background: #f8fafc;
+  border-color: #94a3b8;
 }
 
 .saveLiveBtn {
-  background: linear-gradient(135deg, #0284c7, #2563eb);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   border: none;
   color: white;
   padding: 0.75rem 1.75rem;
@@ -96,6 +97,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
 }
 
 .tabsRow {
@@ -115,6 +117,7 @@
   background: transparent;
   border: none;
   font-size: 1rem;
+  transition: all 0.2s ease;
 }
 
 .tab:hover {
@@ -168,6 +171,7 @@
   color: #0f172a;
   font-size: 0.95rem;
   outline: none;
+  transition: all 0.2s ease;
 }
 
 .inputGroup input:focus,
@@ -202,11 +206,16 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.addTierBtn:hover {
+  background: #dbeafe;
 }
 
 .deleteBtn {
   background: #fef2f2;
-  color: #ef4444;
+  color: #dc2626;
   border: 1px solid #fca5a5;
   padding: 0.75rem;
   border-radius: 10px;

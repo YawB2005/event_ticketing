@@ -1,32 +1,37 @@
 .page {
-  padding: 2.5rem;
-  max-width: 1250px;
+  max-width: 1350px;
   margin: 0 auto;
-  color: #0f172a;
+  color: #f8fafc;
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .header h1 {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: #0f172a;
+  font-size: 2.5rem;
+  font-weight: 900;
   margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.03em;
 }
 
 .subText {
-  color: #64748b;
-  font-size: 1rem;
+  color: #94a3b8;
+  font-size: 1.05rem;
+  margin: 0;
 }
 
 .card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
 }
 
 .table {
@@ -36,49 +41,55 @@
 }
 
 .table th {
-  background: #f8fafc;
-  padding: 1rem 1.5rem;
+  background: rgba(30, 41, 59, 0.6);
+  padding: 1.1rem 1.5rem;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #475569;
+  color: #94a3b8;
   text-transform: uppercase;
-  border-bottom: 1px solid #e2e8f0;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .table td {
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 0.95rem;
-  color: #334155;
+  color: #e2e8f0;
 }
 
 .table tr:hover {
-  background: #f8fafc;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .orderId {
   font-family: monospace;
   font-weight: 700;
-  color: #2563eb;
+  color: #38bdf8;
 }
 
 .statusCompleted {
-  background: #ecfdf5;
-  color: #059669;
-  border: 1px solid #a7f3d0;
-  padding: 0.3rem 0.75rem;
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  padding: 0.35rem 0.85rem;
   border-radius: 9999px;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .receiptBtn {
-  background: #eff6ff;
-  color: #2563eb;
-  border: 1px solid #bfdbfe;
-  padding: 0.4rem 0.85rem;
-  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 0.45rem 0.95rem;
+  border-radius: 10px;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.receiptBtn:hover {
+  background: rgba(56, 189, 248, 0.25);
 }

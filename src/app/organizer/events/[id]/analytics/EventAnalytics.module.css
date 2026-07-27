@@ -1,5 +1,4 @@
 .page {
-  padding: 2.5rem;
   max-width: 1300px;
   margin: 0 auto;
   color: #0f172a;
@@ -152,7 +151,8 @@
 .barFill {
   width: 70%;
   border-radius: 6px 6px 0 0;
-  background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+  transition: height 0.5s ease;
 }
 
 .barLabel {
@@ -197,6 +197,6 @@
 
 .fill {
   height: 100%;
-  background: linear-gradient(90deg, #2563eb, #4f46e5);
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
   border-radius: 9999px;
 }

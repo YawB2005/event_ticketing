@@ -1,73 +1,301 @@
-.page {
-  padding: 2.5rem;
-  max-width: 1300px;
+.container {
+  max-width: 1350px;
   margin: 0 auto;
-  color: #0f172a;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+  align-items: flex-end;
+  margin-bottom: 2.5rem;
 }
 
-.header h1 {
-  font-size: 2.2rem;
-  font-weight: 800;
+.headerTitle {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin: 0 0 0.5rem 0;
   color: #0f172a;
-  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.03em;
 }
 
-.subText {
+.headerSub {
   color: #64748b;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  margin: 0;
 }
 
 .createBtn {
-  background: linear-gradient(135deg, #0284c7, #2563eb);
-  color: white;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  font-weight: 600;
+  padding: 0.85rem 1.75rem;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2);
-  transition: all 0.2s ease;
+  gap: 0.6rem;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+  transition: all 0.25s ease;
+  text-decoration: none;
 }
 
 .createBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
 }
 
-.statsGrid {
+.topMetricsGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
   margin-bottom: 2.5rem;
 }
 
-.statCard {
+.topMetricCard {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 20px;
-  padding: 1.5rem;
+  padding: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s ease;
+}
+
+.topMetricCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  border-color: #cbd5e1;
+}
+
+.metricIconWrap {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metricInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.metricLabel {
+  font-size: 0.825rem;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.25rem;
+}
+
+.metricValue {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.metricTrend {
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+}
+
+.positive {
+  color: #059669;
+}
+
+.widgetGrid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.widget {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  padding: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
-.statLabel {
-  font-size: 0.875rem;
-  color: #64748b;
-  font-weight: 600;
-  margin-bottom: 0.35rem;
+.widgetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.75rem;
 }
 
-.statValue {
-  font-size: 1.8rem;
+.widgetTitle h2 {
+  font-size: 1.35rem;
   font-weight: 800;
   color: #0f172a;
+  margin: 0;
+}
+
+.widgetTitle p {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0.2rem 0 0 0;
+}
+
+.chartContainer {
+  padding-top: 1rem;
+}
+
+.mainStat {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #059669;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.03em;
+}
+
+.subStat {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.pillChart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 200px;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.pillCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.pillBar {
+  width: 70%;
+  border-radius: 8px 8px 0 0;
+  background: #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.pillCol:hover .pillBar {
+  background: #93c5fd;
+}
+
+.pillDay {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-top: 0.85rem;
+}
+
+.active .pillBar {
+  background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.active .pillDay {
+  color: #2563eb;
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.eventItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+
+.eventItem:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateX(4px);
+}
+
+.eventItemLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.eventSquare {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eventDetails h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
+}
+
+.eventDetails p {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.eventPill {
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.statusLive {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+.statusEnded {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+.statusDraft {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+@media (max-width: 1100px) {
+  .topMetricsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .widgetGrid {
+    grid-template-columns: 1fr;
+  }
 }
