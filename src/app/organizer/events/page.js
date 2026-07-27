@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 import styles from './Events.module.css';
 import { Plus, Music, Mic, Palette, Calendar, BarChart2, Settings, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -63,9 +64,11 @@ export default function EventsPage() {
           <h1>Event Analytics</h1>
           <p>Track revenue and ticket sales for specific events</p>
         </div>
-        <button className={styles.createBtn}>
-          <Plus size={20} /> Create Event
-        </button>
+        <Link href="/organizer/events/new" style={{ textDecoration: 'none' }}>
+          <button className={styles.createBtn}>
+            <Plus size={20} /> Create Event
+          </button>
+        </Link>
       </div>
 
       <div className={styles.filterRow}>
@@ -133,15 +136,21 @@ export default function EventsPage() {
               </div>
 
               <div className={styles.actions}>
-                <button className={`${styles.actionBtn} ${styles.primary}`}>
-                  <BarChart2 size={18} /> Deep Dive
-                </button>
-                <button className={styles.actionBtn}>
-                  <Settings size={18} /> Manage
-                </button>
-                <button className={styles.actionBtn}>
-                  <Users size={18} /> Attendees
-                </button>
+                <Link href={`/organizer/events/${event.id}/analytics`} style={{ textDecoration: 'none' }}>
+                  <button className={`${styles.actionBtn} ${styles.primary}`}>
+                    <BarChart2 size={18} /> Deep Dive
+                  </button>
+                </Link>
+                <Link href={`/organizer/events/${event.id}/edit`} style={{ textDecoration: 'none' }}>
+                  <button className={styles.actionBtn}>
+                    <Settings size={18} /> Manage
+                  </button>
+                </Link>
+                <Link href={`/organizer/events/${event.id}/attendees`} style={{ textDecoration: 'none' }}>
+                  <button className={styles.actionBtn}>
+                    <Users size={18} /> Attendees
+                  </button>
+                </Link>
               </div>
             </motion.div>
           );
