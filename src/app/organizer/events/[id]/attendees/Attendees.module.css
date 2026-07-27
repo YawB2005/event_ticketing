@@ -2,23 +2,18 @@
   padding: 2.5rem;
   max-width: 1300px;
   margin: 0 auto;
-  color: #f8fafc;
+  color: #0f172a;
 }
 
 .backBtn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: #94a3b8;
+  color: #64748b;
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
-  transition: color 0.2s ease;
   margin-bottom: 0.75rem;
-}
-
-.backBtn:hover {
-  color: #38bdf8;
 }
 
 .header {
@@ -31,19 +26,19 @@
 .header h1 {
   font-size: 2.2rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
   margin: 0 0 0.25rem 0;
 }
 
 .subText {
-  color: #94a3b8;
+  color: #64748b;
   font-size: 1rem;
 }
 
 .exportBtn {
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  color: #38bdf8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
   padding: 0.75rem 1.5rem;
   border-radius: 12px;
   font-weight: 600;
@@ -51,23 +46,18 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.exportBtn:hover {
-  background: rgba(56, 189, 248, 0.2);
 }
 
 .filterCard {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
   padding: 1.25rem 1.5rem;
   margin-bottom: 2rem;
   display: flex;
   gap: 1.5rem;
   align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .searchBox {
@@ -85,35 +75,31 @@
 
 .searchInput {
   width: 100%;
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
   border-radius: 10px;
   padding: 0.75rem 1rem 0.75rem 2.75rem;
-  color: white;
+  color: #0f172a;
   font-size: 0.95rem;
   outline: none;
 }
 
-.searchInput:focus {
-  border-color: #38bdf8;
-}
-
 .selectFilter {
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
   border-radius: 10px;
   padding: 0.75rem 1rem;
-  color: white;
+  color: #0f172a;
   font-size: 0.95rem;
   outline: none;
 }
 
 .tableCard {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 20px;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .table {
@@ -123,35 +109,34 @@
 }
 
 .table th {
-  background: rgba(30, 41, 59, 0.5);
+  background: #f8fafc;
   padding: 1rem 1.5rem;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #94a3b8;
+  color: #475569;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .table td {
   padding: 1.2rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid #f1f5f9;
   font-size: 0.95rem;
-  color: #e2e8f0;
+  color: #334155;
 }
 
 .table tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: #f8fafc;
 }
 
 .attendeeName {
   font-weight: 600;
-  color: #ffffff;
+  color: #0f172a;
 }
 
 .attendeeEmail {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .statusPill {
@@ -165,31 +150,30 @@
 }
 
 .checkedIn {
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
 }
 
 .pending {
-  background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fde68a;
 }
 
 .actionBtn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #e2e8f0;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
   padding: 0.4rem 0.85rem;
   border-radius: 8px;
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .actionBtn:hover {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-  border-color: #38bdf8;
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
 }

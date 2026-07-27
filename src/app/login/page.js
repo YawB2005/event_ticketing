@@ -13,6 +13,7 @@ const fadeUp = {
 };
 
 export default function Login() {
+  const [role, setRole] = useState('attendee');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -25,7 +26,7 @@ export default function Login() {
     setLoading(true);
     setError(null);
     
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -34,7 +35,12 @@ export default function Login() {
       setError(error.message);
       setLoading(false);
     } else {
-      router.push('/');
+      const userRole = data?.user?.user_metadata?.role || role;
+      if (userRole === 'organizer') {
+        router.push('/organizer');
+      } else {
+        router.push('/dashboard');
+      }
       router.refresh();
     }
   };
@@ -84,6 +90,48 @@ export default function Login() {
 
           <form onSubmit={handleLogin}>
             {error && <motion.div variants={fadeUp} style={{ color: '#ff4d4d', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</motion.div>}
+            
+            <motion.div variants={fadeUp} style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', background: '#f1f5f9', padding: '0.25rem', borderRadius: '12px' }}>
+              <button 
+                type="button" 
+                onClick={() => setRole('attendee')}
+                style={{
+                  flex: 1,
+                  padding: '0.6rem 0.5rem',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  background: role === 'attendee' ? '#ffffff' : 'transparent',
+                  color: role === 'attendee' ? '#2563eb' : '#64748b',
+                  boxShadow: role === 'attendee' ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Sign in as Attendee
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setRole('organizer')}
+                style={{
+                  flex: 1,
+                  padding: '0.6rem 0.5rem',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  background: role === 'organizer' ? '#ffffff' : 'transparent',
+                  color: role === 'organizer' ? '#2563eb' : '#64748b',
+                  boxShadow: role === 'organizer' ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Sign in as Organizer
+              </button>
+            </motion.div>
+
             <motion.div variants={fadeUp} className={styles.formGroup}>
               <label htmlFor="email">Email</label>
               <input 

@@ -3,14 +3,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  FileText, 
   Download, 
   DollarSign, 
   TrendingUp, 
-  CreditCard, 
-  Calendar,
-  ArrowUpRight,
-  Filter
+  Percent, 
+  CheckCircle2, 
+  Clock,
+  ArrowUpRight
 } from 'lucide-react';
 import styles from './Reports.module.css';
 
@@ -18,24 +17,48 @@ export default function OrganizerReportsPage() {
   const [timeframe, setTimeframe] = useState('This Month');
 
   const financialSummary = [
-    { label: 'Total Gross Revenue', value: 'GH₵ 81,510', color: '#38bdf8' },
-    { label: 'Platform Fees (5%)', value: 'GH₵ 4,075.50', color: '#f43f5e' },
-    { label: 'Net Payout Received', value: 'GH₵ 77,434.50', color: '#10b981' },
-    { label: 'Pending Settlement', value: 'GH₵ 6,750.00', color: '#f59e0b' }
+    { 
+      label: 'Gross Ticket Sales', 
+      value: 'GH₵ 81,510', 
+      color: '#059669', 
+      bg: '#ecfdf5',
+      badge: '+14.2% vs last month' 
+    },
+    { 
+      label: 'Platform Fees (5%)', 
+      value: 'GH₵ 4,075.50', 
+      color: '#4f46e5', 
+      bg: '#f5f3ff',
+      badge: 'Standard 5% Rate' 
+    },
+    { 
+      label: 'Net Payout Received', 
+      value: 'GH₵ 70,684.50', 
+      color: '#2563eb', 
+      bg: '#eff6ff',
+      badge: 'Settled to MoMo/Bank' 
+    },
+    { 
+      label: 'Pending Settlement', 
+      value: 'GH₵ 6,750.00', 
+      color: '#d97706', 
+      bg: '#fffbeb',
+      badge: 'Processing (24h)' 
+    }
   ];
 
   const reportHistory = [
-    { id: 'REP-2026-07', name: 'July 2026 Financial & Ticket Summary', date: 'Jul 24, 2026', gross: 'GH₵ 74,760', net: 'GH₵ 71,022', status: 'Completed' },
-    { id: 'REP-2026-06', name: 'June 2026 Event Performance Report', date: 'Jun 30, 2026', gross: 'GH₵ 6,750', net: 'GH₵ 6,412.50', status: 'Completed' },
-    { id: 'REP-2026-05', name: 'May 2026 Event Performance Report', date: 'May 31, 2026', gross: 'GH₵ 0', net: 'GH₵ 0', status: 'Completed' },
+    { id: 'REP-2026-07', name: 'July 2026 Financial & Ticket Summary', date: 'Jul 24, 2026', gross: 'GH₵ 74,760.00', fee: 'GH₵ 3,738.00', net: 'GH₵ 71,022.00', status: 'Completed' },
+    { id: 'REP-2026-06', name: 'June 2026 Event Performance Report', date: 'Jun 30, 2026', gross: 'GH₵ 6,750.00', fee: 'GH₵ 337.50', net: 'GH₵ 6,412.50', status: 'Completed' },
+    { id: 'REP-2026-05', name: 'May 2026 Event Performance Report', date: 'May 31, 2026', gross: 'GH₵ 0.00', fee: 'GH₵ 0.00', net: 'GH₵ 0.00', status: 'Completed' },
   ];
 
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <h1>Financial & Sales Reports</h1>
-          <p className={styles.subText}>Download detailed revenue breakdowns, tax summaries, and payout receipts</p>
+          <h1>Financial & Payout Reports</h1>
+          <p className={styles.subText}>Download transparent revenue breakdowns, tax summaries, and payout receipts</p>
         </div>
 
         <div className={styles.dateFilter}>
@@ -58,10 +81,13 @@ export default function OrganizerReportsPage() {
             className={styles.card}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
+            transition={{ delay: idx * 0.08 }}
           >
             <div className={styles.cardLabel}>{item.label}</div>
             <div className={styles.cardValue} style={{ color: item.color }}>{item.value}</div>
+            <div className={styles.badgePill} style={{ background: item.bg, color: item.color }}>
+              {item.badge}
+            </div>
           </motion.div>
         ))}
       </div>
@@ -72,8 +98,8 @@ export default function OrganizerReportsPage() {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className={styles.sectionHeader}>
-          <h2>Monthly Report Statements</h2>
-          <button className={styles.downloadBtn} onClick={() => alert("Downloading master report CSV...")}>
+          <h2>Monthly Financial Statements</h2>
+          <button className={styles.downloadBtn} onClick={() => alert("Downloading master financial report CSV...")}>
             <Download size={16} /> Download Master CSV
           </button>
         </div>
@@ -81,28 +107,30 @@ export default function OrganizerReportsPage() {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Report ID</th>
-              <th>Report Name</th>
+              <th>Report Ref</th>
+              <th>Statement Name</th>
               <th>Date Generated</th>
               <th>Gross Revenue</th>
-              <th>Net Payout</th>
+              <th>Platform Fee (5%)</th>
+              <th>Net Settled</th>
               <th>Payout Status</th>
-              <th>Action</th>
+              <th>Receipt</th>
             </tr>
           </thead>
           <tbody>
             {reportHistory.map((rep) => (
               <tr key={rep.id}>
-                <td style={{ fontFamily: 'monospace', fontWeight: 600, color: '#38bdf8' }}>{rep.id}</td>
-                <td style={{ fontWeight: 600, color: '#ffffff' }}>{rep.name}</td>
-                <td style={{ color: '#94a3b8' }}>{rep.date}</td>
-                <td style={{ fontWeight: 600 }}>{rep.gross}</td>
-                <td style={{ color: '#10b981', fontWeight: 700 }}>{rep.net}</td>
+                <td style={{ fontFamily: 'monospace', fontWeight: 700, color: '#2563eb' }}>{rep.id}</td>
+                <td style={{ fontWeight: 600, color: '#0f172a' }}>{rep.name}</td>
+                <td style={{ color: '#64748b' }}>{rep.date}</td>
+                <td style={{ fontWeight: 700, color: '#059669' }}>{rep.gross}</td>
+                <td style={{ color: '#4f46e5', fontWeight: 600 }}>-{rep.fee}</td>
+                <td style={{ color: '#2563eb', fontWeight: 700 }}>{rep.net}</td>
                 <td>
-                  <span className={styles.statusCompleted}>{rep.status}</span>
+                  <span className={styles.statusCompleted}>✓ {rep.status}</span>
                 </td>
                 <td>
-                  <button className={styles.downloadBtn} onClick={() => alert(`Downloading ${rep.id} report PDF`)}>
+                  <button className={styles.downloadBtn} onClick={() => alert(`Downloading statement PDF for ${rep.id}...`)}>
                     <Download size={14} /> PDF
                   </button>
                 </td>

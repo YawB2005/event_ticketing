@@ -117,9 +117,13 @@ export default function Home() {
           
           <motion.div 
             variants={fadeUp} initial="hidden" animate="visible" transition={{ duration: 0.8, delay: 0.2 }}
+            style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '1.5rem' }}
           >
             <Link href="/events" className="btn btn-primary" style={{ backgroundColor: '#2b00ff' }}>
-              Get Started
+              Explore Events
+            </Link>
+            <Link href="/organizer" className="btn btn-secondary" style={{ backgroundColor: '#1e293b', color: '#fff', padding: '0.85rem 1.75rem', borderRadius: '50px', fontWeight: 600, textDecoration: 'none' }}>
+              Host an Event
             </Link>
           </motion.div>
         </div>

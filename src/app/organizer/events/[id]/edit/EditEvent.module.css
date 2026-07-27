@@ -2,7 +2,7 @@
   padding: 2.5rem;
   max-width: 1200px;
   margin: 0 auto;
-  color: #f8fafc;
+  color: #0f172a;
 }
 
 .topBar {
@@ -16,7 +16,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: #94a3b8;
+  color: #64748b;
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
@@ -24,7 +24,7 @@
 }
 
 .backBtn:hover {
-  color: #38bdf8;
+  color: #2563eb;
 }
 
 .headerTitle {
@@ -35,8 +35,8 @@
 
 .headerTitle h1 {
   font-size: 2rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-weight: 800;
+  color: #0f172a;
   margin: 0;
 }
 
@@ -44,26 +44,26 @@
   padding: 0.35rem 0.85rem;
   border-radius: 9999px;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
 }
 
 .live {
-  background: rgba(239, 68, 68, 0.15);
+  background: #fef2f2;
   color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid #fca5a5;
 }
 
 .draft {
-  background: rgba(16, 185, 129, 0.15);
+  background: #ecfdf5;
   color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid #6ee7b7;
 }
 
 .ended {
-  background: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
 }
 
 .headerActions {
@@ -72,19 +72,17 @@
 }
 
 .saveDraftBtn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #e2e8f0;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
   padding: 0.75rem 1.5rem;
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .saveDraftBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: #f8fafc;
 }
 
 .saveLiveBtn {
@@ -98,19 +96,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
-  transition: all 0.2s ease;
-}
-
-.saveLiveBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
 }
 
 .tabsRow {
   display: flex;
   gap: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #e2e8f0;
   margin-bottom: 2rem;
   padding-bottom: 0.5rem;
 }
@@ -118,31 +109,30 @@
 .tab {
   padding: 0.75rem 1.25rem;
   border-radius: 8px;
-  color: #94a3b8;
+  color: #64748b;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
   background: transparent;
   border: none;
   font-size: 1rem;
 }
 
 .tab:hover {
-  color: #f8fafc;
+  color: #0f172a;
 }
 
 .activeTab {
-  color: #38bdf8;
-  background: rgba(56, 189, 248, 0.1);
-  border-bottom: 2px solid #38bdf8;
+  color: #2563eb;
+  background: #eff6ff;
+  border-bottom: 2px solid #2563eb;
 }
 
 .formCard {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 20px;
   padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   margin-bottom: 2rem;
 }
 
@@ -165,32 +155,31 @@
 .inputGroup label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #cbd5e1;
+  color: #334155;
 }
 
 .inputGroup input,
 .inputGroup select,
 .inputGroup textarea {
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
   border-radius: 10px;
   padding: 0.85rem 1rem;
-  color: white;
+  color: #0f172a;
   font-size: 0.95rem;
   outline: none;
-  transition: all 0.2s ease;
 }
 
 .inputGroup input:focus,
 .inputGroup select:focus,
 .inputGroup textarea:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+  border-color: #2563eb;
+  background: #ffffff;
 }
 
 .tierCard {
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 14px;
   padding: 1.5rem;
   margin-bottom: 1.25rem;
@@ -201,9 +190,9 @@
 }
 
 .addTierBtn {
-  background: rgba(56, 189, 248, 0.1);
-  color: #38bdf8;
-  border: 1px dashed rgba(56, 189, 248, 0.3);
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px dashed #93c5fd;
   padding: 1rem;
   border-radius: 12px;
   font-weight: 600;
@@ -213,24 +202,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.addTierBtn:hover {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: #38bdf8;
 }
 
 .deleteBtn {
-  background: rgba(239, 68, 68, 0.1);
+  background: #fef2f2;
   color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  border: 1px solid #fca5a5;
   padding: 0.75rem;
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.deleteBtn:hover {
-  background: rgba(239, 68, 68, 0.25);
 }

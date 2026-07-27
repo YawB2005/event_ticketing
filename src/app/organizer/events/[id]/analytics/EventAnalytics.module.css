@@ -2,7 +2,7 @@
   padding: 2.5rem;
   max-width: 1300px;
   margin: 0 auto;
-  color: #f8fafc;
+  color: #0f172a;
 }
 
 .header {
@@ -16,34 +16,29 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: #94a3b8;
+  color: #64748b;
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
-  transition: color 0.2s ease;
   margin-bottom: 0.75rem;
-}
-
-.backBtn:hover {
-  color: #38bdf8;
 }
 
 .header h1 {
   font-size: 2.2rem;
   font-weight: 800;
   margin: 0 0 0.5rem 0;
-  color: #ffffff;
+  color: #0f172a;
 }
 
 .subText {
-  color: #94a3b8;
+  color: #64748b;
   font-size: 1rem;
 }
 
 .exportBtn {
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  color: #38bdf8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
   padding: 0.75rem 1.5rem;
   border-radius: 12px;
   font-weight: 600;
@@ -51,12 +46,6 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.exportBtn:hover {
-  background: rgba(56, 189, 248, 0.2);
-  transform: translateY(-2px);
 }
 
 .statsGrid {
@@ -67,13 +56,13 @@
 }
 
 .statCard {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 18px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .iconWrapper {
@@ -88,15 +77,15 @@
 
 .label {
   font-size: 0.875rem;
-  color: #94a3b8;
+  color: #64748b;
   font-weight: 500;
   margin-bottom: 0.25rem;
 }
 
 .value {
   font-size: 1.75rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-weight: 800;
+  color: #0f172a;
   margin-bottom: 0.5rem;
 }
 
@@ -109,11 +98,7 @@
 }
 
 .positive {
-  color: #10b981;
-}
-
-.negative {
-  color: #ef4444;
+  color: #059669;
 }
 
 .sectionGrid {
@@ -124,11 +109,11 @@
 }
 
 .chartCard {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 20px;
   padding: 1.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .cardHeader {
@@ -141,7 +126,7 @@
 .cardHeader h3 {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #f8fafc;
+  color: #0f172a;
   margin: 0;
 }
 
@@ -151,7 +136,7 @@
   justify-content: space-between;
   height: 220px;
   padding-top: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #e2e8f0;
   gap: 0.5rem;
 }
 
@@ -167,13 +152,12 @@
 .barFill {
   width: 70%;
   border-radius: 6px 6px 0 0;
-  background: linear-gradient(180deg, #38bdf8, #0284c7);
-  transition: height 0.5s ease;
+  background: linear-gradient(180deg, #3b82f6, #1d4ed8);
 }
 
 .barLabel {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: #64748b;
   margin-top: 0.75rem;
 }
 
@@ -197,31 +181,22 @@
 }
 
 .tierName {
-  color: #f1f5f9;
+  color: #0f172a;
 }
 
 .tierSales {
-  color: #38bdf8;
+  color: #2563eb;
 }
 
 .track {
   height: 8px;
-  background: rgba(255, 255, 255, 0.08);
+  background: #f1f5f9;
   border-radius: 9999px;
   overflow: hidden;
 }
 
 .fill {
   height: 100%;
-  background: linear-gradient(90deg, #38bdf8, #6366f1);
+  background: linear-gradient(90deg, #2563eb, #4f46e5);
   border-radius: 9999px;
-}
-
-@media (max-width: 900px) {
-  .statsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .sectionGrid {
-    grid-template-columns: 1fr;
-  }
 }

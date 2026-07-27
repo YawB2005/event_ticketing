@@ -59,7 +59,12 @@ export default function Signup() {
     } else {
       setSuccess(true);
       setLoading(false);
-      // Wait a bit before redirecting or show a success message to check email
+      // Role-based post-signup landing page redirection
+      if (role === 'organizer') {
+        router.push('/organizer');
+      } else {
+        router.push('/dashboard');
+      }
     }
   };
 
