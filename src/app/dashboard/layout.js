@@ -1,5 +1,6 @@
 import styles from './DashboardLayout.module.css';
 import AttendeeSidebar from '@/components/ui/AttendeeSidebar/AttendeeSidebar';
+import DashboardHeader from '@/components/ui/DashboardHeader/DashboardHeader';
 
 export const metadata = {
   title: "Attendee Dashboard - Eventix",
@@ -12,6 +13,7 @@ export default function DashboardLayout({ children }) {
       <div className={styles.appLayout}>
         <AttendeeSidebar />
         <main className={styles.mainContent}>
+          <DashboardHeader />
           {children}
         </main>
       </div>

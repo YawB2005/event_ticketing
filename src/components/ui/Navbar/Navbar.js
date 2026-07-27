@@ -10,7 +10,7 @@ import { UserCircle } from 'lucide-react';
 export default function Navbar() {
   const pathname = usePathname();
   const isAuthPage = pathname === '/login' || pathname === '/signup';
-  const isDashboard = pathname.startsWith('/home') || pathname.startsWith('/organizer');
+  const isDashboard = pathname.startsWith('/home') || pathname.startsWith('/organizer') || pathname.startsWith('/dashboard');
   
   const [user, setUser] = useState(null);
 
@@ -44,7 +44,7 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <div className={`container ${styles.navContainer}`}>
         <Link href="/" className={styles.logo}>
-          Eventix
+          ETSP
         </Link>
         {!isAuthPage && (
           <div className={styles.authActions}>
