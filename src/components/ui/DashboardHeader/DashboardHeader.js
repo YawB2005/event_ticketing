@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 import { Search, Bell, User, Settings, LogOut, ChevronDown, Menu, X } from 'lucide-react';
 import styles from './DashboardHeader.module.css';
 
 export default function DashboardHeader() {
   const pathname = usePathname();
   const router = useRouter();
+  const supabase = createClient();
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
@@ -26,6 +28,13 @@ export default function DashboardHeader() {
       sidebar.style.transform = isVisible ? 'translateX(-100%)' : 'translateX(0px)';
       setMobileDrawerOpen(!isVisible);
     }
+  };
+
+  const handleLogout = async () => {
+    setMenuOpen(false);
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
   };
 
   return (
@@ -70,7 +79,7 @@ export default function DashboardHeader() {
                 <Link href={settingsLink} className={styles.dropdownItem}>
                   <Settings size={16} /> Account Settings
                 </Link>
-                <button className={`${styles.dropdownItem} ${styles.danger}`} onClick={() => router.push('/')}>
+                <button className={`${styles.dropdownItem} ${styles.danger}`} onClick={handleLogout}>
                   <LogOut size={16} /> Sign Out
                 </button>
               </div>

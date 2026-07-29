@@ -85,7 +85,7 @@ export async function updateSession(request) {
   // Redirect logged in users away from /login and /signup directly to their dashboard
   if (
     user && 
-    (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup' || request.nextUrl.pathname === '/')
+    (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup')
   ) {
      const url = request.nextUrl.clone()
      

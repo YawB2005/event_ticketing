@@ -2,7 +2,8 @@
 
 import styles from './OrganizerSidebar.module.css';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 import { 
   LayoutDashboard, 
   MessageSquare, 
@@ -17,12 +18,22 @@ import {
 
 export default function OrganizerSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
 
   const closeMobileSidebar = () => {
     const sidebar = document.querySelector('aside');
     if (sidebar && window.innerWidth <= 992) {
       sidebar.style.transform = 'translateX(-100%)';
     }
+  };
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    closeMobileSidebar();
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
   };
 
   return (
@@ -90,9 +101,9 @@ export default function OrganizerSidebar() {
         <Link href="/" className={styles.navItem} onClick={closeMobileSidebar}>
           <Globe size={20} /> Go to Website
         </Link>
-        <Link href="/" className={styles.navItem} onClick={closeMobileSidebar}>
+        <a href="#" onClick={handleLogout} className={styles.navItem}>
           <LogOut size={20} /> Log Out
-        </Link>
+        </a>
       </div>
     </aside>
   );

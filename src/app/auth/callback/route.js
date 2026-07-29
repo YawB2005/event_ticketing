@@ -5,8 +5,8 @@ import { initializeUserProfile } from '@/app/actions/profile'
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  // if "next" is in param, use it as the redirect URL
-  const next = searchParams.get('next') ?? '/home'
+  const role = searchParams.get('role')
+  const nextParam = searchParams.get('next')
 
   if (code) {
     const supabase = await createClient()
@@ -14,13 +14,20 @@ export async function GET(request) {
     if (!error) {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
+        if (role) {
+          await supabase.auth.updateUser({ data: { role } })
+          user.user_metadata = { ...user.user_metadata, role }
+        }
         await initializeUserProfile(user)
       }
 
-      const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
+      const activeRole = user?.user_metadata?.role || role || 'attendee'
+      const defaultNext = activeRole === 'organizer' ? '/organizer' : '/dashboard'
+      const next = nextParam ?? defaultNext
+
+      const forwardedHost = request.headers.get('x-forwarded-host')
       const isLocalEnv = process.env.NODE_ENV === 'development'
       if (isLocalEnv) {
-        // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
         return NextResponse.redirect(`${origin}${next}`)
       } else if (forwardedHost) {
         return NextResponse.redirect(`https://${forwardedHost}${next}`)
@@ -30,6 +37,5 @@ export async function GET(request) {
     }
   }
 
-  // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+  return NextResponse.redirect(`${origin}/login?error=Authentication%20failed`)
 }
