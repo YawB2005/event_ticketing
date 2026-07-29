@@ -182,3 +182,32 @@
   background: #dbeafe;
   color: #1d4ed8;
 }
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .dateFilter {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .filterBtn {
+    white-space: nowrap;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .sectionCard {
+    padding: 1.25rem;
+  }
+
+  .tableContainer {
+    overflow-x: auto;
+  }
+}

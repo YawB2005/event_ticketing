@@ -55,7 +55,20 @@ export async function updateSession(request) {
       return NextResponse.redirect(url);
     } else if (user.user_metadata?.role !== 'organizer') {
       const url = request.nextUrl.clone();
-      url.pathname = '/home'; // Redirect non-organizers away
+      url.pathname = '/dashboard'; // Redirect non-organizers away
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // Protect Attendee page routes (/dashboard)
+  if (pathname.startsWith('/dashboard')) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      return NextResponse.redirect(url);
+    } else if (user.user_metadata?.role !== 'attendee') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/organizer'; // Redirect organizers away
       return NextResponse.redirect(url);
     }
   }
@@ -69,16 +82,25 @@ export async function updateSession(request) {
     }
   }
 
-  // Optional: Redirect logged in users away from /login and /signup
+  // Redirect logged in users away from /login and /signup directly to their dashboard
   if (
     user && 
-    (request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup'))
+    (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup' || request.nextUrl.pathname === '/')
   ) {
      const url = request.nextUrl.clone()
-     // If user is organizer we might want to redirect to /organizer, but we don't have role info fully available here without extra queries.
-     // For now, redirect to /
-     url.pathname = '/'
-     return NextResponse.redirect(url)
+     
+     if (user.user_metadata?.role === 'organizer') {
+       url.pathname = '/organizer';
+     } else if (user.user_metadata?.role === 'admin') {
+       url.pathname = '/admin';
+     } else {
+       url.pathname = '/dashboard';
+     }
+     
+     // Only redirect if the current path isn't already the target path
+     if (request.nextUrl.pathname !== url.pathname) {
+       return NextResponse.redirect(url);
+     }
   }
 
   return supabaseResponse

@@ -9,7 +9,7 @@
 }
 
 .brand {
-  font-family: var(--font-yeseva);
+  font-family: var(--font-righteous);
   font-size: 1.5rem;
   color: #ea580c; /* Orange/Red brand color */
   text-decoration: none;
@@ -61,7 +61,7 @@
 }
 
 .searchBtn {
-  background: #ea580c;
+  background: var(--dash-primary);
   color: #fff;
   border: none;
   width: 40px;
@@ -75,7 +75,7 @@
 }
 
 .searchBtn:hover {
-  background: #c2410c;
+  background: var(--accent-primary);
 }
 
 .navLinks {

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 import { 
   LayoutDashboard, 
   Ticket, 
@@ -15,11 +16,20 @@ import styles from './AttendeeSidebar.module.css';
 
 export default function AttendeeSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
+  };
 
   return (
     <aside className={styles.sidebar}>
       <Link href="/" className={styles.brandLogo}>
-        ETSP Pass
+        Eventix
       </Link>
 
       <nav className={styles.sidebarNav}>
@@ -59,9 +69,9 @@ export default function AttendeeSidebar() {
         <Link href="/events" className={styles.navItem}>
           <Globe size={20} /> Explore Events
         </Link>
-        <Link href="/" className={styles.navItem}>
+        <a href="#" onClick={handleLogout} className={styles.navItem}>
           <LogOut size={20} /> Log Out
-        </Link>
+        </a>
       </div>
     </aside>
   );

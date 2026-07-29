@@ -1,7 +1,7 @@
 .page {
   min-height: 100vh;
-  background: #090d16;
-  color: #f8fafc;
+  background: transparent;
+  color: #0f172a;
   padding: 2.5rem 1.5rem 5rem 1.5rem;
 }
 
@@ -19,22 +19,23 @@
   font-size: 2.75rem;
   font-weight: 800;
   margin-bottom: 0.75rem;
-  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #0f172a;
+  letter-spacing: -0.02em;
 }
 
 .subText {
-  color: #94a3b8;
+  color: #64748b;
   font-size: 1.1rem;
   max-width: 600px;
   margin: 0 auto;
 }
 
 .searchBarCard {
-  background: rgba(15, 23, 42, 0.7);
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(226, 232, 240, 0.8);
   border-radius: 20px;
   padding: 1.25rem 1.5rem;
   margin-bottom: 2.5rem;
@@ -42,7 +43,7 @@
   flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
 }
 
 .searchInputWrapper {
@@ -61,37 +62,49 @@
 
 .searchInput {
   width: 100%;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 0.85rem 1rem 0.85rem 2.8rem;
-  color: #ffffff;
+  color: #0f172a;
   font-size: 0.95rem;
   outline: none;
   transition: all 0.2s ease;
 }
 
+.searchInput::placeholder {
+  color: #94a3b8;
+}
+
 .searchInput:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: #ffffff;
 }
 
 .filterSelect {
   flex: 1;
   min-width: 160px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 0.85rem 1rem;
-  color: #ffffff;
+  color: #0f172a;
   font-size: 0.95rem;
   outline: none;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterSelect:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: #ffffff;
 }
 
 .filterSelect option {
-  background: #0f172a;
-  color: white;
+  background: #ffffff;
+  color: #0f172a;
 }
 
 .categoryPills {
@@ -110,27 +123,27 @@
 .pill {
   padding: 0.6rem 1.25rem;
   border-radius: 9999px;
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #cbd5e1;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
 }
 
 .pill:hover {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.3);
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
 }
 
 .activePill {
-  background: linear-gradient(135deg, #0284c7, #2563eb);
+  background: linear-gradient(135deg, #38bdf8, #3b82f6);
   color: white;
   border: none;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .eventsGrid {
@@ -142,6 +155,18 @@
 .noResults {
   text-align: center;
   padding: 4rem 1rem;
-  color: #94a3b8;
+  color: #64748b;
   font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding-top: 6rem; /* Ensures it clears the 80px absolute navbar */
+  }
+  .header {
+    margin-bottom: 1.5rem;
+  }
+  .header h1 {
+    font-size: 2rem;
+  }
 }

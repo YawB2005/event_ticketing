@@ -2,7 +2,7 @@ import styles from './DashboardLayout.module.css';
 import AttendeeSidebar from '@/components/ui/AttendeeSidebar/AttendeeSidebar';
 
 export const metadata = {
-  title: "Attendee Dashboard - ETSP",
+  title: "Attendee Dashboard - Eventix",
   description: "Manage your tickets, orders, and event passes",
 };
 

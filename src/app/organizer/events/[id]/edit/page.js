@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from 'react';
+import { useState, use, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -36,27 +36,71 @@ export default function EditEventPage({ params: paramsPromise }) {
   const router = useRouter();
   const eventId = params.id;
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const [activeTab, setActiveTab] = useState('general');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
-    title: eventId === "1" ? "Neon Nights Festival" : eventId === "2" ? "Comedy Cellar" : "Digital Art Gallery",
-    category: eventId === "1" ? "Music & Concerts" : eventId === "2" ? "Comedy & Entertainment" : "Arts & Culture",
-    description: "Join us for an immersive night of music, art, and vibrant lights with top performers and creators across the region.",
-    venue: "Independence Square",
-    city: "Accra",
-    startDate: "2026-08-15",
-    startTime: "18:00",
-    endDate: "2026-08-16",
-    endTime: "02:00",
-    status: eventId === "1" ? "Live" : eventId === "2" ? "Ended" : "Draft",
-    imageUrl: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop"
+    title: "",
+    category: "",
+    description: "",
+    venue: "",
+    city: "", // Optional/unused physically in DB but we map it to venue_name or just ignore
+    startDate: "",
+    startTime: "",
+    status: "Draft",
+    imageUrl: ""
   });
 
-  const [ticketTiers, setTicketTiers] = useState([
-    { id: 1, name: 'Regular Entry', price: 80, quantity: 800, sold: 650 },
-    { id: 2, name: 'VIP Pass', price: 200, quantity: 200, sold: 190 }
-  ]);
+  const [ticketTiers, setTicketTiers] = useState([]);
+
+  useEffect(() => {
+    async function fetchEvent() {
+      try {
+        const res = await fetch(`/api/organizer/events/${eventId}`);
+        if (!res.ok) throw new Error('Failed to load event data');
+        const data = await res.json();
+        
+        let sDate = "";
+        let sTime = "";
+        if (data.start_datetime) {
+           const d = new Date(data.start_datetime);
+           sDate = d.toISOString().split('T')[0];
+           sTime = d.toTimeString().split(' ')[0].substring(0, 5);
+        }
+
+        setFormData({
+          title: data.title || "",
+          category: data.category_id || "",
+          description: data.description || "",
+          venue: data.venue_name || "",
+          city: "", 
+          startDate: sDate,
+          startTime: sTime,
+          status: data.status === 'published' ? 'Live' : (data.status === 'draft' ? 'Draft' : 'Ended'),
+          imageUrl: data.image_url || ""
+        });
+
+        if (data.ticket_types) {
+          setTicketTiers(data.ticket_types.map(t => ({
+            id: t.id,
+            name: t.name,
+            price: parseFloat(t.price || 0),
+            quantity: t.quantity_total || 0,
+            sold: t.quantity_sold || 0
+          })));
+        }
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEvent();
+  }, [eventId]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -69,10 +113,10 @@ export default function EditEventPage({ params: paramsPromise }) {
   };
 
   const handleAddTier = () => {
-    const newId = ticketTiers.length > 0 ? Math.max(...ticketTiers.map(t => t.id)) + 1 : 1;
+    const newId = `temp-${Date.now()}`;
     setTicketTiers([
       ...ticketTiers,
-      { id: newId, name: 'VVIP Pass', price: 350, quantity: 50, sold: 0 }
+      { id: newId, name: 'New Ticket Tier', price: 0, quantity: 100, sold: 0 }
     ]);
   };
 
@@ -80,13 +124,73 @@ export default function EditEventPage({ params: paramsPromise }) {
     setTicketTiers(prev => prev.filter(tier => tier.id !== id));
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const { createClient } = await import('@/utils/supabase/client');
+      const supabase = createClient();
+      
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('event-banners')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('event-banners')
+        .getPublicUrl(filePath);
+
+      setFormData(prev => ({ ...prev, imageUrl: publicUrl }));
+    } catch (err) {
+      console.error(err);
+      alert('Error uploading image');
+    }
+  };
+
   const handleSave = async (targetStatus) => {
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setIsSubmitting(false);
-    alert(`Event details for "${formData.title}" saved successfully! Status: ${targetStatus || formData.status}`);
-    router.push('/organizer/events');
+    try {
+      let start_datetime = null;
+      if (formData.startDate && formData.startTime) {
+         start_datetime = new Date(`${formData.startDate}T${formData.startTime}:00`).toISOString();
+      }
+
+      const res = await fetch(`/api/organizer/events/${eventId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: formData.title,
+          description: formData.description,
+          venue_name: formData.venue,
+          start_datetime,
+          status: targetStatus || formData.status,
+          image_url: formData.imageUrl,
+          category_id: formData.category || null,
+          ticket_types: ticketTiers
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to update event');
+
+      alert(`Event saved successfully!`);
+      router.push('/organizer/events');
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  if (loading) return <div className={styles.page} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Loading event details...</div>;
+  if (error) return <div className={styles.page} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#ef4444' }}>{error}</div>;
 
   return (
     <div className={styles.page}>
@@ -96,7 +200,7 @@ export default function EditEventPage({ params: paramsPromise }) {
             <ArrowLeft size={18} /> Back to Events
           </Link>
           <div className={styles.headerTitle} style={{ marginTop: '0.5rem' }}>
-            <h1>Edit Event #{eventId}</h1>
+            <h1>Edit Event #{eventId.substring(0, 8)}...</h1>
             <span className={`${styles.statusBadge} ${styles[formData.status.toLowerCase()]}`}>
               {formData.status}
             </span>
@@ -104,9 +208,9 @@ export default function EditEventPage({ params: paramsPromise }) {
         </div>
 
         <div className={styles.headerActions}>
-          <Link href="/organizer/events/preview" style={{ textDecoration: 'none' }}>
+          <Link href={`/events/${eventId}`} style={{ textDecoration: 'none' }}>
             <button className={styles.saveDraftBtn} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Eye size={18} /> Preview
+              <Eye size={18} /> View Live
             </button>
           </Link>
           <button 
@@ -157,18 +261,6 @@ export default function EditEventPage({ params: paramsPromise }) {
             </div>
 
             <div className={styles.inputGroup}>
-              <label>Category</label>
-              <select 
-                value={formData.category} 
-                onChange={(e) => handleInputChange('category', e.target.value)}
-              >
-                {CATEGORIES.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className={styles.inputGroup}>
               <label>Event Status</label>
               <select 
                 value={formData.status} 
@@ -186,15 +278,6 @@ export default function EditEventPage({ params: paramsPromise }) {
                 type="text" 
                 value={formData.venue} 
                 onChange={(e) => handleInputChange('venue', e.target.value)} 
-              />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label>City / Location</label>
-              <input 
-                type="text" 
-                value={formData.city} 
-                onChange={(e) => handleInputChange('city', e.target.value)} 
               />
             </div>
 
@@ -285,7 +368,11 @@ export default function EditEventPage({ params: paramsPromise }) {
         >
           <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#38bdf8' }}>Cover Image</h2>
           <div className={styles.inputGroup}>
-            <label>Image URL</label>
+            <label>Upload New Image</label>
+            <input type="file" accept="image/*" onChange={handleFileUpload} />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>Or Image URL</label>
             <input 
               type="text" 
               value={formData.imageUrl} 

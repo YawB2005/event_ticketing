@@ -183,7 +183,7 @@
   width: 100%;
   padding: 1.25rem;
   border-radius: 50px;
-  background: #2b00ff;
+  background: var(--dash-primary);
   color: #fff;
   border: none;
   font-family: var(--font-inter);
@@ -195,7 +195,7 @@
 
 .purchaseBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(43, 0, 255, 0.3);
+  box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
 }
 
 @media (max-width: 600px) {

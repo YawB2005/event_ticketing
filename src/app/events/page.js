@@ -1,97 +1,102 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Search, Filter, Calendar, MapPin, Tag } from 'lucide-react';
+import { Search } from 'lucide-react';
 import EventCard from '@/components/ui/EventCard/EventCard';
+import EventSlideshow from '@/components/ui/EventSlideshow/EventSlideshow';
+import LoadingSpinner from '@/components/ui/LoadingSpinner/LoadingSpinner';
 import styles from './Events.module.css';
-
-const CATEGORIES = [
-  "All Events",
-  "Music & Concerts",
-  "Technology & Innovation",
-  "Arts & Culture",
-  "Business & Networking",
-  "Food & Drink",
-  "Comedy & Entertainment"
-];
-
-const mockEvents = [
-  {
-    id: 1,
-    title: "Global Tech Summit 2026",
-    date: "Aug 15, 2026",
-    month: "Aug",
-    day: "15",
-    location: "Moscone Center, SF",
-    price: "From GH₵ 299",
-    category: "Technology & Innovation",
-    availability: "Going Fast",
-    color: "#e0e7ff"
-  },
-  {
-    id: 2,
-    title: "Neon Nights Music Festival",
-    date: "Sep 02, 2026",
-    month: "Sep",
-    day: "02",
-    location: "Downtown Arena, Accra",
-    price: "From GH₵ 89",
-    category: "Music & Concerts",
-    availability: "Available",
-    color: "#fdf4ff"
-  },
-  {
-    id: 3,
-    title: "Digital Art & NFT Gallery",
-    date: "Oct 10, 2026",
-    month: "Oct",
-    day: "10",
-    location: "Virtual Experience",
-    price: "Free Entry",
-    category: "Arts & Culture",
-    availability: "Unlimited",
-    color: "#f0fdf4"
-  },
-  {
-    id: 4,
-    title: "Accra Food & Cocktail Festival",
-    date: "Nov 05, 2026",
-    month: "Nov",
-    day: "05",
-    location: "Labadi Beach Resort",
-    price: "From GH₵ 120",
-    category: "Food & Drink",
-    availability: "Available",
-    color: "#fef3c7"
-  },
-  {
-    id: 5,
-    title: "Comedy Cellar Live",
-    date: "Jul 20, 2026",
-    month: "Jul",
-    day: "20",
-    location: "National Theatre, Accra",
-    price: "From GH₵ 50",
-    category: "Comedy & Entertainment",
-    availability: "Selling Fast",
-    color: "#e0f2fe"
-  }
-];
+import { createClient } from '@/utils/supabase/client';
 
 export default function BrowseEventsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All Events');
   const [selectedPrice, setSelectedPrice] = useState('All');
+  
+  useEffect(() => {
+    // Read the query string on mount for search terms (e.g. from HomeNavbar search)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('q');
+      if (q) setSearchTerm(q);
+    }
+  }, []);
+  
+  const [events, setEvents] = useState([]);
+  const [categories, setCategories] = useState(["All Events"]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredEvents = mockEvents.filter(event => {
-    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          event.location.toLowerCase().includes(searchTerm.toLowerCase());
+  useEffect(() => {
+    async function loadEvents() {
+      try {
+        const res = await fetch('/api/events');
+        if (!res.ok) throw new Error('Failed to fetch events');
+        
+        const data = await res.json();
+
+        const formatted = data.map(evt => {
+          const dateObj = evt.start_datetime ? new Date(evt.start_datetime) : null;
+          let priceStr = "Free";
+          let minPrice = 0;
+          let availabilityStr = "Available";
+
+          if (evt.ticket_types && evt.ticket_types.length > 0) {
+            const prices = evt.ticket_types.map(t => parseFloat(t.price));
+            minPrice = Math.min(...prices);
+            priceStr = minPrice === 0 ? "Free" : `From GH₵ ${minPrice.toLocaleString()}`;
+            
+            const totalQty = evt.ticket_types.reduce((acc, t) => acc + (t.quantity_total || 0), 0);
+            const soldQty = evt.ticket_types.reduce((acc, t) => acc + (t.quantity_sold || 0), 0);
+            
+            if (totalQty > 0) {
+              if (soldQty >= totalQty) availabilityStr = "Sold Out";
+              else if (soldQty > totalQty * 0.8) availabilityStr = "Going Fast";
+            }
+          }
+
+          return {
+            id: evt.id,
+            title: evt.title,
+            image: evt.image_url,
+            color: "#f1f5f9", // subtle fallback background
+            availability: availabilityStr,
+            date: dateObj ? dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD',
+            time: dateObj ? dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '',
+            location: evt.venue_name || "TBA",
+            price: priceStr,
+            category: evt.categories?.name || "Other"
+          };
+        });
+
+        setEvents(formatted);
+        
+        // Extract unique categories for filter pills
+        const uniqueCats = ["All Events", ...new Set(formatted.map(e => e.category))];
+        setCategories(uniqueCats);
+      } catch (error) {
+        console.error("Failed to load events", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadEvents();
+  }, []);
+
+  const filteredEvents = events.filter(event => {
+    const title = event.title || "";
+    const location = event.location || "";
+    const searchLower = searchTerm.toLowerCase();
+
+    const matchesSearch = title.toLowerCase().includes(searchLower) ||
+                          location.toLowerCase().includes(searchLower);
+    
     const matchesCategory = selectedCategory === 'All Events' || event.category === selectedCategory;
+    
     let matchesPrice = true;
-    if (selectedPrice === 'Free') matchesPrice = event.price.toLowerCase().includes('free');
-    if (selectedPrice === 'Paid') matchesPrice = !event.price.toLowerCase().includes('free');
+    if (selectedPrice === 'Free') matchesPrice = event.price.toLowerCase() === 'free';
+    if (selectedPrice === 'Paid') matchesPrice = event.price.toLowerCase() !== 'free';
 
     return matchesSearch && matchesCategory && matchesPrice;
   });
@@ -100,21 +105,29 @@ export default function BrowseEventsPage() {
     <div className={styles.page}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <h1>Discover & Explore Events</h1>
+          <h2>Discover & Explore Events</h2>
           <p className={styles.subText}>Find concerts, tech summits, cultural galas, and comedy shows happening near you.</p>
         </div>
 
+        {!loading && events.length > 0 && <EventSlideshow events={events} />}
+
         <div className={styles.searchBarCard}>
-          <div className={styles.searchInputWrapper}>
+          <form 
+            className={styles.searchInputWrapper} 
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (document.activeElement) document.activeElement.blur();
+            }}
+          >
             <Search size={18} className={styles.searchIcon} />
             <input 
-              type="text" 
+              type="search" 
               placeholder="Search events, cities, or venues..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className={styles.searchInput}
             />
-          </div>
+          </form>
 
           <select 
             className={styles.filterSelect}
@@ -128,7 +141,7 @@ export default function BrowseEventsPage() {
         </div>
 
         <div className={styles.categoryPills}>
-          {CATEGORIES.map(cat => (
+          {categories.map(cat => (
             <button 
               key={cat}
               className={`${styles.pill} ${selectedCategory === cat ? styles.activePill : ''}`}
@@ -139,7 +152,9 @@ export default function BrowseEventsPage() {
           ))}
         </div>
 
-        {filteredEvents.length > 0 ? (
+        {loading ? (
+          <LoadingSpinner text="Loading amazing events..." />
+        ) : filteredEvents.length > 0 ? (
           <div className={styles.eventsGrid}>
             {filteredEvents.map(event => (
               <EventCard key={event.id} event={event} />

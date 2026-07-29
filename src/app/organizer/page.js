@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import styles from './Organizer.module.css';
 import { motion } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
+import EventCard from '@/components/ui/EventCard/EventCard';
+import LoadingSpinner from '@/components/ui/LoadingSpinner/LoadingSpinner';
 import { 
   Ticket, 
   TrendingUp, 
@@ -73,7 +75,7 @@ export default function OrganizerDashboard() {
         initial="hidden" animate="visible" variants={fadeUp} transition={{ duration: 0.5, delay: 0.1 }}
       >
         <div className={styles.topMetricCard}>
-          <div className={styles.metricIconWrap} style={{ background: '#e0e7ff', color: '#4f46e5' }}>
+          <div className={styles.metricIconWrap}>
             <Ticket size={24} />
           </div>
           <div className={styles.metricInfo}>
@@ -83,7 +85,7 @@ export default function OrganizerDashboard() {
         </div>
 
         <div className={styles.topMetricCard}>
-          <div className={styles.metricIconWrap} style={{ background: '#fce7f3', color: '#db2777' }}>
+          <div className={styles.metricIconWrap}>
             <DollarSign size={24} />
           </div>
           <div className={styles.metricInfo}>
@@ -93,7 +95,7 @@ export default function OrganizerDashboard() {
         </div>
 
         <div className={styles.topMetricCard}>
-          <div className={styles.metricIconWrap} style={{ background: '#dcfce7', color: '#16a34a' }}>
+          <div className={styles.metricIconWrap}>
             <CalendarDays size={24} />
           </div>
           <div className={styles.metricInfo}>
@@ -129,7 +131,7 @@ export default function OrganizerDashboard() {
 
             <div className={styles.pillChart}>
               {loading ? (
-                 <p style={{textAlign: 'center', width: '100%', color: '#888'}}>Loading chart data...</p>
+                 <LoadingSpinner text="Loading chart data..." />
               ) : trend.length === 0 ? (
                  <p style={{textAlign: 'center', width: '100%', color: '#888'}}>No sales data yet.</p>
               ) : (
@@ -168,24 +170,51 @@ export default function OrganizerDashboard() {
 
           <div className={styles.eventList}>
             {loading ? (
-              <p style={{padding: '1rem', color: '#888'}}>Loading events...</p>
+              <LoadingSpinner text="Loading events..." />
             ) : events.length === 0 ? (
               <p style={{padding: '1rem', color: '#888'}}>No events created yet.</p>
             ) : (
               events.map((evt) => {
+                const dateObj = evt.start_datetime ? new Date(evt.start_datetime) : null;
                 const isLive = evt.status !== 'draft';
+                let priceStr = "Free";
+                let minPrice = 0;
+                let availabilityStr = "Available";
+      
+                if (evt.ticket_types && evt.ticket_types.length > 0) {
+                  const prices = evt.ticket_types.map(t => parseFloat(t.price));
+                  minPrice = Math.min(...prices);
+                  priceStr = minPrice === 0 ? "Free" : `From GH₵ ${minPrice.toLocaleString()}`;
+                  
+                  const totalQty = evt.ticket_types.reduce((acc, t) => acc + (t.quantity_total || 0), 0);
+                  const soldQty = evt.ticket_types.reduce((acc, t) => acc + (t.quantity_sold || 0), 0);
+                  
+                  if (totalQty > 0) {
+                    if (soldQty >= totalQty) availabilityStr = "Sold Out";
+                    else if (soldQty > totalQty * 0.8) availabilityStr = "Going Fast";
+                  }
+                }
+
+                const eventCardData = {
+                  id: evt.id,
+                  title: evt.title,
+                  image: evt.image_url,
+                  color: "#f1f5f9",
+                  availability: availabilityStr,
+                  date: dateObj ? dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD',
+                  time: dateObj ? dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '',
+                  location: evt.venue_name || "TBA",
+                  price: priceStr,
+                  category: evt.status,
+                  href: `/organizer/events/${evt.id}/edit`
+                };
+
                 return (
-                  <div key={evt.id} className={styles.eventItem}>
-                    <div className={styles.eventItemLeft}>
-                      <div className={styles.eventSquare} style={{ background: isLive ? '#ef4444' : '#10b981' }}>
-                         <Music size={24} color="#fff" />
-                      </div>
-                      <div className={styles.eventDetails}>
-                        <h4>{evt.title}</h4>
-                        <p>{new Date(evt.start_datetime).toLocaleDateString()} • {evt.venue_name}</p>
-                      </div>
-                    </div>
-                    <div className={`${styles.eventPill} ${isLive ? styles.paid : ''}`}>{evt.status}</div>
+                  <div key={evt.id} style={{ marginBottom: '1.5rem', position: 'relative' }}>
+                    <EventCard event={eventCardData} />
+                    <span className={`${styles.eventPill} ${isLive ? styles.paid : ''}`} style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10, background: isLive ? '#ef4444' : '#10b981', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 600 }}>
+                      {evt.status}
+                    </span>
                   </div>
                 );
               })

@@ -17,7 +17,7 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={`container ${styles.footerContainer}`}>
         <div className={styles.brandCol}>
-          <div className={styles.logo}>ETSP</div>
+          <div className={styles.logo}>Eventix</div>
           <p className={styles.description}>
             The premium platform for discovering, managing, and experiencing world-class events.
           </p>
@@ -42,7 +42,7 @@ export default function Footer() {
       </div>
       <div className={styles.copyright}>
         <div className="container">
-          &copy; {new Date().getFullYear()} ETSP. All rights reserved.
+          &copy; {new Date().getFullYear()} Eventix. All rights reserved.
         </div>
       </div>
     </footer>

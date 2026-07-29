@@ -32,8 +32,16 @@ export default function EventCard({ event, onClick }) {
     );
   }
 
+  if (event.noLink) {
+    return (
+      <div className={styles.card}>
+        {CardContent}
+      </div>
+    );
+  }
+
   return (
-    <Link href={`/events/${event.id}`} className={styles.card}>
+    <Link href={event.href || `/events/${event.id}`} className={styles.card}>
       {CardContent}
     </Link>
   );

@@ -22,7 +22,7 @@ export async function GET(request) {
 
     if (format === 'pdf') {
       const lines = [
-        'ETSP Organizer Report',
+        'Eventix Organizer Report',
         `Generated: ${new Date().toISOString()}`,
         '',
         `Total Tickets Sold: ${summary.totalTicketsSold}`,

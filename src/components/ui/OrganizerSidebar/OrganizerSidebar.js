@@ -29,7 +29,7 @@ export default function OrganizerSidebar() {
 
   return (
     <div className={styles.sidebar}>
-      <Link href="/" className={styles.brandLogo}>ETSP</Link>
+      <Link href="/" className={styles.brandLogo}>Eventix</Link>
       
       <div className={styles.sidebarNav}>
         <Link href="/organizer" className={`${styles.navItem} ${pathname === '/organizer' ? styles.active : ''}`}>
