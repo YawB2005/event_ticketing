@@ -1,48 +1,14 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 import Link from 'next/link';
 import EventCard from '@/components/ui/EventCard/EventCard';
+import LoadingSpinner from '@/components/ui/LoadingSpinner/LoadingSpinner';
 import { motion } from 'framer-motion';
+import { createClient } from '@/utils/supabase/client';
 
-const mockEvents = [
-  {
-    id: 1,
-    title: "Global Tech Summit 2024",
-    date: "Aug 15, 2024",
-    month: "Aug",
-    day: "15",
-    location: "Moscone Center, SF",
-    price: "From GH₵ 299",
-    category: "Technology",
-    availability: "Filling Fast",
-    color: "#e0e7ff"
-  },
-  {
-    id: 2,
-    title: "Neon Nights Music Festival",
-    date: "Sep 02, 2024",
-    month: "Sep",
-    day: "02",
-    location: "Downtown Arena",
-    price: "From GH₵ 89",
-    category: "Music",
-    availability: "Available",
-    color: "#fdf4ff"
-  },
-  {
-    id: 3,
-    title: "Digital Art & NFT Gallery",
-    date: "Oct 10, 2024",
-    month: "Oct",
-    day: "10",
-    location: "Virtual Experience",
-    price: "Free Entry",
-    category: "Arts",
-    availability: "Unlimited",
-    color: "#f0fdf4"
-  }
-];
+
 
 // Animation variants
 const fadeUp = {
@@ -56,6 +22,65 @@ const popIn = {
 };
 
 export default function Home() {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchFeaturedEvents() {
+      try {
+        const res = await fetch('/api/events');
+        if (!res.ok) throw new Error('Failed to fetch events');
+        
+        const data = await res.json();
+        
+        // Take up to 3 events for the homepage
+        const topEvents = data.slice(0, 3);
+
+        const formatted = topEvents.map(evt => {
+          const dateObj = evt.start_datetime ? new Date(evt.start_datetime) : null;
+          let priceStr = "Free";
+          let minPrice = 0;
+          let availabilityStr = "Available";
+
+          if (evt.ticket_types && evt.ticket_types.length > 0) {
+            const prices = evt.ticket_types.map(t => parseFloat(t.price));
+            minPrice = Math.min(...prices);
+            priceStr = minPrice === 0 ? "Free" : `From GH₵ ${minPrice.toLocaleString()}`;
+            
+            const totalQty = evt.ticket_types.reduce((acc, t) => acc + (t.quantity_total || 0), 0);
+            const soldQty = evt.ticket_types.reduce((acc, t) => acc + (t.quantity_sold || 0), 0);
+            
+            if (totalQty > 0) {
+              if (soldQty >= totalQty) availabilityStr = "Sold Out";
+              else if (soldQty > totalQty * 0.8) availabilityStr = "Going Fast";
+            }
+          }
+
+          return {
+            id: evt.id,
+            title: evt.title,
+            image: evt.image_url,
+            color: "#e0e7ff",
+            availability: availabilityStr,
+            date: dateObj ? dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD',
+            time: dateObj ? dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '',
+            location: evt.venue_name || "TBA",
+            price: priceStr,
+            category: evt.categories?.name || "Other"
+          };
+        });
+
+        setEvents(formatted);
+      } catch (error) {
+        console.error("Failed to load featured events", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchFeaturedEvents();
+  }, []);
+
   return (
     <div className={styles.page}>
       
@@ -117,9 +142,13 @@ export default function Home() {
           
           <motion.div 
             variants={fadeUp} initial="hidden" animate="visible" transition={{ duration: 0.8, delay: 0.2 }}
+            style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '1.5rem' }}
           >
             <Link href="/events" className="btn btn-primary" style={{ backgroundColor: '#2b00ff' }}>
-              Get Started
+              Explore Events
+            </Link>
+            <Link href="/organizer" className="btn btn-secondary" style={{ backgroundColor: '#1e293b', color: '#fff', padding: '0.85rem 1.75rem', borderRadius: '50px', fontWeight: 600, textDecoration: 'none' }}>
+              Host an Event
             </Link>
           </motion.div>
         </div>
@@ -144,15 +173,23 @@ export default function Home() {
             </motion.div>
           </div>
           <div className={styles.eventGrid}>
-            {mockEvents.map((event, index) => (
-              <motion.div 
-                key={event.id}
-                initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} 
-                variants={fadeUp} transition={{ duration: 0.6, delay: 0.1 * index }}
-              >
-                <EventCard event={event} />
-              </motion.div>
-            ))}
+            {loading ? (
+              <LoadingSpinner text="Loading amazing events..." />
+            ) : events.length > 0 ? (
+              events.map((event, index) => (
+                <motion.div 
+                  key={event.id}
+                  initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} 
+                  variants={fadeUp} transition={{ duration: 0.6, delay: 0.1 * index }}
+                >
+                  <EventCard event={event} />
+                </motion.div>
+              ))
+            ) : (
+              <div style={{ padding: '2rem', textAlign: 'center', width: '100%', color: '#64748b' }}>
+                No events currently available. Check back soon!
+              </div>
+            )}
           </div>
         </div>
       </section>

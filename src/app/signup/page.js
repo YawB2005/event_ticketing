@@ -96,6 +96,12 @@ export default function Signup() {
       }
       setSuccess(true);
       setLoading(false);
+      // Role-based post-signup landing page redirection
+      if (role === 'organizer') {
+        router.push('/organizer');
+      } else {
+        router.push('/home');
+      }
     }
   };
 

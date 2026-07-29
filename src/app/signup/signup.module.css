@@ -168,7 +168,7 @@
   width: 100%;
   padding: 1rem;
   border-radius: 50px;
-  background: #000; /* Distinct from login */
+  background: var(--dash-primary); /* Blue theme */
   color: #fff;
   border: none;
   font-family: var(--font-inter);
@@ -181,7 +181,7 @@
 
 .submitBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.25);
 }
 
 .loginPrompt {

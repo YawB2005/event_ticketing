@@ -1,0 +1,214 @@
+.page {
+  padding: 2.5rem;
+  max-width: 1250px;
+  margin: 0 auto;
+  color: var(--dash-text-dark);
+}
+
+.heroBanner {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 24px;
+  padding: 3rem;
+  color: white;
+  margin-bottom: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--dash-shadow);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 500px;
+}
+
+.heroContent h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+  line-height: 1.2;
+}
+
+.heroContent p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.heroBtn {
+  background: white;
+  color: #6366f1;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.heroBtn:hover {
+  transform: translateY(-2px);
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.metricCard {
+  background: #ffffff;
+  border: none;
+  border-radius: 24px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: var(--dash-shadow);
+}
+
+.iconWrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metricInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.metricLabel {
+  font-size: 0.875rem;
+  color: var(--dash-text-muted);
+  font-weight: 600;
+}
+
+.metricValue {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--dash-text-dark);
+}
+
+.section {
+  margin-bottom: 2.5rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.sectionHeader h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--dash-text-dark);
+  margin: 0;
+}
+
+.viewAllLink {
+  color: var(--dash-primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.viewAllLink:hover {
+  text-decoration: underline;
+}
+
+.upcomingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.ticketCard {
+  background: #ffffff;
+  border: none;
+  border-radius: 24px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--dash-shadow);
+  transition: transform 0.2s ease;
+}
+
+.ticketCard:hover {
+  transform: translateY(-4px);
+}
+
+.ticketTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--dash-text-dark);
+  margin: 0 0 1rem 0;
+}
+
+.ticketMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  color: var(--dash-text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.passBtn {
+  background: var(--dash-primary-light);
+  color: var(--dash-primary);
+  border: none;
+  padding: 0.75rem;
+  border-radius: 50px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.passBtn:hover {
+  background: #e0e7ff;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1rem;
+  }
+  
+  .heroBanner {
+    padding: 1.5rem;
+  }
+  
+  .heroContent h1 {
+    font-size: 1.8rem;
+  }
+  
+  .metricsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .upcomingGrid {
+    grid-template-columns: 1fr;
+  }
+}

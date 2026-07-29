@@ -1,115 +1,234 @@
+"use client";
+
+import { use, useEffect, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
+import LoadingSpinner from '@/components/ui/LoadingSpinner/LoadingSpinner';
 import styles from './Checkout.module.css';
 
-const mockOrder = {
-  eventId: '1',
-  eventTitle: 'Neon Nights Music Festival 2026',
-  date: 'August 15, 2026',
-  tickets: [
-    { type: 'General Admission', qty: 2, price: 45.00 }
-  ],
-  subtotal: 90.00,
-  fees: 5.50,
-  total: 95.50
-};
+function CheckoutContent({ eventId }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tickEventixaram = searchParams.get('tickets'); // e.g. "t1:2,t2:1"
+  
+  const [user, setUser] = useState(null);
+  const [eventData, setEventData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [parsedTickets, setParsedTickets] = useState([]);
+  const [profile, setProfile] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [needsPhone, setNeedsPhone] = useState(false);
 
-export default function Checkout({ params }) {
-  const order = mockOrder;
+  useEffect(() => {
+    async function initCheckout() {
+      const supabase = createClient();
+      
+      // 1. Check Authentication
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        // Force login
+        const currentUrl = `/checkout/${eventId}?tickets=${tickEventixaram || ''}`;
+        router.push(`/login?next=${encodeURIComponent(currentUrl)}`);
+        return;
+      }
+      setUser(user);
+
+      // Fetch profile for phone check
+      const profileRes = await fetch('/api/profile');
+      if (profileRes.ok) {
+        const { profile: userProfile } = await profileRes.json();
+        setProfile(userProfile);
+        if (!userProfile?.phone_number) {
+          setNeedsPhone(true);
+        }
+      }
+
+      // 2. Parse tickets
+      if (!tickEventixaram) {
+        setError('No tickets selected.');
+        setLoading(false);
+        return;
+      }
+
+      const requestedTiers = tickEventixaram.split(',').map(pair => {
+        const [id, qty] = pair.split(':');
+        return { id, qty: parseInt(qty, 10) };
+      });
+
+      // 3. Fetch event & ticket details to compute price
+      try {
+        const res = await fetch(`/api/events/${eventId}`);
+        if (!res.ok) throw new Error('Event not found');
+        const data = await res.json();
+        setEventData(data);
+
+        const ticketsWithPrices = requestedTiers.map(req => {
+          const tierInfo = (data.ticket_types || []).find(t => t.id === req.id);
+          if (!tierInfo) throw new Error(`Invalid ticket tier selected (${req.id})`);
+          
+          return {
+            id: req.id,
+            name: tierInfo.name,
+            qty: req.qty,
+            price: parseFloat(tierInfo.price || 0)
+          };
+        });
+
+        setParsedTickets(ticketsWithPrices);
+      } catch (err) {
+        console.error(err);
+        setError(err.message || 'Failed to load checkout details.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    initCheckout();
+  }, [eventId, tickEventixaram, router]);
+
+  const handlePayment = async () => {
+    setIsCheckingOut(true);
+    setError(null);
+    try {
+      // Create payload format for API
+      const ticketPayload = {};
+      parsedTickets.forEach(t => {
+        ticketPayload[t.id] = t.qty;
+      });
+
+      // Update phone number if needed
+      if (needsPhone) {
+        if (!phoneNumber || phoneNumber.length < 10) {
+          throw new Error('Please enter a valid phone number for SMS ticket delivery.');
+        }
+        const profileUpdateRes = await fetch('/api/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone_number: phoneNumber })
+        });
+        if (!profileUpdateRes.ok) {
+          throw new Error('Failed to save phone number');
+        }
+      }
+
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventId,
+          tickets: ticketPayload
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to initialize payment');
+
+      // Redirect to Paystack
+      if (data.authorization_url) {
+        window.location.href = data.authorization_url;
+      } else {
+        throw new Error('No authorization URL received');
+      }
+
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+      setIsCheckingOut(false);
+    }
+  };
+
+  if (loading) {
+    return <LoadingSpinner text="Loading checkout..." />;
+  }
+
+  if (error && !parsedTickets.length) {
+    return (
+      <div className={styles.page}>
+        <div className={`container ${styles.checkoutContainer}`}>
+          <div className={styles.error}>{error}</div>
+          <button className="btn btn-secondary" onClick={() => router.push(`/events/${eventId}`)}>Go Back</button>
+        </div>
+      </div>
+    );
+  }
+
+  const totalAmount = parsedTickets.reduce((acc, t) => acc + (t.price * t.qty), 0);
 
   return (
-    <div className={`container ${styles.page}`}>
-      <div className={styles.header}>
-        <h1>Checkout</h1>
-        <p>Complete your purchase to secure your tickets.</p>
-      </div>
+    <div className={styles.page}>
+      <div className={`container ${styles.checkoutContainer}`}>
+        <h1 className={styles.title}>Review Your Order</h1>
+        
+        {error && <div className={styles.error}>{error}</div>}
 
-      <div className={styles.mainGrid}>
-        {/* Left Col: Payment Details */}
-        <div className={styles.paymentCol}>
-          <div className={`glass-panel ${styles.panel}`}>
-            <h2>Contact Information</h2>
-            <div className={styles.formGroup}>
-              <label>Full Name</label>
-              <input type="text" placeholder="John Doe" className={styles.input} />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Email Address</label>
-              <input type="email" placeholder="john@example.com" className={styles.input} />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Phone Number (for SMS ticket)</label>
-              <input type="tel" placeholder="+1 (555) 000-0000" className={styles.input} />
-            </div>
-          </div>
-
-          <div className={`glass-panel ${styles.panel}`}>
-            <h2>Payment Method</h2>
-            <div className={styles.paymentOptions}>
-              <label className={`${styles.paymentOption} ${styles.selected}`}>
-                <input type="radio" name="payment" defaultChecked />
-                <span>Credit/Debit Card</span>
-              </label>
-              <label className={styles.paymentOption}>
-                <input type="radio" name="payment" />
-                <span>Mobile Money</span>
-              </label>
-            </div>
-
-            <div className={styles.cardDetails}>
-              <div className={styles.formGroup}>
-                <label>Card Number</label>
-                <input type="text" placeholder="0000 0000 0000 0000" className={styles.input} />
-              </div>
-              <div className={styles.rowGrid}>
-                <div className={styles.formGroup}>
-                  <label>Expiry (MM/YY)</label>
-                  <input type="text" placeholder="MM/YY" className={styles.input} />
-                </div>
-                <div className={styles.formGroup}>
-                  <label>CVC</label>
-                  <input type="text" placeholder="123" className={styles.input} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button className={`btn btn-primary ${styles.payBtn}`}>Pay ${order.total.toFixed(2)}</button>
+        <div className={styles.glassCard}>
+          <h2 className={styles.sectionTitle}>Event</h2>
+          <p style={{ fontSize: '1.2rem', fontWeight: 600 }}>{eventData?.title}</p>
+          <p style={{ color: '#94a3b8', marginTop: '0.5rem' }}>{eventData?.venue_name}</p>
         </div>
 
-        {/* Right Col: Order Summary */}
-        <div className={styles.summaryCol}>
-          <div className={`glass-panel ${styles.summaryPanel}`}>
-            <h2>Order Summary</h2>
-            <div className={styles.eventInfo}>
-              <h3>{order.eventTitle}</h3>
-              <p>{order.date}</p>
+        <div className={styles.glassCard}>
+          <h2 className={styles.sectionTitle}>Order Summary</h2>
+          {parsedTickets.map(t => (
+            <div key={t.id} className={styles.summaryRow}>
+              <span>{t.qty}x {t.name}</span>
+              <span>GH₵ {(t.price * t.qty).toLocaleString()}</span>
             </div>
-            
-            <div className={styles.lineItems}>
-              {order.tickets.map((ticket, idx) => (
-                <div key={idx} className={styles.lineItem}>
-                  <span>{ticket.qty}x {ticket.type}</span>
-                  <span>${(ticket.qty * ticket.price).toFixed(2)}</span>
-                </div>
-              ))}
-            </div>
+          ))}
 
-            <div className={styles.totals}>
-              <div className={styles.totalRow}>
-                <span>Subtotal</span>
-                <span>${order.subtotal.toFixed(2)}</span>
-              </div>
-              <div className={styles.totalRow}>
-                <span>Fees</span>
-                <span>${order.fees.toFixed(2)}</span>
-              </div>
-              <div className={`${styles.totalRow} ${styles.grandTotal}`}>
-                <span>Total</span>
-                <span>${order.total.toFixed(2)}</span>
-              </div>
-            </div>
+          <div className={styles.summaryTotal}>
+            <span>Total</span>
+            <span>GH₵ {totalAmount.toLocaleString()}</span>
           </div>
         </div>
+
+        {needsPhone && (
+          <div className={styles.glassCard}>
+            <h2 className={styles.sectionTitle}>Contact Information</h2>
+            <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '1rem' }}>We need your phone number to send your ticket codes via SMS.</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <label htmlFor="phone" style={{ fontWeight: 600, fontSize: '0.95rem' }}>Phone Number</label>
+              <input
+                id="phone"
+                type="tel"
+                placeholder="e.g. 0241234567"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                style={{
+                  padding: '0.8rem',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0',
+                  outline: 'none',
+                  fontSize: '1rem',
+                  width: '100%',
+                  backgroundColor: '#f8fafc'
+                }}
+                required
+              />
+            </div>
+          </div>
+        )}
+
+        <button 
+          className={`btn btn-primary ${styles.payBtn}`}
+          onClick={handlePayment}
+          disabled={isCheckingOut || totalAmount === 0} 
+        >
+          {isCheckingOut ? 'Processing...' : `Pay GH₵ ${totalAmount.toLocaleString()}`}
+        </button>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage({ params }) {
+  const { id } = use(params);
+  
+  return (
+    <Suspense fallback={<LoadingSpinner text="Loading..." />}>
+      <CheckoutContent eventId={id} />
+    </Suspense>
   );
 }

@@ -1,0 +1,97 @@
+.page {
+  padding-top: 100px;
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  color: var(--accent-primary);
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.ticketGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.ticketCard {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+
+.ticketHeader {
+  background: var(--accent-primary);
+  color: white;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.ticketHeader h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.ticketBody {
+  padding: 2rem;
+  text-align: center;
+}
+
+.qrPlaceholder {
+  width: 150px;
+  height: 150px;
+  background: white;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.qrPlaceholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ticketCode {
+  font-family: monospace;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.ticketType {
+  color: var(--text-muted);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  gap: 1rem;
+}

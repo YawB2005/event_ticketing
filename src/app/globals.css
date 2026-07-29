@@ -9,10 +9,19 @@
   --text-muted: #888888;
 
   /* Accent Colors (Clean & Modern) */
-  --accent-primary: #2b00ff; /* Vibrant blue for new aesthetic */
-  --accent-hover: #1b00cc;
+  --accent-primary: #3b82f6; /* Lighter sky/royal blue */
+  --accent-hover: #2563eb;
   --accent-blue: #2563eb;
   --accent-blue-hover: #1d4ed8;
+
+  /* Dashboard Aesthetic Inspired by Coursue */
+  --dash-bg: #f4f7fe;
+  --dash-sidebar: #ffffff;
+  --dash-primary: #6366f1; /* Indigo */
+  --dash-primary-light: #eef2ff;
+  --dash-text-dark: #1e293b;
+  --dash-text-muted: #64748b;
+  --dash-shadow: 0 10px 40px -10px rgba(0,0,0,0.06);
 
   /* Glassmorphism */
   --glass-bg: rgba(255, 255, 255, 0.7);
@@ -87,7 +96,7 @@ a {
   align-items: center;
   justify-content: center;
   padding: 0.75rem 2rem;
-  border-radius: 50px;
+  border-radius: 4px;
   font-weight: 500;
   font-family: var(--font-inter);
   cursor: pointer;
@@ -136,4 +145,10 @@ a {
 
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Force all icons to be light grey as requested */
+svg.lucide {
+  color: #94a3b8 !important; /* slate-400 */
+  stroke: #94a3b8 !important;
 }

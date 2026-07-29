@@ -2,7 +2,7 @@ import styles from './OrganizerLayout.module.css';
 import OrganizerSidebar from '@/components/ui/OrganizerSidebar/OrganizerSidebar';
 
 export const metadata = {
-  title: "Organizer Dashboard - ETSP",
+  title: "Organizer Dashboard - Eventix",
   description: "Manage your events and analytics",
 };
 

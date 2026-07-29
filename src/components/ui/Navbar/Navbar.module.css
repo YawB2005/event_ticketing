@@ -17,7 +17,7 @@
 }
 
 .logo {
-  font-family: var(--font-outfit);
+  font-family: var(--font-righteous);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -67,4 +67,20 @@
   .navLinks {
     display: none;
   }
+}
+
+.accountIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0.25rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.accountIcon:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.05);
 }

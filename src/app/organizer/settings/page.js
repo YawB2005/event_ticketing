@@ -26,6 +26,7 @@ export default function SettingsPage() {
   const [accountName, setAccountName] = useState('');
   const [subaccountCode, setSubaccountCode] = useState('');
   const [resolving, setResolving] = useState(false);
+  const [availableBanks, setAvailableBanks] = useState([]);
   
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -65,11 +66,26 @@ export default function SettingsPage() {
       if (orgProfile) {
         setBusinessName(orgProfile.business_name || '');
         setPayoutAccount(orgProfile.payout_account_number || '');
-        setBankCode(orgProfile.settlement_bank || 'MTN');
+        if (orgProfile.settlement_bank) setBankCode(orgProfile.settlement_bank);
         setAccountName(orgProfile.account_name || '');
         setSubaccountCode(orgProfile.paystack_subaccount_code || '');
       }
       
+      // Fetch Banks
+      try {
+        const res = await fetch('/api/organizer/paystack/banks');
+        const data = await res.json();
+        if (res.ok && data.banks) {
+          setAvailableBanks(data.banks);
+          // Set default bank code if none is set
+          if (!orgProfile?.settlement_bank && data.banks.length > 0) {
+            setBankCode(data.banks[0].code);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load banks:", err);
+      }
+
       setLoading(false);
     }
     loadProfile();
@@ -109,8 +125,12 @@ export default function SettingsPage() {
     }
   };
 
-  const handleResolveAccount = async () => {
-    if (!payoutAccount || !bankCode) return;
+  const handleResolveAccount = async (silent = false) => {
+    const selectedBank = availableBanks.find(b => b.code === bankCode);
+    const isMobileMoney = selectedBank ? selectedBank.type === 'mobile_money' : ['MTN', 'VOD', 'ATL'].includes(bankCode);
+    
+    if (!payoutAccount || !bankCode || payoutAccount.length < 10 || isMobileMoney) return;
+
     setResolving(true);
     setAccountName('');
     try {
@@ -118,14 +138,30 @@ export default function SettingsPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setAccountName(data.account_name);
-      showMessage('success', 'Account verified successfully!');
+      if (!silent) showMessage('success', 'Account verified successfully!');
     } catch (err) {
       console.error("❌ Frontend Resolve Error:", err);
-      showMessage('error', err.message || 'Failed to verify account');
+      if (!silent) showMessage('error', err.message || 'Failed to verify account');
     } finally {
       setResolving(false);
     }
   };
+
+  useEffect(() => {
+    // Only auto-resolve if it's 10-15 characters long
+    if (payoutAccount && payoutAccount.length >= 10 && payoutAccount.length <= 15) {
+      const selectedBank = availableBanks.find(b => b.code === bankCode);
+      const isMobileMoney = selectedBank ? selectedBank.type === 'mobile_money' : ['MTN', 'VOD', 'ATL'].includes(bankCode);
+      
+      if (!isMobileMoney) {
+        const timer = setTimeout(() => {
+          handleResolveAccount(true); // Pass true to do it silently without toasts
+        }, 800); // 800ms debounce
+        return () => clearTimeout(timer);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [payoutAccount, bankCode, availableBanks]);
 
   const handleLinkPaystack = async () => {
     if (!accountName) {
@@ -385,14 +421,22 @@ export default function SettingsPage() {
                         onChange={(e) => { setBankCode(e.target.value); setAccountName(''); setSubaccountCode(''); }}
                         style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem', border: '1px solid #e2e8f0', borderRadius: '8px', outline: 'none', appearance: 'none', background: '#fff' }}
                       >
-                        <option value="MTN">MTN Mobile Money</option>
-                        <option value="VOD">Telecel (Vodafone Cash)</option>
-                        <option value="ATL">AirtelTigo Money</option>
-                        <option value="040100">GCB Bank</option>
-                        <option value="020100">Standard Chartered</option>
-                        <option value="130100">Ecobank</option>
-                        <option value="240100">Fidelity Bank</option>
-                        <option value="140100">CalBank</option>
+                        {availableBanks.length > 0 ? (
+                          availableBanks.map((bank, index) => (
+                            <option key={bank.id || `${bank.code}-${index}`} value={bank.code}>{bank.name}</option>
+                          ))
+                        ) : (
+                          <>
+                            <option value="MTN">MTN Mobile Money</option>
+                            <option value="VOD">Telecel (Vodafone Cash)</option>
+                            <option value="ATL">AirtelTigo Money</option>
+                            <option value="040100">GCB Bank</option>
+                            <option value="020100">Standard Chartered</option>
+                            <option value="130100">Ecobank</option>
+                            <option value="240100">Fidelity Bank</option>
+                            <option value="140100">CalBank</option>
+                          </>
+                        )}
                       </select>
                     </div>
                   </div>
@@ -410,9 +454,9 @@ export default function SettingsPage() {
                           style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem', border: '1px solid #e2e8f0', borderRadius: '8px', outline: 'none' }}
                         />
                       </div>
-                      {!['MTN', 'VOD', 'ATL'].includes(bankCode) && (
+                      {(!availableBanks.find(b => b.code === bankCode)?.type || availableBanks.find(b => b.code === bankCode)?.type !== 'mobile_money') && !['MTN', 'VOD', 'ATL'].includes(bankCode) && (
                         <button 
-                          onClick={handleResolveAccount} 
+                          onClick={() => handleResolveAccount(false)} 
                           disabled={resolving || !payoutAccount || payoutAccount.length < 10}
                           style={{ padding: '0 1.5rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap', opacity: (resolving || !payoutAccount || payoutAccount.length < 10) ? 0.6 : 1 }}
                         >
@@ -422,7 +466,7 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  {['MTN', 'VOD', 'ATL'].includes(bankCode) ? (
+                  {(availableBanks.find(b => b.code === bankCode)?.type === 'mobile_money' || ['MTN', 'VOD', 'ATL'].includes(bankCode)) ? (
                     <div className={styles.formGroup}>
                       <label>Registered Account Name</label>
                       <div className={styles.inputWrapper}>

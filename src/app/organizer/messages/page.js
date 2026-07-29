@@ -9,12 +9,12 @@ const mockMessages = [
   {
     id: 1,
     sender: "Support Team",
-    email: "support@etsp.com",
+    email: "support@Eventix.com",
     subject: "Weekly Analytics Report Available",
     preview: "Your weekly event analytics report is now ready to view in the dashboard...",
     time: "10:30 AM",
     unread: true,
-    body: "Hi Rave Culture Ltd,\n\nYour weekly analytics report for August 1st - August 7th is now ready. You've seen a 20% increase in ticket sales across all active events this week.\n\nKeep up the great work!\n\nBest,\nETSP Support Team",
+    body: "Hi Rave Culture Ltd,\n\nYour weekly analytics report for August 1st - August 7th is now ready. You've seen a 20% increase in ticket sales across all active events this week.\n\nKeep up the great work!\n\nBest,\nEventix Support Team",
     avatarColor: "#4f46e5"
   },
   {
@@ -31,12 +31,12 @@ const mockMessages = [
   {
     id: 3,
     sender: "Billing Department",
-    email: "billing@etsp.com",
+    email: "billing@Eventix.com",
     subject: "Payout Successful",
     preview: "Your payout of GH₵ 5,420 has been successfully processed to your bank account.",
     time: "Aug 12",
     unread: false,
-    body: "Hello,\n\nThis is a confirmation that your payout of GH₵ 5,420 has been successfully processed and should reflect in your registered bank account within 1-2 business days.\n\nThank you for using ETSP.",
+    body: "Hello,\n\nThis is a confirmation that your payout of GH₵ 5,420 has been successfully processed and should reflect in your registered bank account within 1-2 business days.\n\nThank you for using Eventix.",
     avatarColor: "#10b981"
   },
   {
@@ -69,7 +69,7 @@ export default function MessagesPage() {
       
       <div className={styles.header}>
         <h1>Messages</h1>
-        <p>Communicate with attendees and ETSP support</p>
+        <p>Communicate with attendees and Eventix support</p>
       </div>
 
       <div className={styles.messagesContainer}>

@@ -1,36 +1,41 @@
-import { Outfit, Inter, Yeseva_One } from "next/font/google";
+import { Inter, Outfit, Yeseva_One, Righteous } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/ui/Navbar/Navbar";
-import Footer from "@/components/ui/Footer/Footer";
-
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-});
+import LayoutWrapper from "@/components/ui/LayoutWrapper";
 
 const inter = Inter({
-  variable: "--font-inter",
   subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
 });
 
 const yeseva = Yeseva_One({
   weight: "400",
-  variable: "--font-yeseva",
   subsets: ["latin"],
+  variable: "--font-yeseva",
+});
+
+const righteous = Righteous({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-righteous",
 });
 
 export const metadata = {
-  title: "ETSP - Discover Premium Events",
+  title: "Eventix - Discover Premium Events",
   description: "Event Ticketing and Showcasing Platform",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${outfit.variable} ${inter.variable} ${yeseva.variable}`}>
+    <html lang="en" className={`${inter.variable} ${outfit.variable} ${yeseva.variable} ${righteous.variable}`}>
       <body suppressHydrationWarning>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+        <LayoutWrapper>
+          {children}
+        </LayoutWrapper>
       </body>
     </html>
   );
