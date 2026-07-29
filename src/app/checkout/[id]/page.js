@@ -1,32 +1,36 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, CreditCard, Smartphone, ShieldCheck, Plus, Minus } from 'lucide-react';
+import { getEventById, purchaseTicket } from '@/utils/eventStore';
 import styles from './Checkout.module.css';
 
-export default function CheckoutPage({ params }) {
+export default function CheckoutPage({ params: paramsPromise }) {
+  const params = use(paramsPromise);
+  const eventId = params.id;
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // State
-  const [quantity, setQuantity] = useState(2);
-  const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' or 'momo'
-  const [momoProvider, setMomoProvider] = useState('mtn'); // 'mtn', 'telecel', 'at'
-  
-  // Contact details
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const tierName = searchParams.get('tier') || 'General Admission';
+  const queryPrice = parseFloat(searchParams.get('price')) || 50;
 
-  // Card details
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiry, setExpiry] = useState('');
-  const [cvc, setCvc] = useState('');
+  const [event, setEvent] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [paymentMethod, setPaymentMethod] = useState('momo');
+  const [momoProvider, setMomoProvider] = useState('mtn');
 
-  // Event & Pricing calculations
-  const unitPrice = 45.00;
-  const bookingFeePerTicket = 2.75;
+  const [name, setName] = useState('Kwame Mensah');
+  const [email, setEmail] = useState('kwame@example.com');
+  const [phone, setPhone] = useState('024 123 4567');
+
+  useEffect(() => {
+    setEvent(getEventById(eventId));
+  }, [eventId]);
+
+  const unitPrice = queryPrice;
+  const bookingFeePerTicket = 2.50;
   const subtotal = quantity * unitPrice;
   const totalFees = quantity * bookingFeePerTicket;
   const grandTotal = subtotal + totalFees;
@@ -38,13 +42,21 @@ export default function CheckoutPage({ params }) {
       return;
     }
 
-    // Pass checkout details to processing page
+    const { ticket, order } = purchaseTicket({
+      eventId,
+      tierName,
+      price: grandTotal,
+      paymentMethod: paymentMethod === 'momo' ? `MTN Mobile Money (${momoProvider.toUpperCase()})` : 'Credit Card',
+      attendeeName: name,
+      attendeeEmail: email
+    });
+
     const query = new URLSearchParams({
-      id: params.id || '1',
-      title: 'Neon Nights Music Festival 2026',
-      qty: quantity.toString(),
+      id: eventId,
+      ticketId: ticket.id,
+      orderId: order.id,
+      title: event?.title || 'Event Pass',
       total: grandTotal.toFixed(2),
-      provider: paymentMethod === 'momo' ? `Mobile Money (${momoProvider.toUpperCase()})` : 'Credit Card',
       email: email,
       name: name
     }).toString();
@@ -55,11 +67,11 @@ export default function CheckoutPage({ params }) {
   return (
     <div className={`container ${styles.page}`}>
       <div className={styles.header}>
-        <Link href="/events/1" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#94a3b8', textDecoration: 'none', marginBottom: '1rem', fontWeight: 600 }}>
+        <Link href={`/events/${eventId}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', textDecoration: 'none', marginBottom: '1rem', fontWeight: 600 }}>
           <ArrowLeft size={16} /> Back to Event Details
         </Link>
         <h1>Checkout</h1>
-        <p>Complete your purchase to secure your tickets.</p>
+        <p>Complete your purchase to secure your event tickets.</p>
       </div>
 
       <div className={styles.mainGrid}>
@@ -127,44 +139,6 @@ export default function CheckoutPage({ params }) {
                 </div>
               </div>
 
-              {/* Card Inputs */}
-              {paymentMethod === 'card' && (
-                <div className={styles.cardDetails}>
-                  <div className={styles.formGroup}>
-                    <label>Card Number</label>
-                    <input 
-                      type="text" 
-                      placeholder="4000 1234 5678 9010" 
-                      className={styles.input} 
-                      value={cardNumber}
-                      onChange={(e) => setCardNumber(e.target.value)}
-                    />
-                  </div>
-                  <div className={styles.rowGrid}>
-                    <div className={styles.formGroup}>
-                      <label>Expiry (MM/YY)</label>
-                      <input 
-                        type="text" 
-                        placeholder="12/28" 
-                        className={styles.input} 
-                        value={expiry}
-                        onChange={(e) => setExpiry(e.target.value)}
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>CVC</label>
-                      <input 
-                        type="text" 
-                        placeholder="123" 
-                        className={styles.input} 
-                        value={cvc}
-                        onChange={(e) => setCvc(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* Mobile Money Inputs */}
               {paymentMethod === 'momo' && (
                 <div className={styles.cardDetails}>
@@ -174,7 +148,7 @@ export default function CheckoutPage({ params }) {
                       className={styles.input} 
                       value={momoProvider}
                       onChange={(e) => setMomoProvider(e.target.value)}
-                      style={{ background: '#0f172a' }}
+                      style={{ background: '#f8fafc', color: '#0f172a' }}
                     >
                       <option value="mtn">MTN Mobile Money</option>
                       <option value="telecel">Telecel Cash</option>
@@ -206,31 +180,31 @@ export default function CheckoutPage({ params }) {
           <div className={`glass-panel ${styles.summaryPanel}`}>
             <h2>Order Summary</h2>
             <div className={styles.eventInfo}>
-              <h3>Neon Nights Music Festival 2026</h3>
-              <p>August 15, 2026 • 7:00 PM</p>
-              <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem' }}>Labadi Beach Resort, Accra</p>
+              <h3>{event?.title || 'Neon Nights Music Festival 2026'}</h3>
+              <p>{event?.date || 'Aug 15, 2026'} • {event?.time || '8:00 PM'}</p>
+              <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem' }}>{event?.venue || 'Accra Venue'}</p>
             </div>
             
             {/* Quantity Selector */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '1.5rem 0', background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '1.5rem 0', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
               <div>
-                <span style={{ fontWeight: 600, display: 'block' }}>General Admission</span>
-                <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>GH₵ {unitPrice.toFixed(2)} each</span>
+                <span style={{ fontWeight: 600, display: 'block', color: '#0f172a' }}>{tierName}</span>
+                <span style={{ fontSize: '0.85rem', color: '#64748b' }}>GH₵ {unitPrice.toFixed(2)} each</span>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <button 
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  style={{ background: '#1e293b', border: 'none', color: '#fff', width: '32px', height: '32px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', color: '#0f172a', width: '32px', height: '32px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <Minus size={14} />
                 </button>
-                <span style={{ fontWeight: 700, fontSize: '1.1rem', minWidth: '20px', textAlign: 'center' }}>{quantity}</span>
+                <span style={{ fontWeight: 700, fontSize: '1.1rem', minWidth: '20px', textAlign: 'center', color: '#0f172a' }}>{quantity}</span>
                 <button 
                   type="button"
                   onClick={() => setQuantity(quantity + 1)}
-                  style={{ background: '#1e293b', border: 'none', color: '#fff', width: '32px', height: '32px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', color: '#0f172a', width: '32px', height: '32px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <Plus size={14} />
                 </button>
@@ -252,7 +226,7 @@ export default function CheckoutPage({ params }) {
               </div>
             </div>
 
-            <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontSize: '0.85rem', fontWeight: 600 }}>
+            <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#059669', fontSize: '0.85rem', fontWeight: 600 }}>
               <ShieldCheck size={16} /> 256-bit Encrypted Checkout
             </div>
           </div>

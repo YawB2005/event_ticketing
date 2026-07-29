@@ -18,6 +18,7 @@ import {
   Ticket,
   Clock
 } from 'lucide-react';
+import { createEvent } from '@/utils/eventStore';
 import styles from './CreateEvent.module.css';
 
 const CATEGORIES = [
@@ -90,10 +91,14 @@ export default function CreateEventPage() {
 
   const handlePublish = async (status = "Live") => {
     setIsSubmitting(true);
-    // Simulate Supabase API save delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const created = createEvent({
+      ...formData,
+      status,
+      tiers: ticketTiers
+    });
+    await new Promise(resolve => setTimeout(resolve, 800));
     setIsSubmitting(false);
-    alert(`Event "${formData.title || 'Untitled Event'}" has been successfully saved as ${status}!`);
+    alert(`Event "${created.title}" has been successfully published to public events!`);
     router.push('/organizer/events');
   };
 

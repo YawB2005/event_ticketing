@@ -1,26 +1,26 @@
 "use client";
 
-import { use } from 'react';
+import { use, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Download, Calendar, MapPin, Ticket, User, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Download, CheckCircle } from 'lucide-react';
+import { getAttendeeTickets } from '@/utils/eventStore';
 import styles from './TicketPass.module.css';
 
 export default function TicketPassPage({ params: paramsPromise }) {
   const params = use(paramsPromise);
   const ticketId = params.ticketId;
+  const [ticketData, setTicketData] = useState(null);
 
-  const ticketData = {
-    id: ticketId,
-    eventTitle: ticketId.includes('8802') ? 'Global Tech Summit 2026' : 'Neon Nights Music Festival',
-    date: ticketId.includes('8802') ? 'Aug 15, 2026' : 'Sep 02, 2026',
-    time: ticketId.includes('8802') ? '9:00 AM - 5:00 PM' : '8:00 PM - 3:00 AM',
-    venue: ticketId.includes('8802') ? 'Moscone Center, SF' : 'Downtown Arena, Accra',
-    holderName: 'Alex Morgan',
-    tier: ticketId.includes('8802') ? 'General Admission' : 'VIP Pass',
-    price: ticketId.includes('8802') ? 'GH₵ 299' : 'GH₵ 200',
-    qrCodeUrl: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${ticketId}`
-  };
+  useEffect(() => {
+    const all = getAttendeeTickets();
+    const found = all.find(t => t.id === ticketId) || all[0];
+    setTicketData(found);
+  }, [ticketId]);
+
+  if (!ticketData) {
+    return <div style={{ padding: '4rem', textAlign: 'center' }}>Loading pass details...</div>;
+  }
 
   return (
     <div className={styles.page}>
@@ -41,7 +41,7 @@ export default function TicketPassPage({ params: paramsPromise }) {
 
         <div className={styles.ticketBody}>
           <div className={styles.qrWrapper}>
-            <img src={ticketData.qrCodeUrl} alt="Gate QR Scanner Pass" className={styles.qrImage} />
+            <img src={ticketData.qrCode || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${ticketData.id}`} alt="Gate QR Scanner Pass" className={styles.qrImage} />
           </div>
 
           <div className={styles.ticketIdText}>PASS ID: {ticketData.id}</div>
@@ -49,7 +49,7 @@ export default function TicketPassPage({ params: paramsPromise }) {
           <div className={styles.infoGrid}>
             <div className={styles.infoItem}>
               <span className={styles.infoLabel}>Ticket Holder</span>
-              <span className={styles.infoValue}>{ticketData.holderName}</span>
+              <span className={styles.infoValue}>{ticketData.attendeeName || 'Alex Morgan'}</span>
             </div>
 
             <div className={styles.infoItem}>
@@ -64,7 +64,7 @@ export default function TicketPassPage({ params: paramsPromise }) {
 
             <div className={styles.infoItem}>
               <span className={styles.infoLabel}>Status</span>
-              <span className={styles.infoValue} style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+              <span className={styles.infoValue} style={{ color: '#059669', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                 <CheckCircle size={16} /> Valid for Entrance
               </span>
             </div>

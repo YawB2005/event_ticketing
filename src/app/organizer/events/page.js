@@ -1,57 +1,24 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './Events.module.css';
 import { Plus, Music, Mic, Palette, Calendar, BarChart2, Settings, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getEvents } from '@/utils/eventStore';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 }
 };
 
-const myEvents = [
-  {
-    id: 1,
-    title: "Neon Nights Festival",
-    date: "Aug 15, 2026",
-    status: "Live",
-    color: "#ef4444",
-    icon: Music,
-    ticketsSold: 840,
-    capacity: 1000,
-    revenue: "GH₵ 74,760",
-    pageViews: 4520
-  },
-  {
-    id: 2,
-    title: "Comedy Cellar",
-    date: "Jul 20, 2026",
-    status: "Ended",
-    color: "#3b82f6",
-    icon: Mic,
-    ticketsSold: 150,
-    capacity: 150,
-    revenue: "GH₵ 6,750",
-    pageViews: 890
-  },
-  {
-    id: 3,
-    title: "Digital Art Gallery",
-    date: "Oct 10, 2026",
-    status: "Draft",
-    color: "#10b981",
-    icon: Palette,
-    ticketsSold: 0,
-    capacity: 500,
-    revenue: "GH₵ 0",
-    pageViews: 0
-  }
-];
-
 export default function EventsPage() {
   const [activeFilter, setActiveFilter] = useState("All Events");
+  const [myEvents, setMyEvents] = useState([]);
+
+  useEffect(() => {
+    setMyEvents(getEvents());
+  }, []);
 
   const filteredEvents = activeFilter === "All Events" 
     ? myEvents 
@@ -61,8 +28,8 @@ export default function EventsPage() {
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <h1>Event Analytics</h1>
-          <p>Track revenue and ticket sales for specific events</p>
+          <h1>Event Analytics & Management</h1>
+          <p>Track revenue and ticket sales for all your hosted events</p>
         </div>
         <Link href="/organizer/events/new" style={{ textDecoration: 'none' }}>
           <button className={styles.createBtn}>
@@ -85,7 +52,7 @@ export default function EventsPage() {
 
       <div className={styles.eventGrid}>
         {filteredEvents.map((event, index) => {
-          const Icon = event.icon;
+          const Icon = event.category.includes('Comedy') ? Mic : event.category.includes('Art') ? Palette : Music;
           const progressPercent = event.capacity > 0 ? (event.ticketsSold / event.capacity) * 100 : 0;
           
           let statusClass = styles.statusEnded;
@@ -101,7 +68,7 @@ export default function EventsPage() {
               variants={fadeUp}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
-              <div className={styles.eventIcon} style={{ background: event.color }}>
+              <div className={styles.eventIcon} style={{ background: event.color || '#2563eb' }}>
                 <Icon size={36} />
               </div>
               
@@ -122,15 +89,15 @@ export default function EventsPage() {
                   
                   <div className={styles.metricBlock}>
                     <span className={styles.metricLabel}>Tickets Sold</span>
-                    <span className={styles.metricValue}>{event.ticketsSold} <span style={{fontSize: '1rem', color: '#94a3b8'}}>/ {event.capacity}</span></span>
+                    <span className={styles.metricValue}>{event.ticketsSold} <span style={{fontSize: '0.9rem', color: '#64748b'}}>/ {event.capacity}</span></span>
                     <div className={styles.progressBar}>
-                      <div className={styles.progressFill} style={{ width: `${progressPercent}%` }}></div>
+                      <div className={styles.progressFill} style={{ width: `${Math.min(progressPercent, 100)}%` }}></div>
                     </div>
                   </div>
 
                   <div className={styles.metricBlock}>
                     <span className={styles.metricLabel}>Page Views</span>
-                    <span className={styles.metricValue}>{event.pageViews.toLocaleString()}</span>
+                    <span className={styles.metricValue}>{(event.pageViews || 0).toLocaleString()}</span>
                   </div>
                 </div>
               </div>

@@ -1,37 +1,40 @@
+"use client";
+
+import { use, useState, useEffect } from 'react';
 import styles from './EventDetail.module.css';
 import Link from 'next/link';
+import { getEventById } from '@/utils/eventStore';
 
-// Mock fetching data based on ID
-const mockEvent = {
-  id: '1',
-  title: 'Neon Nights Music Festival 2026',
-  date: 'August 15, 2026',
-  time: '6:00 PM - 2:00 AM',
-  location: 'Cyber Arena, Downtown',
-  description: 'Experience the ultimate electronic music festival of the year. Featuring top DJs from around the world, mind-blowing visual effects, and an unforgettable atmosphere.',
-  category: 'Music',
-  color: 'linear-gradient(135deg, #FF007A 0%, #7928CA 100%)',
-  organizer: 'Rave Culture Ltd',
-  ticketTypes: [
-    { id: 't1', name: 'General Admission', price: 45.00, available: true, maxQty: 4 },
-    { id: 't2', name: 'VIP Pass', price: 120.00, available: true, maxQty: 2, benefits: 'Includes fast-track entry, exclusive lounge access, and 2 complimentary drinks.' },
-    { id: 't3', name: 'Early Bird', price: 30.00, available: false, maxQty: 0 }
-  ]
-};
+export default function EventDetail({ params: paramsPromise }) {
+  const params = use(paramsPromise);
+  const eventId = params.id;
 
-export default function EventDetail({ params }) {
-  // In a real app, use params.id to fetch the event
-  const event = mockEvent;
+  const [event, setEvent] = useState(null);
+  const [selectedTier, setSelectedTier] = useState(null);
+
+  useEffect(() => {
+    const fetched = getEventById(eventId);
+    setEvent(fetched);
+    if (fetched && fetched.tiers && fetched.tiers.length > 0) {
+      setSelectedTier(fetched.tiers[0]);
+    }
+  }, [eventId]);
+
+  if (!event) {
+    return <div style={{ padding: '4rem', textContent: 'center' }}>Loading event details...</div>;
+  }
+
+  const price = selectedTier ? selectedTier.price : 0;
 
   return (
     <div className={styles.page}>
       {/* Event Header Hero */}
-      <div className={styles.hero} style={{ background: event.color }}>
+      <div className={styles.hero} style={{ background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)' }}>
         <div className={`container ${styles.heroContainer}`}>
           <div className={styles.heroContent}>
             <span className={styles.categoryBadge}>{event.category}</span>
             <h1 className={styles.title}>{event.title}</h1>
-            <p className={styles.subtitle}>{event.date} &bull; {event.location}</p>
+            <p className={styles.subtitle}>{event.date} &bull; {event.venue}</p>
           </div>
         </div>
       </div>
@@ -54,7 +57,7 @@ export default function EventDetail({ params }) {
               </div>
               <div className={styles.infoItem}>
                 <h3>Location</h3>
-                <p>{event.location}</p>
+                <p>{event.venue}</p>
               </div>
             </div>
           </section>
@@ -62,10 +65,10 @@ export default function EventDetail({ params }) {
           <section className={styles.section}>
             <h2>Organizer</h2>
             <div className={styles.organizerCard}>
-              <div className={styles.organizerAvatar}>RC</div>
+              <div className={styles.organizerAvatar}>ET</div>
               <div>
-                <h3>{event.organizer}</h3>
-                <p>3 past events</p>
+                <h3>Official ETSP Host</h3>
+                <p>Verified Verified Event Host</p>
               </div>
             </div>
           </section>
@@ -74,36 +77,35 @@ export default function EventDetail({ params }) {
         {/* Right Column: Ticket Selection */}
         <div className={styles.ticketCol}>
           <div className={`glass-panel ${styles.ticketCard}`}>
-            <h2>Select Tickets</h2>
+            <h2>Select Ticket Tier</h2>
             <div className={styles.ticketList}>
-              {event.ticketTypes.map(ticket => (
-                <div key={ticket.id} className={`${styles.ticketType} ${!ticket.available ? styles.soldOut : ''}`}>
+              {(event.tiers || []).map(tier => (
+                <div 
+                  key={tier.id} 
+                  className={`${styles.ticketType} ${selectedTier?.id === tier.id ? styles.activeTier : ''}`}
+                  onClick={() => setSelectedTier(tier)}
+                  style={{ cursor: 'pointer', padding: '1rem', border: selectedTier?.id === tier.id ? '2px solid #2563eb' : '1px solid #e2e8f0', borderRadius: '14px', marginBottom: '0.75rem' }}
+                >
                   <div className={styles.ticketInfo}>
-                    <h4>{ticket.name}</h4>
-                    {ticket.benefits && <p className={styles.ticketBenefits}>{ticket.benefits}</p>}
-                    <p className={styles.ticketPrice}>
-                      {ticket.available ? `$${ticket.price.toFixed(2)}` : 'Sold Out'}
+                    <h4 style={{ margin: 0, color: '#0f172a' }}>{tier.name}</h4>
+                    <p className={styles.ticketPrice} style={{ fontWeight: 700, color: '#2563eb', margin: '0.25rem 0' }}>
+                      {tier.price === 0 ? 'Free Entry' : `GH₵ ${tier.price}`}
                     </p>
                   </div>
-                  {ticket.available && (
-                    <div className={styles.quantitySelector}>
-                      <select defaultValue={0}>
-                        {[...Array(ticket.maxQty + 1).keys()].map(num => (
-                          <option key={num} value={num}>{num}</option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
             
             <div className={styles.checkoutSection}>
               <div className={styles.totalRow}>
-                <span>Total</span>
-                <span>$0.00</span>
+                <span>Total Amount</span>
+                <span style={{ fontWeight: 800, fontSize: '1.25rem', color: '#059669' }}>GH₵ {price}.00</span>
               </div>
-              <Link href={`/checkout/${event.id}`} className={`btn btn-primary ${styles.checkoutBtn}`}>
+              <Link 
+                href={`/checkout/${event.id}?tier=${encodeURIComponent(selectedTier?.name || 'Standard')}&price=${price}`} 
+                className={`btn btn-primary ${styles.checkoutBtn}`}
+                style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', textDecoration: 'none', background: '#2563eb', color: 'white', padding: '0.85rem', borderRadius: '12px', fontWeight: 700, marginTop: '1rem' }}
+              >
                 Proceed to Checkout
               </Link>
             </div>

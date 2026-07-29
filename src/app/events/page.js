@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Search, Filter, Calendar, MapPin, Tag } from 'lucide-react';
 import EventCard from '@/components/ui/EventCard/EventCard';
+import { getEvents } from '@/utils/eventStore';
 import styles from './Events.module.css';
 
 const CATEGORIES = [
@@ -17,81 +18,37 @@ const CATEGORIES = [
   "Comedy & Entertainment"
 ];
 
-const mockEvents = [
-  {
-    id: 1,
-    title: "Global Tech Summit 2026",
-    date: "Aug 15, 2026",
-    month: "Aug",
-    day: "15",
-    location: "Moscone Center, SF",
-    price: "From GH₵ 299",
-    category: "Technology & Innovation",
-    availability: "Going Fast",
-    color: "#e0e7ff"
-  },
-  {
-    id: 2,
-    title: "Neon Nights Music Festival",
-    date: "Sep 02, 2026",
-    month: "Sep",
-    day: "02",
-    location: "Downtown Arena, Accra",
-    price: "From GH₵ 89",
-    category: "Music & Concerts",
-    availability: "Available",
-    color: "#fdf4ff"
-  },
-  {
-    id: 3,
-    title: "Digital Art & NFT Gallery",
-    date: "Oct 10, 2026",
-    month: "Oct",
-    day: "10",
-    location: "Virtual Experience",
-    price: "Free Entry",
-    category: "Arts & Culture",
-    availability: "Unlimited",
-    color: "#f0fdf4"
-  },
-  {
-    id: 4,
-    title: "Accra Food & Cocktail Festival",
-    date: "Nov 05, 2026",
-    month: "Nov",
-    day: "05",
-    location: "Labadi Beach Resort",
-    price: "From GH₵ 120",
-    category: "Food & Drink",
-    availability: "Available",
-    color: "#fef3c7"
-  },
-  {
-    id: 5,
-    title: "Comedy Cellar Live",
-    date: "Jul 20, 2026",
-    month: "Jul",
-    day: "20",
-    location: "National Theatre, Accra",
-    price: "From GH₵ 50",
-    category: "Comedy & Entertainment",
-    availability: "Selling Fast",
-    color: "#e0f2fe"
-  }
-];
-
 export default function BrowseEventsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All Events');
   const [selectedPrice, setSelectedPrice] = useState('All');
+  const [eventsList, setEventsList] = useState([]);
 
-  const filteredEvents = mockEvents.filter(event => {
+  useEffect(() => {
+    const rawEvents = getEvents();
+    // Filter only Live or published events
+    const formatted = rawEvents.map(e => ({
+      id: e.id,
+      title: e.title,
+      date: e.date,
+      month: e.date.split(' ')[0] || 'Aug',
+      day: e.date.split(' ')[1] || '15',
+      location: e.venue || 'Accra',
+      price: e.tiers && e.tiers.length > 0 ? `From GH₵ ${Math.min(...e.tiers.map(t => t.price))}` : 'Free Entry',
+      category: e.category || 'General',
+      availability: 'Available',
+      color: '#eff6ff'
+    }));
+    setEventsList(formatted);
+  }, []);
+
+  const filteredEvents = eventsList.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           event.location.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All Events' || event.category === selectedCategory;
     let matchesPrice = true;
-    if (selectedPrice === 'Free') matchesPrice = event.price.toLowerCase().includes('free');
-    if (selectedPrice === 'Paid') matchesPrice = !event.price.toLowerCase().includes('free');
+    if (selectedPrice === 'Free') matchesPrice = event.price.toLowerCase().includes('free') || event.price.includes('GH₵ 0');
+    if (selectedPrice === 'Paid') matchesPrice = !event.price.toLowerCase().includes('free') && !event.price.includes('GH₵ 0');
 
     return matchesSearch && matchesCategory && matchesPrice;
   });

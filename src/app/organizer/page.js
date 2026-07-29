@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './Organizer.module.css';
 import { motion } from 'framer-motion';
@@ -15,6 +16,7 @@ import {
   Plus,
   ArrowUpRight
 } from 'lucide-react';
+import { getEvents } from '@/utils/eventStore';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -22,6 +24,23 @@ const fadeUp = {
 };
 
 export default function OrganizerDashboard() {
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    setEvents(getEvents());
+  }, []);
+
+  const totalRevenueNumeric = events.reduce((sum, e) => {
+    const num = parseInt((e.revenue || '0').replace(/[^0-9]/g, ''), 10) || 0;
+    return sum + num;
+  }, 0);
+
+  const totalSold = events.reduce((sum, e) => sum + (e.ticketsSold || 0), 0);
+  const totalCapacity = events.reduce((sum, e) => sum + (e.capacity || 0), 0);
+  const liveCount = events.filter(e => e.status === 'Live').length;
+  const draftCount = events.filter(e => e.status === 'Draft').length;
+  const endedCount = events.filter(e => e.status === 'Ended').length;
+
   return (
     <div className={styles.container}>
       {/* HEADER */}
@@ -50,9 +69,9 @@ export default function OrganizerDashboard() {
           </div>
           <div className={styles.metricInfo}>
             <span className={styles.metricLabel}>Total Revenue</span>
-            <span className={styles.metricValue}>GH₵ 81,510</span>
+            <span className={styles.metricValue}>GH₵ {totalRevenueNumeric.toLocaleString()}</span>
             <span className={`${styles.metricTrend} ${styles.positive}`}>
-              <ArrowUpRight size={14} /> +14.2% this month
+              <ArrowUpRight size={14} /> Live Settlements
             </span>
           </div>
         </div>
@@ -63,9 +82,9 @@ export default function OrganizerDashboard() {
           </div>
           <div className={styles.metricInfo}>
             <span className={styles.metricLabel}>Tickets Sold</span>
-            <span className={styles.metricValue}>990 / 1,650</span>
+            <span className={styles.metricValue}>{totalSold} / {totalCapacity}</span>
             <span className={`${styles.metricTrend} ${styles.positive}`}>
-              <ArrowUpRight size={14} /> 60% Capacity
+              <ArrowUpRight size={14} /> {totalCapacity > 0 ? Math.round((totalSold / totalCapacity) * 100) : 0}% Capacity
             </span>
           </div>
         </div>
@@ -89,9 +108,9 @@ export default function OrganizerDashboard() {
           </div>
           <div className={styles.metricInfo}>
             <span className={styles.metricLabel}>Active Events</span>
-            <span className={styles.metricValue}>3 Listed</span>
+            <span className={styles.metricValue}>{events.length} Listed</span>
             <span className={`${styles.metricTrend} ${styles.positive}`}>
-              1 Live • 1 Draft • 1 Ended
+              {liveCount} Live • {draftCount} Draft • {endedCount} Ended
             </span>
           </div>
         </div>
@@ -112,13 +131,13 @@ export default function OrganizerDashboard() {
                 <p>Daily sales performance for active events across the week</p>
               </div>
             </div>
-            <div style={{ background: 'rgba(52, 211, 153, 0.15)', color: '#34d399', padding: '0.4rem 0.85rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 700 }}>
+            <div style={{ background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0', padding: '0.4rem 0.85rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 700 }}>
               +20.4% vs last week
             </div>
           </div>
 
           <div className={styles.chartContainer}>
-            <h3 className={styles.mainStat}>GH₵ 2,567.00 <span style={{ fontSize: '1rem', color: '#94a3b8', fontWeight: 500 }}>today</span></h3>
+            <h3 className={styles.mainStat}>GH₵ 2,567.00 <span style={{ fontSize: '1rem', color: '#64748b', fontWeight: 500 }}>today</span></h3>
             <p className={styles.subStat}>Peak ticket conversions recorded on Tuesday & Thursday night</p>
 
             <div className={styles.pillChart}>
@@ -166,50 +185,33 @@ export default function OrganizerDashboard() {
                 <p>Status & management overview</p>
               </div>
             </div>
-            <Link href="/organizer/events" style={{ color: '#38bdf8', fontSize: '0.85rem', fontWeight: 600, textDecoration: 'none' }}>
+            <Link href="/organizer/events" style={{ color: '#2563eb', fontSize: '0.85rem', fontWeight: 600, textDecoration: 'none' }}>
               Manage All →
             </Link>
           </div>
 
           <div className={styles.eventList}>
-            <div className={styles.eventItem}>
-              <div className={styles.eventItemLeft}>
-                <div className={styles.eventSquare} style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)' }}>
-                  <Music size={22} color="#fff" />
-                </div>
-                <div className={styles.eventDetails}>
-                  <h4>Neon Nights Festival</h4>
-                  <p>Aug 15 • 840 / 1000 sold</p>
-                </div>
-              </div>
-              <div className={`${styles.eventPill} ${styles.statusLive}`}>Live</div>
-            </div>
+            {events.map(event => {
+              const Icon = event.category.includes('Comedy') ? Mic : event.category.includes('Art') ? Palette : Music;
+              let statusClass = styles.statusEnded;
+              if (event.status === 'Live') statusClass = styles.statusLive;
+              if (event.status === 'Draft') statusClass = styles.statusDraft;
 
-            <div className={styles.eventItem}>
-              <div className={styles.eventItemLeft}>
-                <div className={styles.eventSquare} style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}>
-                  <Mic size={22} color="#fff" />
+              return (
+                <div key={event.id} className={styles.eventItem}>
+                  <div className={styles.eventItemLeft}>
+                    <div className={styles.eventSquare} style={{ background: event.color || '#2563eb', color: 'white' }}>
+                      <Icon size={22} color="#fff" />
+                    </div>
+                    <div className={styles.eventDetails}>
+                      <h4>{event.title}</h4>
+                      <p>{event.date} • {event.ticketsSold} / {event.capacity} sold</p>
+                    </div>
+                  </div>
+                  <div className={`${styles.eventPill} ${statusClass}`}>{event.status}</div>
                 </div>
-                <div className={styles.eventDetails}>
-                  <h4>Comedy Cellar</h4>
-                  <p>Jul 20 • 150 / 150 sold</p>
-                </div>
-              </div>
-              <div className={`${styles.eventPill} ${styles.statusEnded}`}>Ended</div>
-            </div>
-
-            <div className={styles.eventItem}>
-              <div className={styles.eventItemLeft}>
-                <div className={styles.eventSquare} style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
-                  <Palette size={22} color="#fff" />
-                </div>
-                <div className={styles.eventDetails}>
-                  <h4>Digital Art Gallery</h4>
-                  <p>Oct 10 • 0 / 500 sold</p>
-                </div>
-              </div>
-              <div className={`${styles.eventPill} ${styles.statusDraft}`}>Draft</div>
-            </div>
+              );
+            })}
           </div>
         </motion.div>
 

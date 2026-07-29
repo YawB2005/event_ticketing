@@ -104,40 +104,42 @@ export default function OrganizerReportsPage() {
           </button>
         </div>
 
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Report Ref</th>
-              <th>Statement Name</th>
-              <th>Date Generated</th>
-              <th>Gross Revenue</th>
-              <th>Platform Fee (5%)</th>
-              <th>Net Settled</th>
-              <th>Payout Status</th>
-              <th>Receipt</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reportHistory.map((rep) => (
-              <tr key={rep.id}>
-                <td style={{ fontFamily: 'monospace', fontWeight: 700, color: '#2563eb' }}>{rep.id}</td>
-                <td style={{ fontWeight: 600, color: '#0f172a' }}>{rep.name}</td>
-                <td style={{ color: '#64748b' }}>{rep.date}</td>
-                <td style={{ fontWeight: 700, color: '#059669' }}>{rep.gross}</td>
-                <td style={{ color: '#6d28d9', fontWeight: 600 }}>-{rep.fee}</td>
-                <td style={{ color: '#2563eb', fontWeight: 700 }}>{rep.net}</td>
-                <td>
-                  <span className={styles.statusCompleted}>✓ {rep.status}</span>
-                </td>
-                <td>
-                  <button className={styles.downloadBtn} onClick={() => alert(`Downloading statement PDF for ${rep.id}...`)}>
-                    <Download size={14} /> PDF
-                  </button>
-                </td>
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Report Ref</th>
+                <th>Statement Name</th>
+                <th>Date Generated</th>
+                <th>Gross Revenue</th>
+                <th>Platform Fee (5%)</th>
+                <th>Net Settled</th>
+                <th>Payout Status</th>
+                <th>Receipt</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {reportHistory.map((rep) => (
+                <tr key={rep.id}>
+                  <td style={{ fontFamily: 'monospace', fontWeight: 700, color: '#2563eb' }}>{rep.id}</td>
+                  <td style={{ fontWeight: 600, color: '#0f172a' }}>{rep.name}</td>
+                  <td style={{ color: '#64748b' }}>{rep.date}</td>
+                  <td style={{ fontWeight: 700, color: '#059669' }}>{rep.gross}</td>
+                  <td style={{ color: '#6d28d9', fontWeight: 600 }}>-{rep.fee}</td>
+                  <td style={{ color: '#2563eb', fontWeight: 700 }}>{rep.net}</td>
+                  <td>
+                    <span className={styles.statusCompleted}>✓ {rep.status}</span>
+                  </td>
+                  <td>
+                    <button className={styles.downloadBtn} onClick={() => alert(`Downloading statement PDF for ${rep.id}...`)}>
+                      <Download size={14} /> PDF
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </motion.div>
     </div>
   );

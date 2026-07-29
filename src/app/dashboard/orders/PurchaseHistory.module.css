@@ -30,10 +30,17 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+  min-width: 650px;
 }
 
 .table th {
@@ -84,8 +91,15 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .receiptBtn:hover {
   background: #dbeafe;
+}
+
+@media (max-width: 640px) {
+  .header h1 {
+    font-size: 1.8rem;
+  }
 }
