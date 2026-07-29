@@ -33,6 +33,7 @@
   border-radius: 16px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  overflow-x: auto;
 }
 
 .filterBtn {
@@ -44,6 +45,7 @@
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.2s ease;
 }
 
@@ -129,10 +131,17 @@
   margin: 0;
 }
 
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+  min-width: 750px;
 }
 
 .table th {
@@ -180,6 +189,7 @@
   align-items: center;
   gap: 0.4rem;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .downloadBtn:hover {
@@ -187,31 +197,22 @@
   color: #1d4ed8;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
   .header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-  
-  .dateFilter {
-    width: 100%;
-    overflow-x: auto;
-  }
-  
-  .filterBtn {
-    white-space: nowrap;
-  }
-
   .summaryGrid {
     grid-template-columns: 1fr;
   }
-  
   .sectionCard {
     padding: 1.25rem;
-  }
-
-  .tableContainer {
-    overflow-x: auto;
   }
 }

@@ -114,52 +114,54 @@ export default function AttendeesPage({ params: paramsPromise }) {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Ticket ID</th>
-              <th>Attendee</th>
-              <th>Tier & Price</th>
-              <th>Purchased</th>
-              <th>Status</th>
-              <th>Check-in Time</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredAttendees.map((attendee) => (
-              <tr key={attendee.id}>
-                <td style={{ fontFamily: 'monospace', fontWeight: 600, color: '#38bdf8' }}>{attendee.id}</td>
-                <td>
-                  <div className={styles.attendeeName}>{attendee.name}</div>
-                  <div className={styles.attendeeEmail}>{attendee.email}</div>
-                </td>
-                <td>
-                  <div style={{ fontWeight: 600 }}>{attendee.tier}</div>
-                  <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{attendee.price}</div>
-                </td>
-                <td style={{ fontSize: '0.875rem', color: '#94a3b8' }}>{attendee.date}</td>
-                <td>
-                  {attendee.checkedIn ? (
-                    <span className={`${styles.statusPill} ${styles.checkedIn}`}>
-                      <CheckCircle size={14} /> Checked In
-                    </span>
-                  ) : (
-                    <span className={`${styles.statusPill} ${styles.pending}`}>
-                      <Clock size={14} /> Pending
-                    </span>
-                  )}
-                </td>
-                <td style={{ fontSize: '0.875rem', color: '#cbd5e1' }}>{attendee.checkInTime}</td>
-                <td>
-                  <button className={styles.actionBtn} onClick={() => toggleCheckIn(attendee.id)}>
-                    {attendee.checkedIn ? "Undo" : "Check-In"}
-                  </button>
-                </td>
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Attendee</th>
+                <th>Tier & Price</th>
+                <th>Purchased</th>
+                <th>Status</th>
+                <th>Check-in Time</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredAttendees.map((attendee) => (
+                <tr key={attendee.id}>
+                  <td style={{ fontFamily: 'monospace', fontWeight: 600, color: '#2563eb' }}>{attendee.id}</td>
+                  <td>
+                    <div className={styles.attendeeName}>{attendee.name}</div>
+                    <div className={styles.attendeeEmail}>{attendee.email}</div>
+                  </td>
+                  <td>
+                    <div style={{ fontWeight: 600, color: '#0f172a' }}>{attendee.tier}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b' }}>{attendee.price}</div>
+                  </td>
+                  <td style={{ fontSize: '0.875rem', color: '#64748b' }}>{attendee.date}</td>
+                  <td>
+                    {attendee.checkedIn ? (
+                      <span className={`${styles.statusPill} ${styles.checkedIn}`}>
+                        <CheckCircle size={14} /> Checked In
+                      </span>
+                    ) : (
+                      <span className={`${styles.statusPill} ${styles.pending}`}>
+                        <Clock size={14} /> Pending
+                      </span>
+                    )}
+                  </td>
+                  <td style={{ fontSize: '0.875rem', color: '#334155' }}>{attendee.checkInTime}</td>
+                  <td>
+                    <button className={styles.actionBtn} onClick={() => toggleCheckIn(attendee.id)}>
+                      {attendee.checkedIn ? "Undo" : "Check-In"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </motion.div>
     </div>
   );

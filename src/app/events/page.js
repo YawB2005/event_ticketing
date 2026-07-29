@@ -2,101 +2,52 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Search, Filter, Calendar, MapPin, Tag } from 'lucide-react';
 import EventCard from '@/components/ui/EventCard/EventCard';
-import EventSlideshow from '@/components/ui/EventSlideshow/EventSlideshow';
-import LoadingSpinner from '@/components/ui/LoadingSpinner/LoadingSpinner';
+import { getEvents } from '@/utils/eventStore';
 import styles from './Events.module.css';
-import { createClient } from '@/utils/supabase/client';
+
+const CATEGORIES = [
+  "All Events",
+  "Music & Concerts",
+  "Technology & Innovation",
+  "Arts & Culture",
+  "Business & Networking",
+  "Food & Drink",
+  "Comedy & Entertainment"
+];
 
 export default function BrowseEventsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All Events');
   const [selectedPrice, setSelectedPrice] = useState('All');
-  
-  useEffect(() => {
-    // Read the query string on mount for search terms (e.g. from HomeNavbar search)
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const q = params.get('q');
-      if (q) setSearchTerm(q);
-    }
-  }, []);
-  
-  const [events, setEvents] = useState([]);
-  const [categories, setCategories] = useState(["All Events"]);
-  const [loading, setLoading] = useState(true);
+  const [eventsList, setEventsList] = useState([]);
 
   useEffect(() => {
-    async function loadEvents() {
-      try {
-        const res = await fetch('/api/events');
-        if (!res.ok) throw new Error('Failed to fetch events');
-        
-        const data = await res.json();
-
-        const formatted = data.map(evt => {
-          const dateObj = evt.start_datetime ? new Date(evt.start_datetime) : null;
-          let priceStr = "Free";
-          let minPrice = 0;
-          let availabilityStr = "Available";
-
-          if (evt.ticket_types && evt.ticket_types.length > 0) {
-            const prices = evt.ticket_types.map(t => parseFloat(t.price));
-            minPrice = Math.min(...prices);
-            priceStr = minPrice === 0 ? "Free" : `From GH₵ ${minPrice.toLocaleString()}`;
-            
-            const totalQty = evt.ticket_types.reduce((acc, t) => acc + (t.quantity_total || 0), 0);
-            const soldQty = evt.ticket_types.reduce((acc, t) => acc + (t.quantity_sold || 0), 0);
-            
-            if (totalQty > 0) {
-              if (soldQty >= totalQty) availabilityStr = "Sold Out";
-              else if (soldQty > totalQty * 0.8) availabilityStr = "Going Fast";
-            }
-          }
-
-          return {
-            id: evt.id,
-            title: evt.title,
-            image: evt.image_url,
-            color: "#f1f5f9", // subtle fallback background
-            availability: availabilityStr,
-            date: dateObj ? dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD',
-            time: dateObj ? dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '',
-            location: evt.venue_name || "TBA",
-            price: priceStr,
-            category: evt.categories?.name || "Other"
-          };
-        });
-
-        setEvents(formatted);
-        
-        // Extract unique categories for filter pills
-        const uniqueCats = ["All Events", ...new Set(formatted.map(e => e.category))];
-        setCategories(uniqueCats);
-      } catch (error) {
-        console.error("Failed to load events", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    loadEvents();
+    const rawEvents = getEvents();
+    const formatted = rawEvents.map(e => ({
+      id: e.id,
+      title: e.title,
+      date: e.date,
+      month: e.date.split(' ')[0] || 'Aug',
+      day: e.date.split(' ')[1] || '15',
+      location: e.venue || 'Accra',
+      price: e.tiers && e.tiers.length > 0 ? `From GH₵ ${Math.min(...e.tiers.map(t => t.price))}` : 'Free Entry',
+      category: e.category || 'General',
+      availability: 'Available',
+      color: '#eff6ff'
+    }));
+    setEventsList(formatted);
   }, []);
 
-  const filteredEvents = events.filter(event => {
-    const title = event.title || "";
-    const location = event.location || "";
-    const searchLower = searchTerm.toLowerCase();
-
-    const matchesSearch = title.toLowerCase().includes(searchLower) ||
-                          location.toLowerCase().includes(searchLower);
-    
+  const filteredEvents = eventsList.filter(event => {
+    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          event.location.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All Events' || event.category === selectedCategory;
-    
     let matchesPrice = true;
-    if (selectedPrice === 'Free') matchesPrice = event.price.toLowerCase() === 'free';
-    if (selectedPrice === 'Paid') matchesPrice = event.price.toLowerCase() !== 'free';
+    if (selectedPrice === 'Free') matchesPrice = event.price.toLowerCase().includes('free') || event.price.includes('GH₵ 0');
+    if (selectedPrice === 'Paid') matchesPrice = !event.price.toLowerCase().includes('free') && !event.price.includes('GH₵ 0');
 
     return matchesSearch && matchesCategory && matchesPrice;
   });
@@ -105,29 +56,21 @@ export default function BrowseEventsPage() {
     <div className={styles.page}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2>Discover & Explore Events</h2>
+          <h1>Discover & Explore Events</h1>
           <p className={styles.subText}>Find concerts, tech summits, cultural galas, and comedy shows happening near you.</p>
         </div>
 
-        {!loading && events.length > 0 && <EventSlideshow events={events} />}
-
         <div className={styles.searchBarCard}>
-          <form 
-            className={styles.searchInputWrapper} 
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (document.activeElement) document.activeElement.blur();
-            }}
-          >
+          <div className={styles.searchInputWrapper}>
             <Search size={18} className={styles.searchIcon} />
             <input 
-              type="search" 
+              type="text" 
               placeholder="Search events, cities, or venues..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className={styles.searchInput}
             />
-          </form>
+          </div>
 
           <select 
             className={styles.filterSelect}
@@ -141,7 +84,7 @@ export default function BrowseEventsPage() {
         </div>
 
         <div className={styles.categoryPills}>
-          {categories.map(cat => (
+          {CATEGORIES.map(cat => (
             <button 
               key={cat}
               className={`${styles.pill} ${selectedCategory === cat ? styles.activePill : ''}`}
@@ -152,9 +95,7 @@ export default function BrowseEventsPage() {
           ))}
         </div>
 
-        {loading ? (
-          <LoadingSpinner text="Loading amazing events..." />
-        ) : filteredEvents.length > 0 ? (
+        {filteredEvents.length > 0 ? (
           <div className={styles.eventsGrid}>
             {filteredEvents.map(event => (
               <EventCard key={event.id} event={event} />

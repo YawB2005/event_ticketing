@@ -3,33 +3,16 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Ticket, Calendar, MapPin, QrCode, ArrowRight } from 'lucide-react';
+import { Ticket, Calendar, MapPin, QrCode } from 'lucide-react';
+import { getAttendeeTickets } from '@/utils/eventStore';
 import styles from './MyTickets.module.css';
 
-export default function MyTickEventixage() {
+export default function MyTicketsPage() {
   const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchTickets() {
-      try {
-        const res = await fetch('/api/dashboard/tickets');
-        const data = await res.json();
-        if (res.ok && data.tickets) {
-          setTickets(data.tickets);
-        }
-      } catch (err) {
-        console.error("Failed to load tickets:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchTickets();
+    setTickets(getAttendeeTickets());
   }, []);
-
-  if (loading) {
-    return <div className={styles.page} style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>Loading tickets...</div>;
-  }
 
   return (
     <div className={styles.page}>
@@ -38,34 +21,21 @@ export default function MyTickEventixage() {
         <p className={styles.subText}>Show these QR code passes at the event entrance for instant scan check-in.</p>
       </div>
 
-      {tickets.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '4rem 1rem', background: '#fff', borderRadius: '12px', border: '1px dashed #cbd5e1' }}>
-          <Ticket size={48} style={{ color: '#94a3b8', margin: '0 auto 1rem' }} />
-          <h3 style={{ margin: '0 0 0.5rem', color: '#1e293b' }}>No tickets yet</h3>
-          <p style={{ color: '#64748b', margin: '0 0 1.5rem' }}>You haven't purchased any event tickets yet.</p>
-          <Link href="/events" style={{ background: '#3b82f6', color: '#fff', padding: '0.75rem 1.5rem', borderRadius: '8px', textDecoration: 'none', fontWeight: 500 }}>
-            Browse Events
-          </Link>
-        </div>
-      ) : (
+      {tickets.length > 0 ? (
         <div className={styles.ticketsGrid}>
           {tickets.map(ticket => (
             <motion.div key={ticket.id} className={styles.ticketCard} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}>
               <div className={styles.qrPreview}>
-                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticket.qr_verification_hash || ticket.id}`} alt="QR Code Pass" className={styles.qrImage} />
+                <img src={ticket.qrCode || `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticket.id}`} alt="QR Code Pass" className={styles.qrImage} />
               </div>
 
               <div className={styles.ticketDetails}>
-                <h3>{ticket.events?.title || 'Unknown Event'}</h3>
+                <h3>{ticket.eventTitle}</h3>
                 <div className={styles.ticketMeta}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Calendar size={14} /> {ticket.events?.start_datetime ? new Date(ticket.events.start_datetime).toLocaleDateString() : 'TBA'} • {ticket.events?.start_datetime ? new Date(ticket.events.start_datetime).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : ''}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <MapPin size={14} /> {ticket.events?.venue_name || 'TBA'}
-                  </div>
-                  <div style={{ color: 'var(--dash-primary)', fontWeight: 600, marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Ticket size={14} /> {ticket.ticket_types?.name} (GH₵ {ticket.ticket_types?.price})
+                  <div>📅 {ticket.date} • {ticket.time}</div>
+                  <div>📍 {ticket.venue}</div>
+                  <div style={{ color: '#2563eb', fontWeight: 600, marginTop: '0.25rem' }}>
+                    🎫 {ticket.tier} ({ticket.price})
                   </div>
                 </div>
               </div>
@@ -75,6 +45,15 @@ export default function MyTickEventixage() {
               </Link>
             </motion.div>
           ))}
+        </div>
+      ) : (
+        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', padding: '3rem', borderRadius: '20px', textAlign: 'center', color: '#64748b' }}>
+          <Ticket size={48} color="#94a3b8" style={{ marginBottom: '1rem' }} />
+          <h3>No Active Tickets Yet</h3>
+          <p>Explore upcoming concerts, summits, and galas to register for your pass.</p>
+          <Link href="/events" style={{ display: 'inline-block', marginTop: '1rem', background: '#2563eb', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '12px', textDecoration: 'none', fontWeight: 700 }}>
+            Browse Public Events
+          </Link>
         </div>
       )}
     </div>

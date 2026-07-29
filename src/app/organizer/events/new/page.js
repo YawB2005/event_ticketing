@@ -18,8 +18,8 @@ import {
   Ticket,
   Clock
 } from 'lucide-react';
+import { createEvent } from '@/utils/eventStore';
 import styles from './CreateEvent.module.css';
-import { createClient } from '@/utils/supabase/client';
 
 const CATEGORIES = [
   "Music & Concerts",
@@ -89,69 +89,17 @@ export default function CreateEventPage() {
     setTicketTiers(prev => prev.filter(tier => tier.id !== id));
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    try {
-      const supabase = createClient();
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('event-banners')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const { data } = supabase.storage
-        .from('event-banners')
-        .getPublicUrl(filePath);
-
-      handleInputChange('imageUrl', data.publicUrl);
-    } catch (error) {
-      console.error('Error uploading image: ', error);
-      alert('Error uploading image!');
-    }
-  };
-
   const handlePublish = async (status = "Live") => {
-    if (!formData.title || !formData.startDate || !formData.category) {
-      alert("Please fill in all required fields (Title, Category, Start Date).");
-      return;
-    }
-
     setIsSubmitting(true);
-    try {
-      const response = await fetch('/api/organizer/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          ticketTiers,
-          status
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to create event');
-      }
-
-      alert(`Event "${formData.title}" has been successfully saved as ${status}!`);
-      router.push('/organizer/events');
-    } catch (err) {
-      console.error("Publish error", err);
-      alert(err.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    const created = createEvent({
+      ...formData,
+      status,
+      tiers: ticketTiers
+    });
+    await new Promise(resolve => setTimeout(resolve, 800));
+    setIsSubmitting(false);
+    alert(`Event "${created.title}" has been successfully published to public events!`);
+    router.push('/organizer/events');
   };
 
   return (
@@ -306,14 +254,10 @@ export default function CreateEventPage() {
                 {/* Banner Image URL / Picker */}
                 <div className={`${styles.formGroup} ${styles.fullWidth}`}>
                   <label>Event Cover Image</label>
-                  <input 
-                    type="file" 
-                    id="imageUpload" 
-                    accept="image/*" 
-                    style={{ display: 'none' }} 
-                    onChange={handleImageUpload} 
-                  />
-                  <div className={styles.imageUploadBox} onClick={() => document.getElementById('imageUpload').click()}>
+                  <div className={styles.imageUploadBox} onClick={() => {
+                    const sampleUrl = '/images/tech_summit.png';
+                    handleInputChange('imageUrl', sampleUrl);
+                  }}>
                     {formData.imageUrl ? (
                       <div>
                         <img src={formData.imageUrl} alt="Cover Preview" className={styles.imagePreview} />
@@ -481,7 +425,7 @@ export default function CreateEventPage() {
                 <div key={t.id} className={styles.reviewBox} style={{ marginBottom: '0.75rem', padding: '1.2rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
                     <span>{t.name}</span>
-                    <span style={{ color: '#4f46e5' }}>GH₵ {t.price} ({t.quantity} qty)</span>
+                    <span style={{ color: '#2563eb' }}>GH₵ {t.price} ({t.quantity} qty)</span>
                   </div>
                 </div>
               ))}

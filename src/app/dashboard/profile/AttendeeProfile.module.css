@@ -51,6 +51,7 @@
   font-weight: 900;
   color: white;
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+  flex-shrink: 0;
 }
 
 .formGrid {
@@ -84,6 +85,7 @@
   font-size: 0.95rem;
   outline: none;
   transition: all 0.2s ease;
+  width: 100%;
 }
 
 .inputGroup input:focus {
@@ -112,4 +114,28 @@
 .saveBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+}
+
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 1.8rem;
+  }
+  .card {
+    padding: 1.25rem;
+  }
+  .avatarHeader {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  .fullWidth {
+    grid-column: span 1;
+  }
+  .saveBtn {
+    width: 100%;
+    justify-content: center;
+  }
 }

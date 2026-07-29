@@ -7,6 +7,30 @@
   border-bottom: 1px solid #e2e8f0;
 }
 
+.leftGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mobileMenuBtn {
+  display: none;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobileMenuBtn:hover {
+  background: #f1f5f9;
+}
+
 .searchBox {
   position: relative;
   width: 320px;
@@ -40,7 +64,7 @@
 .rightActions {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .iconBtn {
@@ -133,11 +157,12 @@
   position: absolute;
   right: 0;
   top: calc(100% + 0.5rem);
-  width: 220px;
+  width: 230px;
+  max-width: calc(100vw - 2rem);
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   padding: 0.5rem;
   z-index: 100;
 }
@@ -146,7 +171,7 @@
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  padding: 0.65rem 0.85rem;
+  padding: 0.75rem 0.85rem;
   border-radius: 10px;
   color: #334155;
   font-size: 0.9rem;
@@ -157,6 +182,7 @@
   width: 100%;
   border: none;
   background: transparent;
+  white-space: nowrap;
 }
 
 .dropdownItem:hover {
@@ -171,4 +197,48 @@
 .danger:hover {
   background: #fef2f2;
   color: #dc2626;
+}
+
+.drawerOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 99;
+}
+
+@media (max-width: 992px) {
+  .mobileMenuBtn {
+    display: flex;
+  }
+
+  .searchBox {
+    width: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .searchBox {
+    order: 3;
+    width: 100%;
+  }
+
+  .userInfo {
+    display: none;
+  }
+
+  .dropdown {
+    right: -10px;
+    width: 210px;
+  }
+
+  .drawerOverlay {
+    display: block;
+  }
 }

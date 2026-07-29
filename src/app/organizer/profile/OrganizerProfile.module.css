@@ -52,6 +52,7 @@
   font-weight: 800;
   color: #2563eb;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 
 .profileContent {
@@ -89,6 +90,7 @@
   color: #0f172a;
   font-size: 0.95rem;
   outline: none;
+  width: 100%;
 }
 
 .inputGroup input:focus,
@@ -109,4 +111,26 @@
   align-items: center;
   gap: 0.5rem;
   margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1.25rem 1rem;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+  }
+  .profileContent {
+    padding: 3.5rem 1.25rem 1.25rem 1.25rem;
+  }
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  .fullWidth {
+    grid-column: span 1;
+  }
+  .saveBtn {
+    width: 100%;
+    justify-content: center;
+  }
 }

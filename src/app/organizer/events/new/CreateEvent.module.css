@@ -27,8 +27,9 @@
 }
 
 .title {
-  font-family: var(--font-yeseva);
+  font-family: var(--font-outfit), sans-serif;
   font-size: 2.2rem;
+  font-weight: 800;
   color: #0f172a;
   margin-top: 0.5rem;
 }
@@ -70,12 +71,13 @@
   font-weight: 700;
   font-size: 0.95rem;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .stepItem.active .stepNumber {
-  background: #4f46e5;
+  background: #2563eb;
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .stepItem.completed .stepNumber {
@@ -110,8 +112,8 @@
 }
 
 .sectionTitle {
-  font-family: var(--font-yeseva);
   font-size: 1.5rem;
+  font-weight: 800;
   color: #0f172a;
   margin-bottom: 0.5rem;
 }
@@ -163,8 +165,8 @@
 .select:focus,
 .textarea:focus {
   background: #ffffff;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
 .textarea {
@@ -189,16 +191,16 @@
 }
 
 .imageUploadBox:hover {
-  border-color: #4f46e5;
-  background: #f0fdf4;
+  border-color: #2563eb;
+  background: #eff6ff;
 }
 
 .uploadIcon {
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  background: #e0e7ff;
-  color: #4f46e5;
+  background: #eff6ff;
+  color: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -255,7 +257,7 @@
   padding: 1rem;
   border-radius: 18px;
   font-weight: 700;
-  color: #4f46e5;
+  color: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -265,8 +267,8 @@
 }
 
 .addTierBtn:hover {
-  background: #e0e7ff;
-  border-color: #4f46e5;
+  background: #eff6ff;
+  border-color: #2563eb;
 }
 
 /* Summary Review Box */
@@ -326,7 +328,7 @@
 }
 
 .btnPrimary {
-  background: #4f46e5;
+  background: #2563eb;
   color: #ffffff;
   border: none;
   padding: 0.85rem 2rem;
@@ -336,16 +338,24 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
   transition: all 0.2s ease;
 }
 
 .btnPrimary:hover {
-  background: #4338ca;
+  background: #1d4ed8;
   transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+
   .formGrid {
     grid-template-columns: 1fr;
   }
@@ -355,12 +365,29 @@
   }
 
   .stepper {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 1rem;
+  }
+
+  .stepLabel {
+    display: none;
   }
 
   .stepDivider {
-    display: none;
+    margin: 0 0.5rem;
+  }
+
+  .actionsRow {
+    flex-direction: column-reverse;
+    gap: 1rem;
+  }
+
+  .actionsRow > div,
+  .btnPrimary,
+  .btnSecondary {
+    width: 100%;
+    justify-content: center;
   }
 }
