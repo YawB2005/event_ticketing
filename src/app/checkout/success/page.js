@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Check, Download, ArrowRight, Ticket, Calendar, MapPin } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './CheckoutSuccess.module.css';
 
 function SuccessContent() {
+  const { showAlert } = useAlert();
   const searchParams = useSearchParams();
 
   const ref = searchParams.get('ref') || 'TK-84920-2026';
@@ -19,7 +21,7 @@ function SuccessContent() {
   const name = searchParams.get('name') || 'Valued Attendee';
 
   const handleDownloadPDF = () => {
-    alert(`Downloading Ticket PDF (${ref})... Saved to your device!`);
+    showAlert(`Downloading Ticket PDF (${ref})... Saved to your device!`, "success", "Download Complete");
   };
 
   return (

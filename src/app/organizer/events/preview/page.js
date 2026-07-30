@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { Calendar, MapPin, Tag, Eye, ArrowLeft, Ticket } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './PreviewEvent.module.css';
 
 export default function PreviewEventPage() {
+  const { showAlert } = useAlert();
   return (
     <div className={styles.page}>
       <div className={styles.previewBanner}>
@@ -74,7 +76,7 @@ export default function PreviewEventPage() {
               <div className={styles.ticketPrice}>GH₵ 200</div>
             </div>
 
-            <button className={styles.buyBtn} onClick={() => alert("This is a preview mode. Ticket purchasing is disabled in preview.")}>
+            <button className={styles.buyBtn} onClick={() => showAlert("This is a preview mode. Ticket purchasing is disabled in preview.", "info", "Preview Mode")}>
               Get Tickets Now
             </button>
           </div>

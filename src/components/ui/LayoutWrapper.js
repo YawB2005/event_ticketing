@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import Navbar from './Navbar/Navbar';
 import Footer from './Footer/Footer';
+import { AlertProvider } from './AlertModal/AlertContext';
 
 export default function LayoutWrapper({ children }) {
   const pathname = usePathname();
@@ -14,10 +15,10 @@ export default function LayoutWrapper({ children }) {
   const hideFooter = isDashboard || pathname.startsWith('/events');
 
   return (
-    <>
+    <AlertProvider>
       {!isDashboard && <Navbar />}
       <main>{children}</main>
       {!hideFooter && <Footer />}
-    </>
+    </AlertProvider>
   );
 }

@@ -3,15 +3,17 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, Bell, Shield, Save } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './AttendeeSettings.module.css';
 
 export default function AttendeeSettingsPage() {
+  const { showAlert } = useAlert();
   const [passwords, setPasswords] = useState({ current: '', next: '', confirm: '' });
   const [notifications, setNotifications] = useState({ email: true, sms: true, promo: false });
 
   const handlePasswordChange = (e) => {
     e.preventDefault();
-    alert("Password updated successfully!");
+    showAlert("Password updated successfully!", "success", "Security Settings");
     setPasswords({ current: '', next: '', confirm: '' });
   };
 

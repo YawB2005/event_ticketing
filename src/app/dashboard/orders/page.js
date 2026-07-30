@@ -2,9 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { ShoppingBag, CreditCard, Download, CheckCircle } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './PurchaseHistory.module.css';
 
 export default function PurchaseHistoryPage() {
+  const { showAlert } = useAlert();
   const orders = [
     {
       id: 'ORD-9901',
@@ -69,7 +71,7 @@ export default function PurchaseHistoryPage() {
                   <span className={styles.statusCompleted}>✓ {order.status}</span>
                 </td>
                 <td>
-                  <button className={styles.receiptBtn} onClick={() => alert(`Downloading receipt for ${order.id}`)}>
+                  <button className={styles.receiptBtn} onClick={() => showAlert(`Downloading receipt for ${order.id}`, "info", "Download Started")}>
                     <Download size={14} style={{ display: 'inline', marginRight: '4px' }} /> PDF
                   </button>
                 </td>

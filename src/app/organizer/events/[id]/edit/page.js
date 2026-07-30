@@ -18,6 +18,7 @@ import {
   CheckCircle,
   Eye
 } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './EditEvent.module.css';
 
 const CATEGORIES = [
@@ -32,6 +33,7 @@ const CATEGORIES = [
 ];
 
 export default function EditEventPage({ params: paramsPromise }) {
+  const { showAlert } = useAlert();
   const params = use(paramsPromise);
   const router = useRouter();
   const eventId = params.id;
@@ -149,7 +151,7 @@ export default function EditEventPage({ params: paramsPromise }) {
       setFormData(prev => ({ ...prev, imageUrl: publicUrl }));
     } catch (err) {
       console.error(err);
-      alert('Error uploading image');
+      showAlert('Error uploading image', 'error', 'Upload Failed');
     }
   };
 
@@ -179,11 +181,11 @@ export default function EditEventPage({ params: paramsPromise }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to update event');
 
-      alert(`Event saved successfully!`);
+      showAlert(`Event saved successfully!`, 'success', 'Saved');
       router.push('/organizer/events');
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      showAlert(err.message, 'error', 'Error Saving');
     } finally {
       setIsSubmitting(false);
     }

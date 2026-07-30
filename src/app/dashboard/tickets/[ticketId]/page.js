@@ -4,9 +4,11 @@ import { use } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Download, Calendar, MapPin, Ticket, User, CheckCircle } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './TicketPass.module.css';
 
 export default function TicketPassPage({ params: paramsPromise }) {
+  const { showAlert } = useAlert();
   const params = use(paramsPromise);
   const ticketId = params.ticketId;
 
@@ -70,7 +72,7 @@ export default function TicketPassPage({ params: paramsPromise }) {
             </div>
           </div>
 
-          <button className={styles.downloadBtn} onClick={() => alert(`Downloading PDF ticket pass for ${ticketData.id}...`)}>
+          <button className={styles.downloadBtn} onClick={() => showAlert(`Downloading PDF ticket pass for ${ticketData.id}...`, "info", "Download Started")}>
             <Download size={18} /> Download PDF Ticket Pass
           </button>
         </div>

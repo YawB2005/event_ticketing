@@ -1,0 +1,121 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modal {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.iconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.success .iconWrapper {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.error .iconWrapper {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.warning .iconWrapper {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.info .iconWrapper {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.title {
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.message {
+  font-family: var(--font-inter), sans-serif;
+  color: #64748b;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+
+.button {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  border-radius: 12px;
+  font-family: var(--font-outfit), sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+}
+
+.success .button {
+  background: #16a34a;
+  color: white;
+}
+.success .button:hover {
+  background: #15803d;
+}
+
+.error .button {
+  background: #dc2626;
+  color: white;
+}
+.error .button:hover {
+  background: #b91c1c;
+}
+
+.warning .button {
+  background: #d97706;
+  color: white;
+}
+.warning .button:hover {
+  background: #b45309;
+}
+
+.info .button {
+  background: #0ea5e9;
+  color: white;
+}
+.info .button:hover {
+  background: #0284c7;
+}

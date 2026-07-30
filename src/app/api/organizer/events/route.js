@@ -22,7 +22,18 @@ export async function GET(request) {
       .order('start_datetime', { ascending: false })
 
     if (error) throw error
-    return jsonOk(data)
+    
+    // Generate secure scan token for each event
+    const crypto = require('crypto')
+    const secret = process.env.SUPABASE_SERVICE_ROLE || 'fallback-secret'
+    
+    const eventsWithTokens = data.map(evt => {
+      const hmac = crypto.createHmac('sha256', secret)
+      hmac.update(evt.id)
+      return { ...evt, scan_token: hmac.digest('hex') }
+    })
+    
+    return jsonOk(eventsWithTokens)
   } catch (err) {
     return jsonError(err.message ?? 'Failed to fetch events', 500)
   }

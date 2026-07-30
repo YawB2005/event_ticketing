@@ -13,9 +13,11 @@ import {
   CheckCircle,
   CreditCard
 } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './OrganizerProfile.module.css';
 
 export default function OrganizerProfilePage() {
+  const { showAlert } = useAlert();
   const [profile, setProfile] = useState({
     companyName: 'Neon Wave Productions',
     email: 'contact@neonwave.com',
@@ -39,7 +41,7 @@ export default function OrganizerProfilePage() {
     setIsSaving(true);
     await new Promise(resolve => setTimeout(resolve, 800));
     setIsSaving(false);
-    alert("Organizer profile details saved successfully!");
+    showAlert("Organizer profile details saved successfully!", 'success', 'Profile Updated');
   };
 
   return (

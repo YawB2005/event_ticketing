@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import styles from './Organizer.module.css';
 import { motion } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
@@ -13,6 +14,7 @@ import {
   CalendarDays,
   DollarSign
 } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -20,6 +22,7 @@ const fadeUp = {
 };
 
 export default function OrganizerDashboard() {
+  const { showAlert } = useAlert();
   const [user, setUser] = useState(null);
   const [summary, setSummary] = useState({ totalTicketsSold: 0, totalRevenue: 0 });
   const [trend, setTrend] = useState([]);
@@ -215,6 +218,25 @@ export default function OrganizerDashboard() {
                     <span className={`${styles.eventPill} ${isLive ? styles.paid : ''}`} style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10, background: isLive ? '#ef4444' : '#10b981', color: '#fff', padding: '0.25rem 0.75rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 600 }}>
                       {evt.status}
                     </span>
+                    {isLive && (
+                      <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem' }}>
+                        <button onClick={() => {
+                          navigator.clipboard.writeText(`${window.location.origin}/scan/${evt.id}?token=${evt.scan_token}`);
+                          showAlert('Gatekeeper Scanning Link Copied! Send this link to your gatekeepers.', 'success', 'Link Copied');
+                        }} className="btn btn-outline" style={{ flex: 1, textAlign: 'center', borderColor: '#cbd5e1', color: '#334155', background: 'white' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                            Copy Gatekeeper Link
+                          </span>
+                        </button>
+                        <Link href={`/organizer/events/${evt.id}/scan`} className="btn btn-primary" style={{ flex: 1, textAlign: 'center' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="7" y="7" width="3" height="3"></rect><rect x="14" y="7" width="3" height="3"></rect><rect x="7" y="14" width="3" height="3"></rect><rect x="14" y="14" width="3" height="3"></rect></svg>
+                            Scan Tickets
+                          </span>
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 );
               })

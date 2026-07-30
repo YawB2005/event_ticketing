@@ -11,9 +11,11 @@ import {
   Clock,
   ArrowUpRight
 } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './Reports.module.css';
 
 export default function OrganizerReportsPage() {
+  const { showAlert } = useAlert();
   const [timeframe, setTimeframe] = useState('This Month');
 
   const financialSummary = [
@@ -99,7 +101,7 @@ export default function OrganizerReportsPage() {
       >
         <div className={styles.sectionHeader}>
           <h2>Monthly Financial Statements</h2>
-          <button className={styles.downloadBtn} onClick={() => alert("Downloading master financial report CSV...")}>
+          <button className={styles.downloadBtn} onClick={() => showAlert("Downloading master financial report CSV...", "info", "Download Started")}>
             <Download size={16} /> Download Master CSV
           </button>
         </div>
@@ -131,7 +133,7 @@ export default function OrganizerReportsPage() {
                     <span className={styles.statusCompleted}>✓ {rep.status}</span>
                   </td>
                   <td>
-                    <button className={styles.downloadBtn} onClick={() => alert(`Downloading statement PDF for ${rep.id}...`)}>
+                    <button className={styles.downloadBtn} onClick={() => showAlert(`Downloading statement PDF for ${rep.id}...`, 'info', 'Download Started')}>
                       <Download size={14} /> PDF
                     </button>
                   </td>

@@ -1,3 +1,5 @@
+import { createAdminClient } from '@/utils/supabase/admin'
+
 const COMPLETED = 'completed'
 
 async function getOrganizerEventIds(supabase, organizerId, eventId) {
@@ -37,8 +39,9 @@ async function getCompletedOrderItems(supabase, eventIds) {
 }
 
 export async function fetchOrganizerSummary(supabase, organizerId, eventId) {
-  const eventIds = await getOrganizerEventIds(supabase, organizerId, eventId)
-  const items = await getCompletedOrderItems(supabase, eventIds)
+  const adminSupabase = createAdminClient();
+  const eventIds = await getOrganizerEventIds(adminSupabase, organizerId, eventId)
+  const items = await getCompletedOrderItems(adminSupabase, eventIds)
 
   const totalSold = items.reduce((sum, item) => sum + item.quantity, 0)
   const totalRevenue = items.reduce(
@@ -56,8 +59,9 @@ export async function fetchOrganizerSummary(supabase, organizerId, eventId) {
 }
 
 export async function fetchSalesByType(supabase, organizerId, eventId) {
-  const eventIds = await getOrganizerEventIds(supabase, organizerId, eventId)
-  const items = await getCompletedOrderItems(supabase, eventIds)
+  const adminSupabase = createAdminClient();
+  const eventIds = await getOrganizerEventIds(adminSupabase, organizerId, eventId)
+  const items = await getCompletedOrderItems(adminSupabase, eventIds)
 
   if (items.length === 0) return []
 
@@ -96,8 +100,9 @@ export async function fetchSalesByType(supabase, organizerId, eventId) {
 }
 
 export async function fetchSalesTrend(supabase, organizerId, eventId, period = 'daily') {
-  const eventIds = await getOrganizerEventIds(supabase, organizerId, eventId)
-  const items = await getCompletedOrderItems(supabase, eventIds)
+  const adminSupabase = createAdminClient();
+  const eventIds = await getOrganizerEventIds(adminSupabase, organizerId, eventId)
+  const items = await getCompletedOrderItems(adminSupabase, eventIds)
 
   const buckets = {}
 
@@ -130,8 +135,9 @@ export async function fetchSalesTrend(supabase, organizerId, eventId, period = '
 }
 
 export async function fetchPurchasers(supabase, organizerId, eventId) {
-  const eventIds = await getOrganizerEventIds(supabase, organizerId, eventId)
-  const items = await getCompletedOrderItems(supabase, eventIds)
+  const adminSupabase = createAdminClient();
+  const eventIds = await getOrganizerEventIds(adminSupabase, organizerId, eventId)
+  const items = await getCompletedOrderItems(adminSupabase, eventIds)
 
   if (items.length === 0) return []
 
@@ -139,8 +145,8 @@ export async function fetchPurchasers(supabase, organizerId, eventId) {
   const ticketTypeIds = [...new Set(items.map((i) => i.ticket_type_id))]
 
   const [{ data: profiles }, { data: ticketTypes }] = await Promise.all([
-    supabase.from('profiles').select('id, full_name').in('id', attendeeIds),
-    supabase.from('ticket_types').select('id, name').in('id', ticketTypeIds),
+    adminSupabase.from('profiles').select('id, full_name').in('id', attendeeIds),
+    adminSupabase.from('ticket_types').select('id, name').in('id', ticketTypeIds),
   ])
 
   const profileMap = Object.fromEntries((profiles ?? []).map((p) => [p.id, p]))

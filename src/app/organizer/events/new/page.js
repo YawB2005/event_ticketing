@@ -18,6 +18,7 @@ import {
   Ticket,
   Clock
 } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './CreateEvent.module.css';
 import { createClient } from '@/utils/supabase/client';
 
@@ -39,6 +40,7 @@ const fadeVariant = {
 };
 
 export default function CreateEventPage() {
+  const { showAlert } = useAlert();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -83,7 +85,7 @@ export default function CreateEventPage() {
 
   const handleRemoveTier = (id) => {
     if (ticketTiers.length === 1) {
-      alert("You must have at least one ticket tier.");
+      showAlert("You must have at least one ticket tier.", "warning");
       return;
     }
     setTicketTiers(prev => prev.filter(tier => tier.id !== id));
@@ -114,13 +116,13 @@ export default function CreateEventPage() {
       handleInputChange('imageUrl', data.publicUrl);
     } catch (error) {
       console.error('Error uploading image: ', error);
-      alert('Error uploading image!');
+      showAlert('Error uploading image!', 'error', 'Upload Failed');
     }
   };
 
   const handlePublish = async (status = "Live") => {
     if (!formData.title || !formData.startDate || !formData.category) {
-      alert("Please fill in all required fields (Title, Category, Start Date).");
+      showAlert("Please fill in all required fields (Title, Category, Start Date).", "warning", "Incomplete Form");
       return;
     }
 
@@ -144,11 +146,11 @@ export default function CreateEventPage() {
         throw new Error(result.error || 'Failed to create event');
       }
 
-      alert(`Event "${formData.title}" has been successfully saved as ${status}!`);
+      showAlert(`Event "${formData.title}" has been successfully saved as ${status}!`, "success", "Event Created");
       router.push('/organizer/events');
     } catch (err) {
       console.error("Publish error", err);
-      alert(err.message);
+      showAlert(err.message, "error", "Creation Failed");
     } finally {
       setIsSubmitting(false);
     }
@@ -336,7 +338,7 @@ export default function CreateEventPage() {
                   className={styles.btnPrimary}
                   onClick={() => {
                     if (!formData.title) {
-                      alert("Please enter an event title before continuing.");
+                      showAlert("Please enter an event title before continuing.", "warning");
                       return;
                     }
                     setCurrentStep(2);
