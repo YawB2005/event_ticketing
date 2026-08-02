@@ -1,11 +1,7 @@
-/* ==========================================================================
-   EVENTIX ORGANIZER EVENTS LIST STYLES
-   ========================================================================== */
-
 .page {
   max-width: 1240px;
   margin: 0 auto;
-  color: #1a1a1a;
+  color: #fcf8f2;
 }
 
 .header {
@@ -19,13 +15,13 @@
   font-family: var(--font-outfit), sans-serif;
   font-size: 2.25rem;
   font-weight: 800;
-  color: var(--festino-brown, #2c1206);
+  color: #ffffff;
   margin: 0 0 0.4rem 0;
   letter-spacing: -0.02em;
 }
 
 .header p {
-  color: #64748b;
+  color: rgba(252, 248, 242, 0.7);
   font-size: 1rem;
   margin: 0;
 }
@@ -36,20 +32,20 @@
   border: none;
   padding: 0.85rem 1.75rem;
   border-radius: 50px;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.95rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   text-decoration: none;
-  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.35);
+  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.4);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .createBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(232, 93, 4, 0.5);
+  box-shadow: 0 10px 24px rgba(232, 93, 4, 0.55);
 }
 
 .filterRow {
@@ -57,15 +53,25 @@
   gap: 0.75rem;
   margin-bottom: 2.25rem;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 0.5rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.filterRow::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .filterPill {
   padding: 0.7rem 1.4rem;
   border-radius: 50px;
-  background: #ffffff;
-  border: 1.5px solid rgba(44, 18, 6, 0.08);
-  color: #64748b;
+  background: rgba(44, 18, 6, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(252, 248, 242, 0.75);
   font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
@@ -74,16 +80,16 @@
 }
 
 .filterPill:hover {
-  background: #fffcf9;
-  color: #ff6b2c;
-  border-color: rgba(255, 107, 44, 0.3);
+  background: rgba(255, 107, 44, 0.15);
+  color: #ffffff;
+  border-color: rgba(255, 107, 44, 0.4);
 }
 
 .active {
   background: linear-gradient(135deg, #ff6b2c 0%, #e85d04 100%) !important;
   color: #ffffff !important;
   border: none !important;
-  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.38) !important;
+  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.45) !important;
 }
 
 .eventGrid {
@@ -93,18 +99,18 @@
 }
 
 .eventCard {
-  background: #ffffff;
-  border: 1.5px solid rgba(44, 18, 6, 0.08);
+  background: rgba(44, 18, 6, 0.65);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 107, 44, 0.25);
   border-radius: 24px;
   padding: 1.75rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  transition: transform 0.25s ease, border-color 0.25s ease;
 }
 
 .eventCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 15px 35px rgba(44, 18, 6, 0.1);
-  border-color: rgba(255, 107, 44, 0.3);
+  border-color: rgba(255, 107, 44, 0.45);
 }
 
 .eventTitleRow {
@@ -118,37 +124,7 @@
   font-family: var(--font-outfit), sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--festino-brown, #2c1206);
-}
-
-.statusLive {
-  background: #16a34a;
-  color: white;
-  padding: 0.3rem 0.75rem;
-  border-radius: 50px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.statusDraft {
-  background: #eab308;
-  color: white;
-  padding: 0.3rem 0.75rem;
-  border-radius: 50px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.statusEnded {
-  background: #64748b;
-  color: white;
-  padding: 0.3rem 0.75rem;
-  border-radius: 50px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
+  color: #ffffff;
 }
 
 .actions {
@@ -159,9 +135,9 @@
 
 .actionBtn {
   flex: 1;
-  background: #ffffff;
-  border: 1.5px solid rgba(44, 18, 6, 0.12);
-  color: var(--festino-brown, #2c1206);
+  background: rgba(12, 5, 2, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
   padding: 0.65rem;
   border-radius: 50px;
   font-size: 0.85rem;
@@ -177,19 +153,19 @@
 .actionBtn:hover {
   border-color: #ff6b2c;
   color: #ff6b2c;
-  background: #fffcf9;
+  background: rgba(255, 107, 44, 0.15);
 }
 
 .primary {
   background: linear-gradient(135deg, #ff6b2c 0%, #e85d04 100%);
   color: white;
   border: none;
-  box-shadow: 0 4px 14px rgba(232, 93, 4, 0.3);
+  box-shadow: 0 4px 14px rgba(232, 93, 4, 0.35);
 }
 
 .primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(232, 93, 4, 0.45);
+  box-shadow: 0 8px 20px rgba(232, 93, 4, 0.5);
 }
 
 @media (max-width: 768px) {

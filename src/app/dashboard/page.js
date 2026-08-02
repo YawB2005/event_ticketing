@@ -66,24 +66,13 @@ export default function AttendeeDashboardPage() {
         <motion.div 
           initial={{ opacity: 0, y: -10 }} 
           animate={{ opacity: 1, y: 0 }}
-          style={{ 
-            backgroundColor: '#fffcf0', 
-            border: '1px solid #fce786', 
-            color: '#8a4b08', 
-            padding: '1rem 1.5rem', 
-            borderRadius: '16px', 
-            marginBottom: '2rem', 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center',
-            boxShadow: '0 4px 14px rgba(0,0,0,0.03)'
-          }}
+          className={styles.alertCard}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <UserCheck size={20} style={{ color: '#ff6b2c' }} />
+          <div className={styles.alertTextGroup}>
+            <UserCheck size={22} className={styles.alertIcon} />
             <span><strong>Complete Profile:</strong> Add your phone number to receive instant SMS ticket updates.</span>
           </div>
-          <Link href="/dashboard/profile" style={{ background: '#ff6b2c', color: '#fff', padding: '8px 16px', borderRadius: '50px', fontWeight: 600, fontSize: '0.88rem', textDecoration: 'none' }}>
+          <Link href="/dashboard/profile" className={styles.alertBtn}>
             Add Number
           </Link>
         </motion.div>
@@ -161,8 +150,7 @@ export default function AttendeeDashboardPage() {
         <div className={styles.sectionHeader}>
           <h2>Your Recent Digital Passes</h2>
           <Link href="/dashboard/tickets" className={styles.viewAllLink}>
-            <span>View All My Tickets</span>
-            <ArrowRight size={16} />
+            View All Tickets
           </Link>
         </div>
 
@@ -172,8 +160,8 @@ export default function AttendeeDashboardPage() {
               <LoadingSpinner text="Loading your tickets..." />
             </div>
           ) : recentTickets.length === 0 ? (
-            <div style={{ gridColumn: '1 / -1', background: '#ffffff', border: '1.5px solid rgba(44, 18, 6, 0.08)', borderRadius: '24px', padding: '3rem 2rem', textAlign: 'center', color: '#64748b' }}>
-              <p style={{ fontSize: '1.1rem', marginBottom: '1.25rem' }}>You don't have any active tickets yet.</p>
+            <div style={{ gridColumn: '1 / -1', background: 'rgba(44, 18, 6, 0.65)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255, 107, 44, 0.25)', borderRadius: '24px', padding: '3rem 2rem', textAlign: 'center', color: 'rgba(252, 248, 242, 0.7)', boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)' }}>
+              <p style={{ fontSize: '1.1rem', marginBottom: '1.25rem', color: '#ffffff' }}>You don't have any active tickets yet.</p>
               <Link href="/events" className={styles.heroBtn}>
                 <span>Browse Events Now</span>
                 <ArrowRight size={18} />

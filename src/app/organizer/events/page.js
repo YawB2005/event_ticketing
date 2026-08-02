@@ -148,8 +148,8 @@ export default function EventsPage() {
             <LoadingSpinner text="Loading your events..." />
           </div>
         ) : filteredEvents.length === 0 ? (
-          <div style={{ gridColumn: '1 / -1', background: '#ffffff', border: '1.5px solid rgba(44, 18, 6, 0.08)', borderRadius: '24px', padding: '3.5rem 2rem', textAlign: 'center', color: '#64748b' }}>
-            <p style={{ fontSize: '1.1rem', marginBottom: '1.25rem' }}>No events found for "{activeFilter}".</p>
+          <div style={{ gridColumn: '1 / -1', background: 'rgba(44, 18, 6, 0.65)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255, 107, 44, 0.25)', borderRadius: '24px', padding: '3.5rem 2rem', textAlign: 'center', color: 'rgba(252, 248, 242, 0.7)', boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)' }}>
+            <p style={{ fontSize: '1.1rem', marginBottom: '1.25rem', color: '#ffffff' }}>No events found for "{activeFilter}".</p>
             <Link href="/organizer/events/new" className={styles.createBtn} style={{ display: 'inline-flex' }}>
               <Plus size={20} />
               <span>Create Your First Event</span>

@@ -1,8 +1,8 @@
 .page {
-  padding: 2.5rem;
+  padding: 1.5rem 0;
   max-width: 1300px;
   margin: 0 auto;
-  color: #0f172a;
+  color: #fcf8f2;
 }
 
 .header {
@@ -16,36 +16,48 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: #64748b;
+  color: rgba(252, 248, 242, 0.7);
   text-decoration: none;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 0.75rem;
+  transition: color 0.2s ease;
+}
+
+.backBtn:hover {
+  color: #ff6b2c;
 }
 
 .header h1 {
+  font-family: var(--font-outfit), sans-serif;
   font-size: 2.2rem;
   font-weight: 800;
   margin: 0 0 0.5rem 0;
-  color: #0f172a;
+  color: #ffffff;
 }
 
 .subText {
-  color: #64748b;
+  color: rgba(252, 248, 242, 0.7);
   font-size: 1rem;
 }
 
 .exportBtn {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  color: #2563eb;
+  background: linear-gradient(135deg, #ff6b2c 0%, #e85d04 100%);
+  border: none;
+  color: #ffffff;
   padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  font-weight: 600;
+  border-radius: 50px;
+  font-weight: 800;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.exportBtn:hover {
+  transform: translateY(-2px);
 }
 
 .statsGrid {
@@ -56,19 +68,25 @@
 }
 
 .statCard {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 18px;
+  background: rgba(44, 18, 6, 0.65);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 107, 44, 0.25);
+  border-radius: 24px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.25s ease;
+}
+
+.statCard:hover {
+  border-color: rgba(255, 107, 44, 0.45);
 }
 
 .iconWrapper {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -77,15 +95,15 @@
 
 .label {
   font-size: 0.875rem;
-  color: #64748b;
-  font-weight: 500;
+  color: rgba(252, 248, 242, 0.65);
+  font-weight: 600;
   margin-bottom: 0.25rem;
 }
 
 .value {
   font-size: 1.75rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #ffffff;
   margin-bottom: 0.5rem;
 }
 
@@ -98,7 +116,7 @@
 }
 
 .positive {
-  color: #059669;
+  color: #34d399;
 }
 
 .sectionGrid {
@@ -109,11 +127,12 @@
 }
 
 .chartCard {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
+  background: rgba(44, 18, 6, 0.65);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 107, 44, 0.25);
+  border-radius: 24px;
   padding: 1.75rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
 }
 
 .cardHeader {
@@ -124,9 +143,10 @@
 }
 
 .cardHeader h3 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #0f172a;
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
   margin: 0;
 }
 
@@ -136,7 +156,7 @@
   justify-content: space-between;
   height: 220px;
   padding-top: 1rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   gap: 0.5rem;
 }
 
@@ -151,14 +171,16 @@
 
 .barFill {
   width: 70%;
-  border-radius: 6px 6px 0 0;
-  background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, #ff6b2c 0%, #e85d04 100%);
+  box-shadow: 0 4px 15px rgba(232, 93, 4, 0.35);
 }
 
 .barLabel {
-  font-size: 0.75rem;
-  color: #64748b;
+  font-size: 0.78rem;
+  color: rgba(252, 248, 242, 0.6);
   margin-top: 0.75rem;
+  font-weight: 600;
 }
 
 .tierProgressList {
@@ -181,22 +203,46 @@
 }
 
 .tierName {
-  color: #0f172a;
+  color: #ffffff;
 }
 
 .tierSales {
-  color: #2563eb;
+  color: #ffb703;
+  font-weight: 700;
 }
 
 .track {
-  height: 8px;
-  background: #f1f5f9;
+  height: 10px;
+  background: rgba(12, 5, 2, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 9999px;
   overflow: hidden;
 }
 
 .fill {
   height: 100%;
-  background: linear-gradient(90deg, #2563eb, #4f46e5);
+  background: linear-gradient(90deg, #ff6b2c, #ffb703);
   border-radius: 9999px;
+}
+
+@media (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sectionGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
 }

@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
 import styles from './ResetPassword.module.css';
+import { ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 }
 };
 
@@ -25,44 +26,58 @@ export default function ResetPassword() {
       setStatus({ type: 'error', message: 'Passwords do not match.' });
       return;
     }
+    if (password.length < 6) {
+      setStatus({ type: 'error', message: 'Password must be at least 6 characters long.' });
+      return;
+    }
 
     setLoading(true);
     setStatus({ type: '', message: '' });
     
-    // Supabase updateUser will automatically use the session obtained from the callback
-    const { error } = await supabase.auth.updateUser({ password });
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
 
-    if (error) {
-      setStatus({ type: 'error', message: error.message });
+      if (error) {
+        setStatus({ type: 'error', message: error.message });
+        setLoading(false);
+      } else {
+        setStatus({ type: 'success', message: 'Password updated successfully! Redirecting to login...' });
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      }
+    } catch (err) {
+      setStatus({ type: 'error', message: err.message || 'Failed to update password.' });
       setLoading(false);
-    } else {
-      setStatus({ type: 'success', message: 'Password updated successfully! Redirecting...' });
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
     }
   };
 
   return (
     <div className={styles.authContainer}>
       
-      {/* LEFT SIDE - MAGIC */}
+      {/* LEFT SIDE - MAGIC SHOWCASE */}
       <div className={styles.magicSide}>
-        <div className={styles.wavyBg}></div>
-        
-        <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.8, scale: 1 }} transition={{ delay: 0.2 }} className={styles.star} style={{ top: '15%', left: '20%' }}>✦</motion.div>
-        <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.5, scale: 0.8 }} transition={{ delay: 0.4 }} className={styles.star} style={{ top: '25%', right: '15%', color: '#000' }}>✦</motion.div>
-        <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.6, scale: 1.2 }} transition={{ delay: 0.6 }} className={styles.star} style={{ bottom: '20%', left: '10%' }}>✧</motion.div>
+        <motion.div 
+          className={styles.star} 
+          animate={{ scale: [1, 1.3, 1], opacity: [0.6, 1, 0.6] }} 
+          transition={{ duration: 3, repeat: Infinity }} 
+          style={{ top: '15%', left: '20%' }}
+        >
+          ✦
+        </motion.div>
 
         <motion.div 
           className={styles.magicShape}
-          initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: 1, type: "spring", bounce: 0.4 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
         >
           <h1 className={styles.magicText}>
-            Unlock <br/> the magic
+            Set Your New <br/> Secure Key
           </h1>
+          <p style={{ color: 'rgba(252, 248, 242, 0.7)', marginTop: '1.5rem', maxWidth: '380px', margin: '1.5rem auto 0', fontSize: '1.05rem' }}>
+            Choose a strong password to protect your account and ticket pass purchases.
+          </p>
         </motion.div>
       </div>
 
@@ -73,7 +88,7 @@ export default function ResetPassword() {
           initial="hidden" animate="visible"
           variants={{
             hidden: { opacity: 0 },
-            visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.3 } }
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
           }}
         >
           <motion.h2 variants={fadeUp} className={styles.title}>Reset Password</motion.h2>
@@ -84,16 +99,21 @@ export default function ResetPassword() {
               <motion.div 
                 variants={fadeUp} 
                 style={{ 
-                  color: status.type === 'error' ? '#ff4d4d' : '#10b981', 
-                  background: status.type === 'error' ? 'rgba(255, 77, 77, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                  padding: '1rem',
-                  borderRadius: '8px',
+                  color: status.type === 'error' ? '#fca5a5' : '#6ee7b7', 
+                  background: status.type === 'error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                  border: status.type === 'error' ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(16, 185, 129, 0.3)',
+                  padding: '1rem 1.25rem',
+                  borderRadius: '16px',
                   marginBottom: '1.5rem', 
-                  fontSize: '0.9rem',
-                  fontWeight: 500
+                  fontSize: '0.92rem',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
                 }}
               >
-                {status.message}
+                {status.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
+                <span>{status.message}</span>
               </motion.div>
             )}
 
@@ -112,7 +132,7 @@ export default function ResetPassword() {
             </motion.div>
 
             <motion.div variants={fadeUp} className={styles.formGroup}>
-              <label htmlFor="confirmPassword">Confirm Password</label>
+              <label htmlFor="confirmPassword">Confirm New Password</label>
               <input 
                 type="password" 
                 id="confirmPassword" 
@@ -126,7 +146,7 @@ export default function ResetPassword() {
             </motion.div>
 
             <motion.button variants={fadeUp} type="submit" className={styles.submitBtn} disabled={loading || status.type === 'success'}>
-              {loading ? 'Updating...' : 'Update Password'}
+              {loading ? 'Updating Password...' : 'Update Password'}
             </motion.button>
           </form>
         </motion.div>

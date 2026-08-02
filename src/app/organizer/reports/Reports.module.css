@@ -193,6 +193,15 @@
   .dateFilter {
     width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .dateFilter::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
   
   .filterBtn {
@@ -209,5 +218,14 @@
 
   .tableContainer {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .tableContainer::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
 }

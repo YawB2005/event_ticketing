@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, Suspense } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
-import { Check, X, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Check, X, AlertTriangle, RefreshCw, ShieldCheck, QrCode } from 'lucide-react';
 import styles from '@/app/organizer/events/[id]/scan/Scanner.module.css';
 import LoadingSpinner from '@/components/ui/LoadingSpinner/LoadingSpinner';
 
@@ -58,7 +58,7 @@ function TicketScannerInner() {
   }
 
   function onScanFailure(error) {
-    // Ignore frequent scan failures
+    // Ignore frequent scan frame noise
   }
 
   async function verifyTicket(hash) {
@@ -90,7 +90,7 @@ function TicketScannerInner() {
 
   const handleManualSubmit = (e) => {
     e.preventDefault();
-    if (isProcessingRef.current) return;
+    if (isProcessingRef.current || !manualCode) return;
     isProcessingRef.current = true;
     verifyTicket(manualCode);
   };
@@ -110,9 +110,13 @@ function TicketScannerInner() {
   if (!token) {
     return (
       <div className={styles.page}>
-        <div className={styles.header}>
-          <h1>Unauthorized</h1>
-          <p className={styles.subText} style={{color: 'red'}}>Missing or invalid scanner token. Please request a valid scanning link from the event organizer.</p>
+        <div className={styles.scannerWrapper}>
+          <div className={styles.header}>
+            <h1 style={{ color: '#ef4444' }}>Unauthorized Gatekeeper Session</h1>
+            <p className={styles.subText} style={{ color: '#fca5a5' }}>
+              Missing or invalid scanner security token. Please request a valid gate scanning link from the event organizer dashboard.
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -120,75 +124,81 @@ function TicketScannerInner() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.header}>
-        <h1>Scan Tickets (Gatekeeper)</h1>
-        <p className={styles.subText}>Point the camera at the attendee's QR code pass.</p>
-      </div>
+      <div className={styles.scannerWrapper}>
+        <div className={styles.header}>
+          <h1>Gatekeeper Ticket Validator</h1>
+          <p className={styles.subText}>Point the camera at attendee's QR code pass for instant entry validation.</p>
+        </div>
 
-      <div style={{ display: (loading || scanResult) ? 'none' : 'block' }}>
-        <div className={styles.scannerContainer}>
-          <div id="qr-reader" className={styles.cameraViewport}></div>
-          
-          <div style={{ textAlign: 'center', margin: '2rem 0 1rem', color: '#64748b' }}>
-            OR
+        <div style={{ display: (loading || scanResult) ? 'none' : 'block' }}>
+          <div className={styles.scannerContainer}>
+            <div id="qr-reader" className={styles.cameraViewport}></div>
+            
+            <div style={{ textAlign: 'center', margin: '2rem 0 1rem', color: 'rgba(252, 248, 242, 0.5)', fontWeight: 600 }}>
+              — OR ENTER CODE MANUALLY —
+            </div>
+            
+            <form onSubmit={handleManualSubmit} className={styles.manualEntry}>
+              <input 
+                type="text" 
+                placeholder="Paste or type Ticket Verification Code / Hash..." 
+                value={manualCode}
+                onChange={(e) => setManualCode(e.target.value)}
+                className={styles.manualInput}
+              />
+              <button type="submit" className={styles.verifyBtn} disabled={!manualCode}>
+                Verify Code
+              </button>
+            </form>
           </div>
-          
-          <form onSubmit={handleManualSubmit} className={styles.manualEntry}>
-            <input 
-              type="text" 
-              placeholder="Enter Ticket Hash manually..." 
-              value={manualCode}
-              onChange={(e) => setManualCode(e.target.value)}
-              className={styles.manualInput}
-            />
-            <button type="submit" className="btn btn-outline" disabled={!manualCode}>
-              Verify Code
+        </div>
+
+        {loading && (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem 0' }}>
+            <LoadingSpinner text="Authenticating Gate Pass..." />
+          </div>
+        )}
+        
+        {scanResult && !loading && (
+          <div className={`${styles.resultCard} ${
+            scanResult.status === 'valid' ? styles.resultSuccess : 
+            scanResult.status === 'already_scanned' ? styles.resultWarning : 
+            styles.resultError
+          }`}>
+            <div className={styles.resultIcon}>
+              {scanResult.status === 'valid' ? <Check size={44} /> : 
+               scanResult.status === 'already_scanned' ? <AlertTriangle size={44} /> : 
+               <X size={44} />}
+            </div>
+            
+            <h2 className={styles.resultTitle}>{scanResult.message}</h2>
+            
+            {scanResult.attendee && (
+              <p className={styles.resultDetails}>{scanResult.attendee} • {scanResult.ticketType}</p>
+            )}
+            
+            {scanResult.details && (
+              <p className={styles.resultExtra}>{scanResult.details}</p>
+            )}
+
+            <button onClick={resetScanner} className={styles.scanAgainBtn}>
+              <RefreshCw size={18} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }}/>
+              Scan Next Ticket
             </button>
-          </form>
-        </div>
-      </div>
-
-      {loading && (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
-          <LoadingSpinner text="Verifying Ticket..." />
-        </div>
-      )}
-      
-      {scanResult && !loading && (
-        <div className={`${styles.resultCard} ${
-          scanResult.status === 'valid' ? styles.resultSuccess : 
-          scanResult.status === 'already_scanned' ? styles.resultWarning : 
-          styles.resultError
-        }`}>
-          <div className={styles.resultIcon}>
-            {scanResult.status === 'valid' ? <Check size={40} /> : 
-             scanResult.status === 'already_scanned' ? <AlertTriangle size={40} /> : 
-             <X size={40} />}
           </div>
-          
-          <h2 className={styles.resultTitle}>{scanResult.message}</h2>
-          
-          {scanResult.attendee && (
-            <p className={styles.resultDetails}>{scanResult.attendee} • {scanResult.ticketType}</p>
-          )}
-          
-          {scanResult.details && (
-            <p className={styles.resultExtra}>{scanResult.details}</p>
-          )}
-
-          <button onClick={resetScanner} className={styles.scanAgainBtn}>
-            <RefreshCw size={18} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }}/>
-            Scan Next Ticket
-          </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
 
 export default function TicketScannerPage() {
   return (
-    <Suspense fallback={<LoadingSpinner text="Loading Scanner..." />}>
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', background: '#0c0502', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <LoadingSpinner text="Loading Scanner..." />
+      </div>
+    }>
       <TicketScannerInner />
     </Suspense>
   );

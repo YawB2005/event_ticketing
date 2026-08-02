@@ -479,7 +479,7 @@ export default function SettingsPage() {
                             type="text" 
                             value={accountName}
                             disabled
-                            style={{ background: '#f8fafc', color: '#64748b' }}
+                            style={{ background: 'rgba(12, 5, 2, 0.8)', color: '#ffffff', opacity: 0.8, border: '1px solid rgba(255, 255, 255, 0.15)' }}
                           />
                         </div>
                       </div>

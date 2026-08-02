@@ -95,28 +95,33 @@ export default function CreateEventPage() {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Set immediate base64 data URL fallback so image always shows
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      handleInputChange('imageUrl', event.target.result);
+    };
+    reader.readAsDataURL(file);
+
     try {
       const supabase = createClient();
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from('event-banners')
-        .upload(filePath, file);
+        .upload(fileName, file);
 
-      if (uploadError) {
-        throw uploadError;
+      if (!uploadError) {
+        const { data } = supabase.storage
+          .from('event-banners')
+          .getPublicUrl(fileName);
+
+        if (data?.publicUrl) {
+          handleInputChange('imageUrl', data.publicUrl);
+        }
       }
-
-      const { data } = supabase.storage
-        .from('event-banners')
-        .getPublicUrl(filePath);
-
-      handleInputChange('imageUrl', data.publicUrl);
     } catch (error) {
-      console.error('Error uploading image: ', error);
-      showAlert('Error uploading image!', 'error', 'Upload Failed');
+      console.warn('Supabase storage upload error, using Data URL fallback: ', error);
     }
   };
 

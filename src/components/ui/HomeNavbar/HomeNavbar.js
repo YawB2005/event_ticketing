@@ -1,10 +1,10 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Search, MapPin, ChevronDown, UserCircle } from 'lucide-react';
+import { Search, MapPin, ChevronDown, UserCircle, LogOut } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
-import { useEffect } from 'react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './HomeNavbar.module.css';
 
 export default function HomeNavbar() {
@@ -12,6 +12,7 @@ export default function HomeNavbar() {
   const [search, setSearch] = useState('');
   const [location, setLocation] = useState('');
   const [user, setUser] = useState(null);
+  const { showConfirm } = useAlert();
 
   useEffect(() => {
     const supabase = createClient();
@@ -32,6 +33,24 @@ export default function HomeNavbar() {
     };
   }, []);
 
+  const handleLogoutClick = (e) => {
+    e.preventDefault();
+    showConfirm({
+      title: "Log Out of Eventix",
+      message: "Are you sure you want to log out of your account?",
+      confirmText: "Yes, Log Out",
+      cancelText: "Cancel",
+      type: "warning",
+      onConfirm: async () => {
+        const supabase = createClient();
+        await supabase.auth.signOut();
+        setUser(null);
+        router.push('/login');
+        router.refresh();
+      }
+    });
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
     let query = search;
@@ -43,10 +62,12 @@ export default function HomeNavbar() {
     }
   };
 
+  const dashboardPath = user?.user_metadata?.role === 'organizer' ? '/organizer' : '/dashboard';
+  const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Dashboard';
+
   return (
     <nav className={styles.navbar}>
       <Link href="/" className={styles.brand}>
-        {/* Placeholder for Eventbrite-style logo */}
         Eventix
       </Link>
 
@@ -78,14 +99,18 @@ export default function HomeNavbar() {
       </form>
 
       <div className={styles.navLinks}>
-        <Link href="/create" className={styles.navLink}>Create Events</Link>
-        <div className={styles.navLink} style={{ cursor: 'pointer' }}>
-          Help Center <ChevronDown size={14} style={{ marginTop: '2px' }} />
-        </div>
+        <Link href="/organizer/events/new" className={styles.navLink}>Create Event</Link>
         {user ? (
-          <Link href={user.user_metadata?.role === 'organizer' ? '/organizer' : '/dashboard'} className={styles.navLink} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <UserCircle size={20} /> Dashboard
-          </Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Link href={dashboardPath} className={styles.userBadge}>
+              <UserCircle size={18} />
+              <span>{userName}</span>
+            </Link>
+            <button onClick={handleLogoutClick} className={styles.logoutBtn} title="Log Out">
+              <LogOut size={16} />
+              <span>Log Out</span>
+            </button>
+          </div>
         ) : (
           <Link href="/login" className={styles.navLink}>Sign in</Link>
         )}

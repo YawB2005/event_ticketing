@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Calendar, MapPin } from 'lucide-react';
 import styles from './EventSlideshow.module.css';
 
-export default function EventSlideshow({ events }) {
+export default function EventSlideshow({ events, onEventClick }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const slides = useMemo(() => {
@@ -47,24 +47,30 @@ export default function EventSlideshow({ events }) {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img 
-            src={currentSlide.image || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop"} 
+            src={currentSlide.image || "https://images.unsplash.com/photo-1540039155732-d674d6e120a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"} 
             alt={currentSlide.title} 
             className={styles.slideImage} 
           />
           <div className={styles.slideContent}>
-            <span className={styles.categoryBadge}>{currentSlide.category || 'Featured'}</span>
+            <span className={styles.categoryBadge}>{currentSlide.category || 'Featured Event'}</span>
             <h2 className={styles.slideTitle}>{currentSlide.title}</h2>
             <div className={styles.slideMeta}>
               <div className={styles.metaItem}>
-                <Calendar size={18} /> {currentSlide.date}
+                <Calendar size={18} color="#ff6b2c" /> {currentSlide.date}
               </div>
               <div className={styles.metaItem}>
-                <MapPin size={18} /> {currentSlide.location}
+                <MapPin size={18} color="#ff6b2c" /> {currentSlide.location}
               </div>
             </div>
-            <Link href={`/events/${currentSlide.id}`} className="btn btn-primary" style={{ padding: '0.8rem 2rem', fontSize: '1rem' }}>
-              View Event
-            </Link>
+            {onEventClick ? (
+              <button onClick={() => onEventClick(currentSlide)} className={styles.viewBtn}>
+                View Event
+              </button>
+            ) : (
+              <Link href={`/events/${currentSlide.id}`} className={styles.viewBtn}>
+                View Event
+              </Link>
+            )}
           </div>
         </motion.div>
       </AnimatePresence>

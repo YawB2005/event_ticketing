@@ -77,7 +77,7 @@ export default function AttendeeProfilePage() {
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1>My Personal Profile</h1>
+        <h1>Personal Profile</h1>
         <p className={styles.subText}>Manage your contact info used for electronic ticket delivery and SMS order confirmations.</p>
       </div>
 
@@ -133,8 +133,8 @@ export default function AttendeeProfilePage() {
                 type="email" 
                 value={profile.email} 
                 disabled
-                style={{ opacity: 0.65, cursor: 'not-allowed', background: '#f8fafc' }}
-                title="Email cannot be changed directly"
+                style={{ opacity: 0.7, cursor: 'not-allowed', background: 'rgba(12, 5, 2, 0.8)', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#ffffff' }}
+                title="Email address is associated with your account login and cannot be edited"
               />
             </div>
 

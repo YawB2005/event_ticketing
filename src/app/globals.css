@@ -69,6 +69,19 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
+/* GLOBAL SCROLLBAR HIDING WHILE RETAINING TOUCH SWIPING */
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+* {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -163,4 +176,3 @@ a {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-

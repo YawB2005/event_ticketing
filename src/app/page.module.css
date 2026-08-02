@@ -832,42 +832,110 @@
 
 @media (max-width: 640px) {
   .hero {
-    padding: 90px 1rem 40px 1rem;
+    padding: 115px 1.25rem 50px 1.25rem;
     min-height: auto;
   }
 
   .heroTitle {
-    font-size: 2.2rem;
-    line-height: 1.15;
+    font-size: 2.1rem;
+    line-height: 1.18;
+    margin-bottom: 1rem;
   }
 
   .heroSubtitle {
-    font-size: 1rem;
-    margin-bottom: 1.75rem;
-  }
-
-  .heroStats {
-    gap: 0.75rem;
-    flex-direction: column;
-    align-items: flex-start;
+    font-size: 0.95rem;
+    margin-bottom: 2.25rem;
+    line-height: 1.6;
+    padding: 0 0.25rem;
   }
 
   .searchContainer {
-    border-radius: 20px;
-    padding: 14px;
-    gap: 10px;
+    border-radius: 0;
+    padding: 0;
+    gap: 14px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    margin-bottom: 2.5rem;
+    width: 100%;
+  }
+
+  .searchSection {
+    background: rgba(44, 18, 6, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 107, 44, 0.3);
+    border-radius: 18px;
+    padding: 14px 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  .searchDivider {
+    display: none;
+  }
+
+  .searchInput {
+    font-size: 16px !important; /* Prevents iOS auto-zoom */
+    color: #ffffff;
+  }
+
+  .searchBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 15px;
+    border-radius: 50px;
+    font-size: 1.02rem;
+    font-weight: 800;
+    margin-top: 6px;
+    box-shadow: 0 8px 24px rgba(232, 93, 4, 0.45);
+  }
+
+  .searchBtnArrow {
+    display: none !important;
+  }
+
+  .heroStats {
+    gap: 0.85rem;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 2.75rem;
+    padding: 0 0.5rem;
+  }
+
+  .statItem {
+    font-size: 0.88rem;
+    justify-content: center;
   }
 
   .section {
-    padding: 4rem 1rem;
+    padding: 3.5rem 1rem;
   }
 
   .sectionHeader {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
   }
 
   .sectionTitle {
-    font-size: 2rem;
+    font-size: 1.85rem;
+  }
+
+  .categoryTabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .categoryTabs::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
 
   .eventGrid {
@@ -876,7 +944,7 @@
   }
 
   .eventCard {
-    border-radius: 18px;
+    border-radius: 20px;
   }
 
   .cardBody {
@@ -884,7 +952,7 @@
   }
 
   .cardTitle {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
 
   .stepsGrid {
@@ -893,27 +961,29 @@
   }
 
   .stepCard {
-    padding: 1.5rem 1.25rem;
-    border-radius: 16px;
+    padding: 1.75rem 1.25rem;
+    border-radius: 20px;
   }
 
   .editorialCollage {
-    height: 300px;
+    height: 320px;
   }
 
   .collageImg1 {
-    width: 80%;
+    width: 82%;
     height: 220px;
+    border-radius: 20px;
   }
 
   .collageImg2 {
-    width: 70%;
+    width: 72%;
     height: 190px;
+    border-radius: 20px;
   }
 
   .collageBadge {
     padding: 12px 18px;
-    border-radius: 16px;
+    border-radius: 18px;
   }
 
   .collageBadge span {
@@ -932,5 +1002,6 @@
   .btnPrimary, .btnSecondary {
     width: 100%;
     justify-content: center;
+    padding: 14px 24px;
   }
 }

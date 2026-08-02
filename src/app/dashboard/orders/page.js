@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { ShoppingBag, CreditCard, Download, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, CreditCard, Download, CheckCircle2, Ticket } from 'lucide-react';
 import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './PurchaseHistory.module.css';
 
@@ -42,7 +42,7 @@ export default function PurchaseHistoryPage() {
     <div className={styles.page}>
       <div className={styles.header}>
         <h1>Purchase & Order History</h1>
-        <p className={styles.subText}>View receipts, transaction references, and payment methods for all registered tickets.</p>
+        <p className={styles.subText}>View receipts, transaction references, and payment details for all registered passes.</p>
       </div>
 
       <motion.div 
@@ -69,11 +69,11 @@ export default function PurchaseHistoryPage() {
               {orders.map(order => (
                 <tr key={order.id}>
                   <td className={styles.orderId}>{order.id}</td>
-                  <td style={{ fontWeight: 700, color: '#2c1206' }}>{order.event}</td>
-                  <td style={{ color: '#64748b' }}>{order.date}</td>
+                  <td style={{ fontWeight: 700, color: '#ffffff' }}>{order.event}</td>
+                  <td style={{ color: 'rgba(252, 248, 242, 0.7)' }}>{order.date}</td>
                   <td>{order.items}</td>
-                  <td style={{ color: '#64748b' }}>{order.paymentMethod}</td>
-                  <td style={{ fontWeight: 800, color: '#2c1206' }}>{order.total}</td>
+                  <td style={{ color: 'rgba(252, 248, 242, 0.7)' }}>{order.paymentMethod}</td>
+                  <td style={{ fontWeight: 800, color: '#ffb703' }}>{order.total}</td>
                   <td>
                     <span className={styles.statusCompleted}>
                       <CheckCircle2 size={14} />

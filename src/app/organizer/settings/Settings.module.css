@@ -1,11 +1,7 @@
-/* ==========================================================================
-   EVENTIX ORGANIZER SETTINGS STYLES
-   ========================================================================== */
-
 .page {
   max-width: 1240px;
   margin: 0 auto;
-  color: #1a1a1a;
+  color: #fcf8f2;
 }
 
 .header {
@@ -16,13 +12,13 @@
   font-family: var(--font-outfit), sans-serif;
   font-size: 2.25rem;
   font-weight: 800;
-  color: var(--festino-brown, #2c1206);
+  color: #ffffff;
   margin-bottom: 0.4rem;
   letter-spacing: -0.02em;
 }
 
 .header p {
-  color: #64748b;
+  color: rgba(252, 248, 242, 0.7);
   font-size: 1rem;
 }
 
@@ -43,11 +39,12 @@
 }
 
 .navBtn {
-  background: #ffffff;
-  border: 1.5px solid rgba(44, 18, 6, 0.08);
+  background: rgba(44, 18, 6, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 1rem 1.35rem;
   border-radius: 50px;
-  color: #64748b;
+  color: rgba(252, 248, 242, 0.75);
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
@@ -56,20 +53,19 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
 }
 
 .navBtn:hover {
-  background: #fffcf9;
-  color: #ff6b2c;
-  border-color: rgba(255, 107, 44, 0.3);
+  background: rgba(255, 107, 44, 0.15);
+  color: #ffffff;
+  border-color: rgba(255, 107, 44, 0.4);
 }
 
 .navBtn.active {
   background: linear-gradient(135deg, #ff6b2c 0%, #e85d04 100%) !important;
   color: #ffffff !important;
   border: none !important;
-  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.38) !important;
+  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.45) !important;
 }
 
 /* SETTINGS CONTENT AREA */
@@ -80,29 +76,30 @@
 }
 
 .sectionCard {
-  background: #ffffff;
+  background: rgba(44, 18, 6, 0.65);
+  backdrop-filter: blur(16px);
   border-radius: 28px;
   padding: 2.5rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-  border: 1.5px solid rgba(44, 18, 6, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 107, 44, 0.25);
 }
 
 .sectionHeader {
   margin-bottom: 2rem;
   padding-bottom: 1.25rem;
-  border-bottom: 1.5px solid rgba(44, 18, 6, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sectionHeader h2 {
   font-family: var(--font-outfit), sans-serif;
   font-size: 1.45rem;
   font-weight: 800;
-  color: var(--festino-brown, #2c1206);
+  color: #ffffff;
   margin-bottom: 0.4rem;
 }
 
 .sectionHeader p {
-  color: #64748b;
+  color: rgba(252, 248, 242, 0.7);
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -125,7 +122,7 @@
 
 .formGroup label {
   font-weight: 700;
-  color: var(--festino-brown, #2c1206);
+  color: rgba(252, 248, 242, 0.9);
   font-size: 0.9rem;
 }
 
@@ -146,21 +143,25 @@
 .formGroup select {
   width: 100%;
   padding: 0.9rem 1.1rem 0.9rem 3rem;
-  border: 1.5px solid rgba(44, 18, 6, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 14px;
   font-family: inherit;
   font-size: 0.95rem;
-  color: #1a1a1a;
+  color: #ffffff;
   outline: none;
   transition: all 0.25s ease;
-  background: #ffffff;
+  background: rgba(12, 5, 2, 0.7);
+}
+
+.formGroup select option {
+  background: #140803;
+  color: #ffffff;
 }
 
 .formGroup input:focus,
 .formGroup select:focus {
   border-color: #ff6b2c;
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(255, 107, 44, 0.15);
+  box-shadow: 0 0 15px rgba(255, 107, 44, 0.3);
 }
 
 .btnRow {
@@ -175,16 +176,16 @@
   border: none;
   padding: 0.85rem 2.25rem;
   border-radius: 50px;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.95rem;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.35);
+  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.4);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .saveBtn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(232, 93, 4, 0.5);
+  box-shadow: 0 10px 24px rgba(232, 93, 4, 0.55);
 }
 
 @media (max-width: 900px) {
@@ -194,7 +195,15 @@
   .settingsNav {
     flex-direction: row;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     padding-bottom: 0.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .settingsNav::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
   .navBtn {
     white-space: nowrap;

@@ -24,7 +24,17 @@ const curtainReveal = {
   visible: { 
     y: 0, 
     opacity: 1,
-    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } 
+    transition: { duration: 1.4, ease: [0.22, 1, 0.36, 1] } 
+  }
+};
+
+// Curtain Drop-down Animation for Hero Elements
+const curtainDrop = {
+  hidden: { y: "-70px", opacity: 0 },
+  visible: { 
+    y: 0, 
+    opacity: 1,
+    transition: { duration: 1.6, ease: [0.16, 1, 0.3, 1] } 
   }
 };
 
@@ -34,7 +44,7 @@ const slideInLeft = {
   visible: { 
     opacity: 1, 
     x: 0,
-    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+    transition: { duration: 1.5, ease: [0.22, 1, 0.36, 1] } 
   }
 };
 
@@ -44,7 +54,7 @@ const slideInRight = {
   visible: { 
     opacity: 1, 
     x: 0,
-    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+    transition: { duration: 1.5, ease: [0.22, 1, 0.36, 1] } 
   }
 };
 
@@ -54,7 +64,7 @@ const fadeUp = {
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 1.3, ease: [0.22, 1, 0.36, 1] }
   }
 };
 
@@ -64,7 +74,7 @@ const popIn = {
   visible: { 
     opacity: 1, 
     scale: 1,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 1.4, ease: [0.22, 1, 0.36, 1] }
   }
 };
 
@@ -101,19 +111,19 @@ export default function Home() {
           return {
             id: evt.id,
             title: evt.title,
-            image: evt.image_url || 'https://images.unsplash.com/photo-1540039155732-d674d6e120a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-            date: dateObj ? dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'Sat, Oct 12, 2025',
-            time: dateObj ? dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '7:00 PM',
-            location: evt.venue_name || "International Center",
+            image: evt.banner_url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            date: dateObj ? dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'TBA',
+            time: dateObj ? dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) : 'TBA',
+            location: evt.venue_name ? `${evt.venue_name}, ${evt.city || ''}` : evt.city || 'TBA',
             price: priceStr,
-            category: evt.categories?.name || "Music",
-            description: evt.description || "Join us for an unforgettable live experience packed with energy and high vibes."
+            category: evt.category || 'General',
+            description: evt.description
           };
         });
 
         setEvents(formatted);
-      } catch (error) {
-        console.error("Failed to load featured events", error);
+      } catch (err) {
+        console.error('Error loading events for homepage:', err);
       } finally {
         setLoading(false);
       }
@@ -125,57 +135,58 @@ export default function Home() {
   // Handle Search Submission
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    const params = new URLSearchParams();
-    if (searchQuery.trim()) params.append('q', searchQuery.trim());
-    if (locationQuery.trim()) params.append('location', locationQuery.trim());
-    if (selectedCategory !== 'All') params.append('category', selectedCategory);
-
-    router.push(`/events?${params.toString()}`);
+    let query = searchQuery;
+    if (locationQuery) query += ` ${locationQuery}`;
+    if (query.trim()) {
+      router.push(`/events?q=${encodeURIComponent(query.trim())}`);
+    } else {
+      router.push('/events');
+    }
   };
 
   // Base events pool (real events from DB or rich sample dataset if DB has no events yet)
   const defaultDemoEvents = [
     {
       id: 'demo-1',
-      title: 'Global TechX Summit & Innovation Expo',
+      title: 'Accra Tech Summit & AI Expo 2025',
       image: '/images/collage_tech_summit.png',
-      date: 'Fri, Dec 5, 2025',
+      date: 'Sat, Oct 18, 2025',
       time: '9:00 AM',
-      location: 'Convention Center, Accra',
+      location: 'Kempinski Hotel Gold Coast City, Accra',
       price: 'GH₵ 150',
       category: 'Tech',
-      description: 'Keynotes, startup demos, networking, and hands-on workshops with top tech leaders across Africa.'
+      description: 'Ghana’s premier technology conference bringing together AI researchers, founders, engineers, and digital innovators.'
     },
     {
       id: 'demo-2',
-      title: 'Neon Nights Live Music & Afrobeat Fest',
-      image: '/images/hero_concert_bg.png',
-      date: 'Sat, Nov 15, 2025',
-      time: '6:00 PM',
-      location: 'Grand Arena, Accra',
-      price: 'GH₵ 120',
-      category: 'Music',
-      description: 'The biggest Afro-fusion music night featuring top recording artists and live stage visual effects.'
+      title: 'Afrochella Cultural Music & Arts Festival',
+      image: '/images/collage_arts_festival.png',
+      date: 'Sun, Dec 28, 2025',
+      time: '2:00 PM',
+      location: 'El-Wak Sports Stadium, Accra',
+      price: 'GH₵ 250',
+      category: 'Arts',
+      description: 'A celebration of African culture, food, fashion, and live musical performances by top continental artists.'
     },
     {
       id: 'demo-3',
-      title: 'Annual Outdoor Culinary & Arts Festival',
-      image: '/images/collage_arts_festival.png',
-      date: 'Sun, Oct 26, 2025',
-      time: '12:00 PM',
-      location: 'Botanical Gardens, Aburi',
-      price: 'GH₵ 60',
-      category: 'Arts',
-      description: 'A vibrant day of artisanal food, live art installations, handicraft markets, and acoustic performances.'
+      title: 'Highlife & Afrobeats Live Concert Night',
+      image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      date: 'Sat, Nov 15, 2025',
+      time: '7:00 PM',
+      location: 'National Theatre of Ghana, Accra',
+      price: 'GH₵ 120',
+      category: 'Music',
+      description: 'An unforgettable evening of highlife classics and contemporary Afrobeats rhythms performed live.'
     },
     {
       id: 'demo-4',
-      title: 'Laughter Therapy Standup Comedy Night',
-      image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      date: 'Sat, Dec 20, 2025',
+      title: 'Stand-Up Comedy All-Stars Night',
+      image: 'https://images.unsplash.com/photo-1585699324551-f6c309eedeca?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      date: 'Sat, Nov 1, 2025',
       time: '8:00 PM',
-      location: 'National Theatre, Accra',
-      price: 'GH₵ 100',
+      location: 'Accra International Conference Centre',
+      price: 'GH₵ 80',
       category: 'Comedy',
       description: 'Non-stop hilarious comedy performances by top national comedians and guest comedy stars.'
     },
@@ -222,35 +233,35 @@ export default function Home() {
           animate="visible"
         >
           
-          {/* Main Headline */}
+          {/* Main Headline - Curtain Drop */}
           <motion.h1 
             className={styles.heroTitle}
-            variants={fadeUp} 
+            variants={curtainDrop} 
             initial="hidden" 
             animate="visible" 
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
           >
             Your Next Event <br/> Starts Here
           </motion.h1>
 
           <motion.p 
             className={styles.heroSubtitle}
-            variants={fadeUp} 
+            variants={curtainDrop} 
             initial="hidden" 
             animate="visible" 
-            transition={{ duration: 0.8, delay: 0.35 }}
+            transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
           >
             From tech summits to cultural festivals, sports marathons to nightlife, discover, book, and secure your spot in just a few clicks.
           </motion.p>
 
-          {/* Interactive Glassmorphism Search Bar */}
+          {/* Interactive Glassmorphism Search Bar - Curtain Drop */}
           <motion.form 
             className={styles.searchContainer} 
             onSubmit={handleSearchSubmit}
-            variants={fadeUp} 
+            variants={curtainDrop} 
             initial="hidden" 
             animate="visible" 
-            transition={{ duration: 0.8, delay: 0.5 }}
+            transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1], delay: 0.55 }}
           >
             <div className={styles.searchSection}>
               <Search size={20} className={styles.searchIcon} />
@@ -283,17 +294,17 @@ export default function Home() {
               whileTap={{ scale: 0.96 }}
             >
               <span>Explore Events</span>
-              <ArrowRight size={18} />
+              <ArrowRight size={18} className={styles.searchBtnArrow} />
             </motion.button>
           </motion.form>
 
-          {/* Quick Trust Stats */}
+          {/* Quick Trust Stats - Curtain Drop */}
           <motion.div 
             className={styles.heroStats}
-            variants={fadeUp} 
+            variants={curtainDrop} 
             initial="hidden" 
             animate="visible" 
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1], delay: 0.75 }}
           >
             <div className={styles.statItem}>
               <Ticket size={18} style={{ color: '#ff6b2c' }} />
@@ -388,20 +399,29 @@ export default function Home() {
                   src="/images/collage_tech_summit.png" 
                   alt="Tech Summits & Conferences" 
                   className={styles.collageImg1}
+                  initial={{ opacity: 0, scale: 0.9, y: 35 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
                   whileHover={{ scale: 1.04, rotate: -1 }}
-                  transition={{ duration: 0.3 }}
                 />
                 <motion.img 
                   src="/images/collage_arts_festival.png" 
                   alt="Arts & Cultural Festivals" 
                   className={styles.collageImg2}
+                  initial={{ opacity: 0, scale: 0.9, y: 45 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1], delay: 0.45 }}
                   whileHover={{ scale: 1.04, rotate: 1 }}
-                  transition={{ duration: 0.3 }}
                 />
                 <motion.div 
                   className={styles.collageBadge}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.7 }}
                   whileHover={{ scale: 1.08 }}
-                  transition={{ duration: 0.2 }}
                 >
                   <span>99.9%</span>
                   <p>Guaranteed Entry</p>
@@ -469,7 +489,7 @@ export default function Home() {
                   whileInView="visible" 
                   viewport={{ once: true, margin: "-40px" }} 
                   variants={fadeUp} 
-                  transition={{ duration: 0.5, delay: idx * 0.08 }}
+                  transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1], delay: idx * 0.14 }}
                   whileHover={{ y: -10 }}
                 >
                   <Link href={`/events/${evt.id}`} className={styles.eventCard}>
@@ -582,6 +602,7 @@ export default function Home() {
                   className={styles.stepCard} 
                   initial="hidden" whileInView="visible" viewport={{ once: true }} 
                   variants={slideInLeft}
+                  transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
                   whileHover={{ y: -8, boxShadow: '0 18px 35px rgba(0, 0, 0, 0.08)' }}
                 >
                   <div className={styles.stepNum}>01</div>
@@ -593,6 +614,7 @@ export default function Home() {
                   className={styles.stepCard} 
                   initial="hidden" whileInView="visible" viewport={{ once: true }} 
                   variants={slideInRight}
+                  transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.25 }}
                   whileHover={{ y: -8, boxShadow: '0 18px 35px rgba(0, 0, 0, 0.08)' }}
                 >
                   <div className={styles.stepNum}>02</div>
@@ -604,6 +626,7 @@ export default function Home() {
                   className={styles.stepCard} 
                   initial="hidden" whileInView="visible" viewport={{ once: true }} 
                   variants={slideInLeft}
+                  transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
                   whileHover={{ y: -8, boxShadow: '0 18px 35px rgba(0, 0, 0, 0.08)' }}
                 >
                   <div className={styles.stepNum}>03</div>
@@ -615,6 +638,7 @@ export default function Home() {
                   className={styles.stepCard} 
                   initial="hidden" whileInView="visible" viewport={{ once: true }} 
                   variants={slideInRight}
+                  transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.55 }}
                   whileHover={{ y: -8, boxShadow: '0 18px 35px rgba(0, 0, 0, 0.08)' }}
                 >
                   <div className={styles.stepNum}>04</div>
@@ -628,6 +652,7 @@ export default function Home() {
                   className={styles.stepCard} 
                   initial="hidden" whileInView="visible" viewport={{ once: true }} 
                   variants={slideInLeft}
+                  transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
                   whileHover={{ y: -8, boxShadow: '0 18px 35px rgba(0, 0, 0, 0.08)' }}
                 >
                   <div className={styles.stepNum}>01</div>
@@ -639,6 +664,7 @@ export default function Home() {
                   className={styles.stepCard} 
                   initial="hidden" whileInView="visible" viewport={{ once: true }} 
                   variants={slideInRight}
+                  transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.25 }}
                   whileHover={{ y: -8, boxShadow: '0 18px 35px rgba(0, 0, 0, 0.08)' }}
                 >
                   <div className={styles.stepNum}>02</div>
@@ -650,6 +676,7 @@ export default function Home() {
                   className={styles.stepCard} 
                   initial="hidden" whileInView="visible" viewport={{ once: true }} 
                   variants={slideInLeft}
+                  transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
                   whileHover={{ y: -8, boxShadow: '0 18px 35px rgba(0, 0, 0, 0.08)' }}
                 >
                   <div className={styles.stepNum}>03</div>
@@ -661,6 +688,7 @@ export default function Home() {
                   className={styles.stepCard} 
                   initial="hidden" whileInView="visible" viewport={{ once: true }} 
                   variants={slideInRight}
+                  transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.55 }}
                   whileHover={{ y: -8, boxShadow: '0 18px 35px rgba(0, 0, 0, 0.08)' }}
                 >
                   <div className={styles.stepNum}>04</div>

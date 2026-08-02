@@ -1,18 +1,20 @@
 "use client";
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import styles from './Navbar.module.css';
 import { createClient } from '@/utils/supabase/client';
-import { UserCircle, Compass, PlusCircle } from 'lucide-react';
+import { UserCircle, LogOut } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const isAuthPage = pathname === '/login' || pathname === '/signup';
-  const isDashboard = pathname.startsWith('/home') || pathname.startsWith('/organizer');
   
   const [user, setUser] = useState(null);
+  const { showConfirm } = useAlert();
 
   useEffect(() => {
     const supabase = createClient();
@@ -32,6 +34,24 @@ export default function Navbar() {
       authListener?.subscription?.unsubscribe();
     };
   }, []);
+
+  const handleLogoutClick = (e) => {
+    e.preventDefault();
+    showConfirm({
+      title: "Log Out of Eventix",
+      message: "Are you sure you want to log out of your account?",
+      confirmText: "Yes, Log Out",
+      cancelText: "Cancel",
+      type: "warning",
+      onConfirm: async () => {
+        const supabase = createClient();
+        await supabase.auth.signOut();
+        setUser(null);
+        router.push('/login');
+        router.refresh();
+      }
+    });
+  };
 
   // The landing page navbar should ONLY be displayed on the root landing page ('/')
   if (pathname !== '/') {
@@ -66,10 +86,16 @@ export default function Navbar() {
         {!isAuthPage && (
           <div className={styles.authActions}>
             {user ? (
-              <Link href={dashboardPath} className={styles.dashboardBtn}>
-                <UserCircle size={20} />
-                <span>{userName}</span>
-              </Link>
+              <div className={styles.loggedInGroup}>
+                <Link href={dashboardPath} className={styles.dashboardBtn}>
+                  <UserCircle size={20} />
+                  <span>{userName}</span>
+                </Link>
+                <button onClick={handleLogoutClick} className={styles.logoutBtn} title="Log Out">
+                  <LogOut size={16} />
+                  <span className={styles.logoutText}>Log Out</span>
+                </button>
+              </div>
             ) : (
               <>
                 <Link href="/login" className={styles.loginBtn}>

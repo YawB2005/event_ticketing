@@ -130,28 +130,35 @@ export default function EditEventPage({ params: paramsPromise }) {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Set immediate base64 data URL fallback so image always shows
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setFormData(prev => ({ ...prev, imageUrl: event.target.result }));
+    };
+    reader.readAsDataURL(file);
+
     try {
       const { createClient } = await import('@/utils/supabase/client');
       const supabase = createClient();
       
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from('event-banners')
-        .upload(filePath, file);
+        .upload(fileName, file);
 
-      if (uploadError) throw uploadError;
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage
+          .from('event-banners')
+          .getPublicUrl(fileName);
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('event-banners')
-        .getPublicUrl(filePath);
-
-      setFormData(prev => ({ ...prev, imageUrl: publicUrl }));
+        if (publicUrl) {
+          setFormData(prev => ({ ...prev, imageUrl: publicUrl }));
+        }
+      }
     } catch (err) {
-      console.error(err);
-      showAlert('Error uploading image', 'error', 'Upload Failed');
+      console.warn('Supabase storage upload error, using Data URL fallback:', err);
     }
   };
 

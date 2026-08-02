@@ -1,18 +1,14 @@
-/* ==========================================================================
-   EVENTIX AUTHENTICATION STYLES (LOGIN)
-   ========================================================================== */
-
 .authContainer {
   display: flex;
   min-height: 100vh;
   width: 100%;
-  background-color: var(--festino-cream, #fcf8f2);
-  color: #1a1a1a;
+  background-color: #0c0502;
+  color: #fcf8f2;
   overflow: hidden;
   position: relative;
 }
 
-/* LEFT SIDE - VISUAL SHOWCASE (TECH SUMMIT BACKGROUND) */
+/* LEFT SIDE - VISUAL SHOWCASE */
 .visualSide {
   flex: 1.15;
   position: relative;
@@ -79,13 +75,13 @@
 
 /* Glassmorphism Feature Card */
 .glassFeatureCard {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(44, 18, 6, 0.6);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 107, 44, 0.25);
   border-radius: 24px;
   padding: 1.75rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -130,7 +126,8 @@
   flex-direction: column;
   justify-content: center;
   padding: 4rem 3.5rem;
-  background: var(--festino-cream, #fcf8f2);
+  background-color: #0c0502;
+  background-image: radial-gradient(circle at 80% 20%, rgba(232, 93, 4, 0.15) 0%, transparent 50%);
   position: relative;
   z-index: 5;
   overflow-y: auto;
@@ -140,17 +137,24 @@
   max-width: 440px;
   width: 100%;
   margin: 0 auto;
+  background: rgba(44, 18, 6, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 107, 44, 0.25);
+  border-radius: 28px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
 .backLink {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #64748b;
+  color: rgba(252, 248, 242, 0.7);
   font-weight: 600;
   font-size: 0.92rem;
   text-decoration: none;
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
   transition: color 0.2s ease;
 }
 
@@ -160,21 +164,19 @@
 
 .title {
   font-family: var(--font-outfit), sans-serif;
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 800;
-  color: var(--festino-brown, #2c1206);
+  color: #ffffff;
   margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
 }
 
 .subtitle {
-  color: #64748b;
-  font-size: 0.98rem;
+  color: rgba(252, 248, 242, 0.7);
+  font-size: 0.95rem;
   margin-bottom: 2rem;
   line-height: 1.5;
 }
-
-
 
 /* Form Controls */
 .formGroup {
@@ -186,7 +188,7 @@
   font-weight: 600;
   font-size: 0.88rem;
   margin-bottom: 0.5rem;
-  color: var(--festino-brown, #2c1206);
+  color: rgba(252, 248, 242, 0.9);
 }
 
 .inputWrap {
@@ -198,31 +200,31 @@
 .inputIcon {
   position: absolute;
   left: 16px;
-  color: #94a3b8 !important;
-  stroke: #94a3b8 !important;
+  color: #ff6b2c !important;
+  stroke: #ff6b2c !important;
   pointer-events: none;
 }
 
 .input {
   width: 100%;
   padding: 14px 16px 14px 48px;
-  border: 1.5px solid rgba(44, 18, 6, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 14px;
   font-family: inherit;
-  font-size: 0.95rem;
-  background: #ffffff;
-  color: #1a1a1a;
+  font-size: 16px; /* 16px prevents iOS zoom on focus */
+  background: rgba(12, 5, 2, 0.7);
+  color: #ffffff;
   outline: none;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .input::placeholder {
-  color: #94a3b8;
+  color: rgba(252, 248, 242, 0.4);
 }
 
 .input:focus {
   border-color: #ff6b2c;
-  box-shadow: 0 0 0 4px rgba(255, 107, 44, 0.15);
+  box-shadow: 0 0 15px rgba(255, 107, 44, 0.3);
 }
 
 .togglePassBtn {
@@ -230,7 +232,7 @@
   right: 14px;
   background: none;
   border: none;
-  color: #94a3b8;
+  color: rgba(252, 248, 242, 0.5);
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -249,7 +251,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #64748b;
+  color: rgba(252, 248, 242, 0.7);
   cursor: pointer;
 }
 
@@ -264,9 +266,9 @@
 }
 
 .errorAlert {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
   padding: 12px 16px;
   border-radius: 12px;
   font-size: 0.88rem;
@@ -283,7 +285,7 @@
   background: linear-gradient(135deg, #ff6b2c 0%, #e85d04 100%);
   color: #ffffff;
   border: none;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 1rem;
   cursor: pointer;
   box-shadow: 0 8px 22px rgba(232, 93, 4, 0.4);
@@ -300,14 +302,14 @@
 }
 
 .submitBtn:disabled {
-  opacity: 0.7;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .authPrompt {
   margin-top: 2rem;
   text-align: center;
-  color: #64748b;
+  color: rgba(252, 248, 242, 0.7);
   font-size: 0.92rem;
 }
 
@@ -329,6 +331,11 @@
   }
 
   .formSide {
-    padding: 3rem 1.5rem;
+    padding: 2.5rem 1.25rem;
+  }
+
+  .formWrapper {
+    padding: 1.75rem;
+    border-radius: 24px;
   }
 }

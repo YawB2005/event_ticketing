@@ -40,19 +40,22 @@ export default function OrganizerSidebar() {
       
       <div className={styles.sidebarNav}>
         <Link href="/organizer" className={`${styles.navItem} ${pathname === '/organizer' ? styles.active : ''}`}>
-          <LayoutDashboard size={20} /> Dashboard
+          <LayoutDashboard size={20} /> 
+          <span>Dashboard</span>
         </Link>
         <Link href="/organizer/events" className={`${styles.navItem} ${pathname.startsWith('/organizer/events') ? styles.active : ''}`}>
-          <Ticket size={20} /> Events
+          <Ticket size={20} /> 
+          <span>Events</span>
         </Link>
         <Link href="/organizer/settings" className={`${styles.navItem} ${pathname.startsWith('/organizer/settings') ? styles.active : ''}`}>
-          <Settings size={20} /> Settings
+          <Settings size={20} /> 
+          <span>Settings</span>
         </Link>
       </div>
 
       <div className={styles.sidebarBottom}>
         <a href="#" onClick={handleLogoutClick} className={styles.navItem}>
-          <LogOut size={20} /> Log Out
+          <LogOut size={20} /> <span>Log Out</span>
         </a>
       </div>
     </div>

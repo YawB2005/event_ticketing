@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { MapPin, Calendar, Users, Share2, Heart, ArrowLeft, Tag, Clock } from 'lucide-react';
+import { useState, useEffect, use } from 'react';
+import { MapPin, Calendar, Users, Share2, Heart, ArrowLeft, Tag, Clock, Sparkles } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import LoadingSpinner from '@/components/ui/LoadingSpinner/LoadingSpinner';
 import styles from './EventDetail.module.css';
 import Link from 'next/link';
-import { use } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function EventDetail({ params }) {
@@ -39,13 +38,12 @@ export default function EventDetail({ params }) {
           id: data.id,
           title: data.title,
           date: dateObj ? dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'TBA',
-          time: dateObj ? dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '',
+          time: dateObj ? dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : 'TBA',
           location: data.venue_name || 'TBA',
           description: data.description || 'No description provided.',
-          category: data.categories?.name || 'Event',
-          color: 'linear-gradient(135deg, #4f46e5 0%, #7928CA 100%)',
+          category: data.categories?.name || 'Music & Concerts',
           organizer: data.profiles?.full_name || 'Event Organizer',
-          image: data.image_url,
+          image: data.image_url || 'https://images.unsplash.com/photo-1540039155732-d674d6e120a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
           ticketTypes: (data.ticket_types || []).map(t => {
             const maxQty = (t.quantity_total || 0) - (t.quantity_sold || 0);
             return {
@@ -53,7 +51,7 @@ export default function EventDetail({ params }) {
               name: t.name,
               price: parseFloat(t.price || 0),
               available: maxQty > 0,
-              maxQty: maxQty > 10 ? 10 : maxQty
+              maxQty: maxQty > 10 ? 10 : (maxQty < 0 ? 0 : maxQty)
             };
           })
         };
@@ -92,10 +90,11 @@ export default function EventDetail({ params }) {
   const handleCheckout = () => {
     if (totalTicketsSelected === 0) return;
     
-    // Construct items array for checkout
+    const ticketParamPairs = [];
     const items = Object.entries(selectedTickets)
       .filter(([_, qty]) => qty > 0)
       .map(([ticketTypeId, qty]) => {
+        ticketParamPairs.push(`${ticketTypeId}:${qty}`);
         const tt = event.ticketTypes.find(t => t.id === ticketTypeId);
         return {
           id: ticketTypeId,
@@ -113,12 +112,12 @@ export default function EventDetail({ params }) {
       totalAmount: calculateTotal()
     }));
 
-    router.push(`/checkout/${event.id}`);
+    router.push(`/checkout/${event.id}?tickets=${ticketParamPairs.join(',')}`);
   };
 
   if (loading) {
     return (
-      <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={styles.pageContainer} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <LoadingSpinner text="Loading event details..." />
       </div>
     );
@@ -126,9 +125,9 @@ export default function EventDetail({ params }) {
 
   if (!event) {
     return (
-      <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+      <div className={styles.pageContainer} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
         <h2>Event Not Found</h2>
-        <Link href="/events" style={{ color: '#4f46e5', fontWeight: 600 }}>← Back to Events</Link>
+        <Link href="/events" style={{ color: '#ff6b2c', fontWeight: 600, textDecoration: 'none' }}>← Back to Events</Link>
       </div>
     );
   }
@@ -139,27 +138,23 @@ export default function EventDetail({ params }) {
         
         {/* Back Link */}
         <Link href="/events" className={styles.backBtn}>
-          <ArrowLeft size={16} /> Back to Events
+          <ArrowLeft size={16} /> Back to Browse Events
         </Link>
 
         {/* Hero Section */}
         <div className={styles.heroSection}>
           <div className={styles.imageContainer}>
-            {event.image ? (
-              <img src={event.image} alt={event.title} className={styles.eventImage} />
-            ) : (
-              <div className={styles.placeholderImage} style={{ background: event.color }}></div>
-            )}
+            <img src={event.image} alt={event.title} className={styles.eventImage} />
             <span className={styles.categoryBadge}>{event.category}</span>
           </div>
 
           <div className={styles.heroContent}>
             <h1 className={styles.title}>{event.title}</h1>
-            <p className={styles.organizerBy}>Organized by <span>{event.organizer}</span></p>
+            <p className={styles.organizerBy}>Hosted by <span>{event.organizer}</span></p>
 
             <div className={styles.metaList}>
               <div className={styles.metaItem}>
-                <Calendar size={18} className={styles.metaIcon} />
+                <Calendar size={20} className={styles.metaIcon} />
                 <div>
                   <strong>{event.date}</strong>
                   <span>{event.time}</span>
@@ -167,10 +162,10 @@ export default function EventDetail({ params }) {
               </div>
 
               <div className={styles.metaItem}>
-                <MapPin size={18} className={styles.metaIcon} />
+                <MapPin size={20} className={styles.metaIcon} />
                 <div>
                   <strong>{event.location}</strong>
-                  <span>Main Arena / Venue Gate</span>
+                  <span>Main Arena / Gate Entrance</span>
                 </div>
               </div>
             </div>
@@ -183,14 +178,18 @@ export default function EventDetail({ params }) {
           {/* Left Column: Description & Venue */}
           <div className={styles.detailsCol}>
             <section className={styles.sectionCard}>
-              <h3 className={styles.sectionTitle}>About This Event</h3>
+              <h3 className={styles.sectionTitle}>
+                <Sparkles size={20} color="#ff6b2c" /> About This Event
+              </h3>
               <p className={styles.description}>{event.description}</p>
             </section>
 
             <section className={styles.sectionCard}>
-              <h3 className={styles.sectionTitle}>Venue & Gate Access</h3>
+              <h3 className={styles.sectionTitle}>
+                <MapPin size={20} color="#ff6b2c" /> Venue & Gate Access
+              </h3>
               <p className={styles.description}>
-                Present your digital QR e-ticket at the venue gate for instant check-in scanning. Doors open 1 hour prior to event start time.
+                Present your digital QR e-ticket at the entrance gate for fast-track scanning. Doors open 1 hour prior to event start time.
               </p>
             </section>
           </div>
@@ -198,7 +197,10 @@ export default function EventDetail({ params }) {
           {/* Right Column: Ticket Selector Card */}
           <div className={styles.ticketsCol}>
             <div className={styles.ticketCard}>
-              <h3 className={styles.ticketCardTitle}>Select Tickets</h3>
+              <h3 className={styles.ticketCardTitle}>
+                <span>Select Tickets</span>
+                <Tag size={18} color="#ffb703" />
+              </h3>
               
               <div className={styles.ticketTypeList}>
                 {event.ticketTypes.length > 0 ? (
@@ -216,6 +218,7 @@ export default function EventDetail({ params }) {
                           className={styles.counterBtn} 
                           onClick={() => handleQuantityChange(ticket.id, -1, ticket.maxQty)}
                           disabled={!selectedTickets[ticket.id]}
+                          aria-label="Decrease quantity"
                         >
                           -
                         </button>
@@ -226,6 +229,7 @@ export default function EventDetail({ params }) {
                           className={styles.counterBtn} 
                           onClick={() => handleQuantityChange(ticket.id, 1, ticket.maxQty)}
                           disabled={!ticket.available || (selectedTickets[ticket.id] || 0) >= ticket.maxQty}
+                          aria-label="Increase quantity"
                         >
                           +
                         </button>
@@ -233,7 +237,7 @@ export default function EventDetail({ params }) {
                     </div>
                   ))
                 ) : (
-                  <p style={{ color: '#64748b', fontSize: '0.9rem' }}>No ticket tiers available for this event.</p>
+                  <p style={{ color: 'rgba(252, 248, 242, 0.6)', fontSize: '0.95rem' }}>No ticket tiers currently available.</p>
                 )}
               </div>
 
