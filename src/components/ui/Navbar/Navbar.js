@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import styles from './Navbar.module.css';
 import { createClient } from '@/utils/supabase/client';
-import { UserCircle } from 'lucide-react';
+import { UserCircle, Compass, PlusCircle } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -33,34 +33,57 @@ export default function Navbar() {
     };
   }, []);
 
-  // Completely hide the Navbar on dashboard views to maintain the app aesthetic
-  if (isDashboard) {
+  // The landing page navbar should ONLY be displayed on the root landing page ('/')
+  if (pathname !== '/') {
     return null;
   }
 
   const dashboardPath = user?.user_metadata?.role === 'organizer' ? '/organizer' : '/dashboard';
+  const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Account';
 
   return (
-    <nav className={styles.navbar}>
+    <header className={styles.navbar}>
       <div className={`container ${styles.navContainer}`}>
+        
+        {/* Brand Logo */}
         <Link href="/" className={styles.logo}>
           Eventix
         </Link>
+
+        {/* Center Nav Links */}
+        {!isAuthPage && (
+          <div className={styles.navLinks}>
+            <Link href="/events" className={styles.navLink}>
+              Explore Events
+            </Link>
+            <Link href="/organizer" className={styles.navLink}>
+              Host an Event
+            </Link>
+          </div>
+        )}
+
+        {/* Auth Actions */}
         {!isAuthPage && (
           <div className={styles.authActions}>
             {user ? (
-              <Link href={dashboardPath} className={styles.accountIcon} aria-label="Account Dashboard">
-                <UserCircle size={36} color="#0f172a" strokeWidth={1.5} />
+              <Link href={dashboardPath} className={styles.dashboardBtn}>
+                <UserCircle size={20} />
+                <span>{userName}</span>
               </Link>
             ) : (
               <>
-                <Link href="/login" className="btn btn-outline">Log In</Link>
-                <Link href="/signup" className="btn btn-primary">Sign Up</Link>
+                <Link href="/login" className={styles.loginBtn}>
+                  Log In
+                </Link>
+                <Link href="/signup" className={styles.signUpBtn}>
+                  Sign Up
+                </Link>
               </>
             )}
           </div>
         )}
+
       </div>
-    </nav>
+    </header>
   );
 }

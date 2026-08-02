@@ -12,15 +12,16 @@ export async function GET() {
         image_url,
         start_datetime,
         venue_name,
+        status,
         categories ( name ),
         ticket_types ( price, quantity_total, quantity_sold )
       `)
-      .eq('status', 'published')
+      .neq('status', 'draft')
       .order('start_datetime', { ascending: true });
 
     if (error) throw error;
     
-    return NextResponse.json(data);
+    return NextResponse.json(data || []);
   } catch (err) {
     console.error('Failed to fetch public events:', err);
     return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });

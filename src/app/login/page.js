@@ -4,18 +4,42 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { 
+  Mail, 
+  Lock, 
+  ArrowRight, 
+  ArrowLeft, 
+  ShieldCheck, 
+  Ticket, 
+  Eye, 
+  EyeOff, 
+  AlertCircle 
+} from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import styles from './login.module.css';
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 }
+const slideLeft = {
+  hidden: { opacity: 0, x: -40 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+  }
+};
+
+const slideRight = {
+  hidden: { opacity: 0, x: 40 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+  }
 };
 
 export default function Login() {
-  const [role, setRole] = useState('attendee');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -35,145 +59,181 @@ export default function Login() {
       setError(error.message);
       setLoading(false);
     } else {
-      const userRole = data?.user?.user_metadata?.role || role;
-      if (userRole === 'organizer') {
+      let role = data?.user?.user_metadata?.role;
+      
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profile?.role) {
+          role = profile.role;
+        }
+      } catch (err) {
+        console.error("Error fetching profile role:", err);
+      }
+
+      if (role === 'organizer') {
         router.push('/organizer');
       } else {
-        router.push('/home');
+        router.push('/dashboard');
       }
       router.refresh();
     }
   };
 
+
+
   return (
     <div className={styles.authContainer}>
       
-      {/* LEFT SIDE - MAGIC */}
-      <div className={styles.magicSide}>
-        <div className={styles.wavyBg}></div>
-        
-        {/* Floating stars */}
-        <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.8, scale: 1 }} transition={{ delay: 0.2 }} className={styles.star} style={{ top: '15%', left: '20%' }}>✦</motion.div>
-        <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.5, scale: 0.8 }} transition={{ delay: 0.4 }} className={styles.star} style={{ top: '25%', right: '15%', color: '#000' }}>✦</motion.div>
-        <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.6, scale: 1.2 }} transition={{ delay: 0.6 }} className={styles.star} style={{ bottom: '20%', left: '10%' }}>✧</motion.div>
+      {/* LEFT SIDE - VISUAL SHOWCASE (TECH SUMMIT BACKGROUND) */}
+      <div className={styles.visualSide}>
+        <motion.div 
+          className={styles.brandHeader}
+          variants={slideLeft} 
+          initial="hidden" 
+          animate="visible"
+        >
+          <Link href="/" className={styles.brandLogo}>
+            Eventix
+          </Link>
+          <span className={styles.brandBadge}>Secure Portal</span>
+        </motion.div>
 
         <motion.div 
-          className={styles.magicShape}
-          initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: 1, type: "spring", bounce: 0.4 }}
+          className={styles.visualContent}
+          variants={slideLeft} 
+          initial="hidden" 
+          animate="visible" 
+          transition={{ delay: 0.2 }}
         >
-          <h1 className={styles.magicText}>
-            Unlock <br/> the magic
+          <h1 className={styles.visualTitle}>
+            Your Gate to <br/> Unforgettable Events
           </h1>
+          <p className={styles.visualSubtitle}>
+            Log in to manage your tickets, access mobile QR gate check-ins, or control your event dashboard.
+          </p>
+
+          <div className={styles.glassFeatureCard}>
+            <div className={styles.featureRow}>
+              <div className={styles.featureIcon}>
+                <Ticket size={20} />
+              </div>
+              <div className={styles.featureText}>
+                <h5>Instant E-Tickets</h5>
+                <p>QR passes delivered instantly to your device for 1-second gate verification.</p>
+              </div>
+            </div>
+
+            <div className={styles.featureRow}>
+              <div className={styles.featureIcon} style={{ background: '#2c1206' }}>
+                <ShieldCheck size={20} style={{ color: '#ff6b2c' }} />
+              </div>
+              <div className={styles.featureText}>
+                <h5>Encrypted & Verified Checkout</h5>
+                <p>100% safe transaction processing with real-time order protection.</p>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
 
-      {/* RIGHT SIDE - FORM */}
+      {/* RIGHT SIDE - FORM CONTAINER */}
       <div className={styles.formSide}>
         <motion.div 
           className={styles.formWrapper}
-          initial="hidden" animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.3 } }
-          }}
+          variants={slideRight} 
+          initial="hidden" 
+          animate="visible"
         >
-          <motion.div variants={fadeUp}>
-            <Link href="/" style={{ display: 'inline-block', marginBottom: '2rem', fontWeight: 600, color: '#888' }}>
-              ← Back to Home
-            </Link>
-          </motion.div>
+          <Link href="/" className={styles.backLink}>
+            <ArrowLeft size={16} />
+            <span>Back to Home</span>
+          </Link>
 
-          <motion.h2 variants={fadeUp} className={styles.title}>Welcome back</motion.h2>
-          <motion.p variants={fadeUp} className={styles.subtitle}>Log in to access your tickets and events.</motion.p>
+          <h2 className={styles.title}>Welcome Back</h2>
+          <p className={styles.subtitle}>Sign in to access your tickets, orders, and event dashboard.</p>
 
           <form onSubmit={handleLogin}>
-            {error && <motion.div variants={fadeUp} style={{ color: '#ff4d4d', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</motion.div>}
-            
-            <motion.div variants={fadeUp} style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', background: '#f1f5f9', padding: '0.25rem', borderRadius: '12px' }}>
-              <button 
-                type="button" 
-                onClick={() => setRole('attendee')}
-                style={{
-                  flex: 1,
-                  padding: '0.6rem 0.5rem',
-                  border: 'none',
-                  borderRadius: '10px',
-                  fontWeight: 600,
-                  fontSize: '0.85rem',
-                  cursor: 'pointer',
-                  background: role === 'attendee' ? '#ffffff' : 'transparent',
-                  color: role === 'attendee' ? '#2563eb' : '#64748b',
-                  boxShadow: role === 'attendee' ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                Sign in as Attendee
-              </button>
-              <button 
-                type="button" 
-                onClick={() => setRole('organizer')}
-                style={{
-                  flex: 1,
-                  padding: '0.6rem 0.5rem',
-                  border: 'none',
-                  borderRadius: '10px',
-                  fontWeight: 600,
-                  fontSize: '0.85rem',
-                  cursor: 'pointer',
-                  background: role === 'organizer' ? '#ffffff' : 'transparent',
-                  color: role === 'organizer' ? '#2563eb' : '#64748b',
-                  boxShadow: role === 'organizer' ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                Sign in as Organizer
-              </button>
-            </motion.div>
+            {error && (
+              <div className={styles.errorAlert}>
+                <AlertCircle size={18} />
+                <span>{error}</span>
+              </div>
+            )}
 
-            <motion.div variants={fadeUp} className={styles.formGroup}>
-              <label htmlFor="email">Email</label>
-              <input 
-                type="email" 
-                id="email" 
-                className={styles.input} 
-                placeholder="name@example.com" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </motion.div>
+            {/* Email Field */}
+            <div className={styles.formGroup}>
+              <label htmlFor="email">Email Address</label>
+              <div className={styles.inputWrap}>
+                <Mail size={18} className={styles.inputIcon} />
+                <input 
+                  type="email" 
+                  id="email" 
+                  className={styles.input} 
+                  placeholder="name@example.com" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
 
-            <motion.div variants={fadeUp} className={styles.formGroup}>
+            {/* Password Field */}
+            <div className={styles.formGroup}>
               <label htmlFor="password">Password</label>
-              <input 
-                type="password" 
-                id="password" 
-                className={styles.input} 
-                placeholder="••••••••" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </motion.div>
+              <div className={styles.inputWrap}>
+                <Lock size={18} className={styles.inputIcon} />
+                <input 
+                  type={showPassword ? 'text' : 'password'} 
+                  id="password" 
+                  className={styles.input} 
+                  placeholder="••••••••" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button 
+                  type="button" 
+                  className={styles.togglePassBtn}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
 
-            <motion.div variants={fadeUp} className={styles.options}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', margin: 0, fontWeight: 500 }}>
-                <input type="checkbox" /> Remember me
+            {/* Remember Me & Forgot Password */}
+            <div className={styles.optionsRow}>
+              <label className={styles.rememberMe}>
+                <input type="checkbox" style={{ accentColor: '#ff6b2c' }} />
+                <span>Remember me</span>
               </label>
-              <Link href="/forgot-password" className={styles.forgotLink}>Forgot password?</Link>
-            </motion.div>
+              <Link href="/forgot-password" className={styles.forgotLink}>
+                Forgot password?
+              </Link>
+            </div>
 
-            <motion.button variants={fadeUp} type="submit" className={styles.submitBtn} disabled={loading}>
-              {loading ? 'Logging in...' : 'Log In'}
+            {/* Submit Button */}
+            <motion.button 
+              type="submit" 
+              className={styles.submitBtn} 
+              disabled={loading}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
+              <ArrowRight size={18} />
             </motion.button>
           </form>
 
-          <motion.div variants={fadeUp} className={styles.signupPrompt}>
-            Don't have an account? 
-            <Link href="/signup">Sign up</Link>
-          </motion.div>
+          <div className={styles.authPrompt}>
+            Don't have an account yet? 
+            <Link href="/signup">Create Account</Link>
+          </div>
         </motion.div>
       </div>
 

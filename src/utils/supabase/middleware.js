@@ -47,13 +47,26 @@ export async function updateSession(request) {
     }
   }
 
+  // Fetch DB profile role if user exists to prevent false redirects
+  let userRole = user?.user_metadata?.role;
+  if (user && (!userRole || userRole === 'attendee')) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    if (profile?.role) {
+      userRole = profile.role;
+    }
+  }
+
   // Protect Organizer page routes
   if (pathname.startsWith('/organizer')) {
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = '/login';
       return NextResponse.redirect(url);
-    } else if (user.user_metadata?.role !== 'organizer') {
+    } else if (userRole && userRole !== 'organizer') {
       const url = request.nextUrl.clone();
       url.pathname = '/dashboard'; // Redirect non-organizers away
       return NextResponse.redirect(url);
@@ -66,7 +79,7 @@ export async function updateSession(request) {
       const url = request.nextUrl.clone();
       url.pathname = '/login';
       return NextResponse.redirect(url);
-    } else if (user.user_metadata?.role !== 'attendee') {
+    } else if (userRole && userRole === 'organizer') {
       const url = request.nextUrl.clone();
       url.pathname = '/organizer'; // Redirect organizers away
       return NextResponse.redirect(url);
@@ -82,22 +95,21 @@ export async function updateSession(request) {
     }
   }
 
-  // Redirect logged in users away from /login and /signup directly to their dashboard
+  // Redirect logged in users away from /login and /signup directly to their role dashboard
   if (
     user && 
-    (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup' || request.nextUrl.pathname === '/')
+    (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup')
   ) {
      const url = request.nextUrl.clone()
      
-     if (user.user_metadata?.role === 'organizer') {
+     if (userRole === 'organizer') {
        url.pathname = '/organizer';
-     } else if (user.user_metadata?.role === 'admin') {
+     } else if (userRole === 'admin') {
        url.pathname = '/admin';
      } else {
        url.pathname = '/dashboard';
      }
      
-     // Only redirect if the current path isn't already the target path
      if (request.nextUrl.pathname !== url.pathname) {
        return NextResponse.redirect(url);
      }

@@ -1,65 +1,89 @@
+/* ==========================================================================
+   EVENTIX ORGANIZER EVENTS LIST STYLES
+   ========================================================================== */
+
 .page {
-  padding: 2.5rem;
-  max-width: 1300px;
+  max-width: 1240px;
   margin: 0 auto;
-  color: #0f172a;
+  color: #1a1a1a;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.25rem;
 }
 
 .header h1 {
-  font-size: 2.2rem;
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 2.25rem;
   font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 0.25rem 0;
+  color: var(--festino-brown, #2c1206);
+  margin: 0 0 0.4rem 0;
+  letter-spacing: -0.02em;
+}
+
+.header p {
+  color: #64748b;
+  font-size: 1rem;
+  margin: 0;
 }
 
 .createBtn {
-  background: linear-gradient(135deg, #0284c7, #2563eb);
-  color: white;
+  background: linear-gradient(135deg, #ff6b2c 0%, #e85d04 100%);
+  color: #ffffff;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  font-weight: 600;
+  padding: 0.85rem 1.75rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2);
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.createBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(232, 93, 4, 0.5);
 }
 
 .filterRow {
   display: flex;
   gap: 0.75rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.25rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
 }
 
 .filterPill {
-  padding: 0.6rem 1.25rem;
-  border-radius: 9999px;
+  padding: 0.7rem 1.4rem;
+  border-radius: 50px;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid rgba(44, 18, 6, 0.08);
   color: #64748b;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  white-space: nowrap;
 }
 
 .filterPill:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: #fffcf9;
+  color: #ff6b2c;
+  border-color: rgba(255, 107, 44, 0.3);
 }
 
 .active {
-  background: #2563eb;
-  color: white;
-  border-color: #2563eb;
+  background: linear-gradient(135deg, #ff6b2c 0%, #e85d04 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.38) !important;
 }
 
 .eventGrid {
@@ -70,10 +94,17 @@
 
 .eventCard {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1.5px solid rgba(44, 18, 6, 0.08);
+  border-radius: 24px;
+  padding: 1.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.eventCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(44, 18, 6, 0.1);
+  border-color: rgba(255, 107, 44, 0.3);
 }
 
 .eventTitleRow {
@@ -84,36 +115,40 @@
 }
 
 .eventTitleRow h2 {
-  font-size: 1.2rem;
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--festino-brown, #2c1206);
 }
 
 .statusLive {
-  background: #ef4444;
+  background: #16a34a;
   color: white;
-  padding: 0.25rem 0.65rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.78rem;
   font-weight: 700;
+  text-transform: uppercase;
 }
 
 .statusDraft {
-  background: #cbd5e1;
-  color: #334155;
-  padding: 0.25rem 0.65rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
+  background: #eab308;
+  color: white;
+  padding: 0.3rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.78rem;
   font-weight: 700;
+  text-transform: uppercase;
 }
 
 .statusEnded {
-  background: #94a3b8;
+  background: #64748b;
   color: white;
-  padding: 0.25rem 0.65rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.78rem;
   font-weight: 700;
+  text-transform: uppercase;
 }
 
 .actions {
@@ -124,33 +159,47 @@
 
 .actionBtn {
   flex: 1;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #475569;
-  padding: 0.6rem;
-  border-radius: 10px;
+  background: #ffffff;
+  border: 1.5px solid rgba(44, 18, 6, 0.12);
+  color: var(--festino-brown, #2c1206);
+  padding: 0.65rem;
+  border-radius: 50px;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
+  transition: all 0.2s ease;
 }
 
 .actionBtn:hover {
-  background: #eff6ff;
-  color: #2563eb;
-  border-color: #bfdbfe;
+  border-color: #ff6b2c;
+  color: #ff6b2c;
+  background: #fffcf9;
 }
 
 .primary {
-  background: #2563eb;
+  background: linear-gradient(135deg, #ff6b2c 0%, #e85d04 100%);
   color: white;
   border: none;
+  box-shadow: 0 4px 14px rgba(232, 93, 4, 0.3);
 }
 
 .primary:hover {
-  background: #1d4ed8;
-  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(232, 93, 4, 0.45);
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .eventGrid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -4,19 +4,37 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  User, 
+  Mail, 
+  Lock, 
+  Building2, 
+  ArrowRight, 
+  ArrowLeft, 
+  Ticket, 
+  Sparkles, 
+  Users, 
+  AlertCircle, 
+  CheckCircle2,
+  MailCheck
+} from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { initializeUserProfile } from '@/app/actions/profile';
 import styles from './signup.module.css';
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 }
+  hidden: { opacity: 0, y: 25 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } 
+  }
 };
 
 const slideLeft = {
-  hidden: { opacity: 0, x: 50 },
-  visible: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: -50 }
+  hidden: { opacity: 0, x: 45 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+  exit: { opacity: 0, x: -45, transition: { duration: 0.3 } }
 };
 
 export default function Signup() {
@@ -70,7 +88,7 @@ export default function Signup() {
     setSuccess(false);
 
     if (role === 'organizer' && !businessName.trim()) {
-      setError("Business Name is required for organizers");
+      setError("Organization/Business Name is required for event hosts");
       setLoading(false);
       return;
     }
@@ -79,10 +97,11 @@ export default function Signup() {
       email,
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback?role=${role}`,
         data: {
           full_name: name,
           role: role,
-          business_name: businessName // only used if organizer
+          business_name: businessName
         }
       }
     });
@@ -96,211 +115,316 @@ export default function Signup() {
       }
       setSuccess(true);
       setLoading(false);
-      // Role-based post-signup landing page redirection
-      if (role === 'organizer') {
-        router.push('/organizer');
-      } else {
-        router.push('/home');
-      }
     }
   };
 
   return (
     <div className={styles.authContainer}>
       
-      {/* LEFT SIDE - MAGIC */}
-      <div className={styles.magicSide}>
-        <div className={styles.wavyBg}></div>
-        
-        {/* Floating stars */}
-        <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.8, scale: 1 }} transition={{ delay: 0.2 }} className={styles.star} style={{ top: '10%', left: '25%' }}>✦</motion.div>
-        <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.5, scale: 0.8 }} transition={{ delay: 0.4 }} className={styles.star} style={{ top: '30%', right: '10%', color: '#000' }}>✧</motion.div>
-        <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 0.6, scale: 1.2 }} transition={{ delay: 0.6 }} className={styles.star} style={{ bottom: '15%', left: '15%' }}>✦</motion.div>
+      {/* LEFT SIDE - VISUAL SHOWCASE (OUTDOOR CULTURAL FESTIVAL BACKGROUND) */}
+      <div className={styles.visualSide}>
+        <motion.div 
+          className={styles.brandHeader}
+          initial={{ opacity: 0, x: -30 }} 
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Link href="/" className={styles.brandLogo}>
+            Eventix
+          </Link>
+          <span className={styles.brandBadge}>Join Platform</span>
+        </motion.div>
 
         <motion.div 
-          className={styles.magicShape}
-          initial={{ opacity: 0, y: 50, rotate: 5 }}
-          animate={{ opacity: 1, y: 0, rotate: 0 }}
-          transition={{ duration: 1, type: "spring", bounce: 0.4 }}
+          className={styles.visualContent}
+          initial={{ opacity: 0, x: -30 }} 
+          animate={{ opacity: 1, x: 0 }} 
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h1 className={styles.magicText}>
-            Join <br/> the club
+          <h1 className={styles.visualTitle}>
+            Discover & Host <br/> Live Experiences
           </h1>
+          <p className={styles.visualSubtitle}>
+            Join thousands of event lovers discovering tech summits, cultural festivals, sports marathons, comedy shows, and workshops.
+          </p>
+
+          <div className={styles.glassFeatureCard}>
+            <div className={styles.featureRow}>
+              <div className={styles.featureIcon}>
+                <Ticket size={20} />
+              </div>
+              <div className={styles.featureText}>
+                <h5>Instant Access & E-Tickets</h5>
+                <p>Never lose a ticket. Access your digital passes anytime with real-time QR gate scanning.</p>
+              </div>
+            </div>
+
+            <div className={styles.featureRow}>
+              <div className={styles.featureIcon} style={{ background: '#2c1206' }}>
+                <Sparkles size={20} style={{ color: '#ff6b2c' }} />
+              </div>
+              <div className={styles.featureText}>
+                <h5>Powerful Organizer Dashboard</h5>
+                <p>Host events, manage ticket tiers, track sales analytics, and scan gate passes effortlessly.</p>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
 
-      {/* RIGHT SIDE - FORM */}
+      {/* RIGHT SIDE - FORM CONTAINER */}
       <div className={styles.formSide}>
         <div className={styles.formWrapper}>
-          <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-            {step > 1 && !success ? (
-               <button onClick={() => setStep(step - 1)} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', marginBottom: '2rem', fontWeight: 600, color: '#888', display: 'flex', alignItems: 'center', fontSize: '1rem' }}>
-                 ← Back
-               </button>
-            ) : (
-               <Link href="/" style={{ display: 'inline-block', marginBottom: '2rem', fontWeight: 600, color: '#888' }}>
-                 ← Back to Home
-               </Link>
-            )}
-          </motion.div>
-
-          <motion.h2 initial="hidden" animate="visible" variants={fadeUp} className={styles.title}>
-             {step === 1 ? 'Create account' : step === 2 ? 'Your details' : 'Organization info'}
-          </motion.h2>
-          <motion.p initial="hidden" animate="visible" variants={fadeUp} className={styles.subtitle}>
-             {step === 1 ? 'Start discovering or hosting unforgettable events.' : step === 2 ? 'Let us know who you are.' : 'What do you call your business?'}
-          </motion.p>
-
-          <div style={{ position: 'relative' }}>
-            <AnimatePresence mode="wait">
+          
+          {success ? (
+            /* EMAIL VERIFICATION CONFIRMATION CARD */
+            <motion.div 
+              className={styles.verificationCard}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className={styles.mailIconWrap}>
+                <MailCheck size={44} style={{ color: '#ff6b2c' }} />
+              </div>
+              <h2 className={styles.title} style={{ fontSize: '1.85rem' }}>Check Your Email</h2>
+              <p className={styles.subtitle} style={{ marginBottom: '1.5rem', lineHeight: '1.6' }}>
+                We've sent a verification link to <strong style={{ color: '#2c1206' }}>{email}</strong>. Please check your email inbox and click the verification link to confirm your account.
+              </p>
               
-              {/* STEP 1: ROLE SELECTION */}
-              {step === 1 && (
-                <motion.div 
-                  key="step1"
-                  initial="hidden" animate="visible" exit="exit"
-                  variants={slideLeft}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className={styles.roleSelect} style={{ marginTop: '2rem' }}>
-                    <div 
-                      className={`${styles.roleOption} ${role === 'attendee' ? styles.roleOptionActive : ''}`}
-                      onClick={() => handleRoleSelect('attendee')}
-                    >
-                      I want to buy tickets
-                    </div>
-                    <div 
-                      className={`${styles.roleOption} ${role === 'organizer' ? styles.roleOptionActive : ''}`}
-                      onClick={() => handleRoleSelect('organizer')}
-                    >
-                      I want to host events
-                    </div>
-                  </div>
-                </motion.div>
+              <div className={styles.verificationNote}>
+                <CheckCircle2 size={18} style={{ color: '#16a34a', flexShrink: 0 }} />
+                <span>Once verified, you can sign in to access your {role === 'organizer' ? 'event host dashboard' : 'e-tickets'}.</span>
+              </div>
+
+              <Link href="/login" className={styles.submitBtn} style={{ marginTop: '1.75rem', textDecoration: 'none' }}>
+                <span>Proceed to Sign In</span>
+                <ArrowRight size={18} />
+              </Link>
+            </motion.div>
+          ) : (
+            <>
+              {/* Top Navigation */}
+              <motion.div variants={fadeUp} initial="hidden" animate="visible">
+                {step > 1 ? (
+                  <button 
+                    type="button"
+                    onClick={() => setStep(step - 1)} 
+                    className={styles.backLink}
+                  >
+                    <ArrowLeft size={16} />
+                    <span>Back to previous step</span>
+                  </button>
+                ) : (
+                  <Link href="/" className={styles.backLink}>
+                    <ArrowLeft size={16} />
+                    <span>Back to Home</span>
+                  </Link>
+                )}
+              </motion.div>
+
+              {/* Step Progress Indicator Bar */}
+              <div className={styles.stepIndicator}>
+                <div className={`${styles.stepPill} ${step >= 1 ? styles.stepPillActive : ''}`}></div>
+                <div className={`${styles.stepPill} ${step >= 2 ? styles.stepPillActive : ''}`}></div>
+                {role === 'organizer' && (
+                  <div className={`${styles.stepPill} ${step >= 3 ? styles.stepPillActive : ''}`}></div>
+                )}
+              </div>
+
+              <motion.h2 variants={fadeUp} initial="hidden" animate="visible" className={styles.title}>
+                {step === 1 ? 'Join Eventix' : step === 2 ? 'Your Details' : 'Organization Info'}
+              </motion.h2>
+              
+              <motion.p variants={fadeUp} initial="hidden" animate="visible" transition={{ delay: 0.1 }} className={styles.subtitle}>
+                {step === 1 ? 'Step 1: Choose whether you want to buy tickets or host events.' : step === 2 ? 'Enter your personal account credentials.' : 'Tell us about your organization or brand.'}
+              </motion.p>
+
+              {error && (
+                <div className={styles.errorAlert}>
+                  <AlertCircle size={18} />
+                  <span>{error}</span>
+                </div>
               )}
 
-              {/* STEP 2: BASIC INFO */}
-              {step === 2 && (
-                <motion.form 
-                  key="step2"
-                  initial="hidden" animate="visible" exit="exit"
-                  variants={slideLeft}
-                  transition={{ duration: 0.3 }}
-                  onSubmit={handleNextStep}
-                  style={{ marginTop: '2rem' }}
-                >
-                  {error && <div style={{ color: '#ff4d4d', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</div>}
-                  {success && <div style={{ color: '#4caf50', marginBottom: '1rem', fontSize: '0.9rem' }}>Account created! Check your email to confirm.</div>}
+              <div style={{ position: 'relative' }}>
+                <AnimatePresence mode="wait">
                   
-                  {!success && (
-                    <>
+                  {/* STEP 1: ROLE SELECTION CARDS */}
+                  {step === 1 && (
+                    <motion.div 
+                      key="step1"
+                      initial="hidden" animate="visible" exit="exit"
+                      variants={slideLeft}
+                    >
+                      <div className={styles.roleGrid}>
+                        
+                        <div 
+                          className={`${styles.roleCard} ${role === 'attendee' ? styles.roleCardActive : ''}`}
+                          onClick={() => handleRoleSelect('attendee')}
+                        >
+                          <div className={styles.roleCardIcon}>
+                            <Users size={26} />
+                          </div>
+                          <div className={styles.roleCardText}>
+                            <h4>I want to buy tickets (Attendee)</h4>
+                            <p>Discover concerts, tech summits, sports & shows, and manage your e-tickets.</p>
+                          </div>
+                        </div>
+
+                        <div 
+                          className={`${styles.roleCard} ${role === 'organizer' ? styles.roleCardActive : ''}`}
+                          onClick={() => handleRoleSelect('organizer')}
+                        >
+                          <div className={styles.roleCardIcon} style={{ background: 'rgba(44, 18, 6, 0.12)', color: '#2c1206' }}>
+                            <Sparkles size={26} />
+                          </div>
+                          <div className={styles.roleCardText}>
+                            <h4>I want to host events (Event Host)</h4>
+                            <p>Create event listings, customize ticket tiers, track revenue, and scan QR passes.</p>
+                          </div>
+                        </div>
+
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* STEP 2: ACCOUNT DETAILS */}
+                  {step === 2 && (
+                    <motion.form 
+                      key="step2"
+                      initial="hidden" animate="visible" exit="exit"
+                      variants={slideLeft}
+                      onSubmit={handleNextStep}
+                    >
                       <div className={styles.formGroup}>
                         <label htmlFor="name">Full Name</label>
-                        <input 
-                          type="text" 
-                          id="name" 
-                          className={styles.input} 
-                          placeholder="John Doe" 
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          required
-                        />
+                        <div className={styles.inputWrap}>
+                          <User size={18} className={styles.inputIcon} />
+                          <input 
+                            type="text" 
+                            id="name" 
+                            className={styles.input} 
+                            placeholder="e.g. Kwame Mensah" 
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                          />
+                        </div>
                       </div>
 
                       <div className={styles.formGroup}>
-                        <label htmlFor="email">Email</label>
-                        <input 
-                          type="email" 
-                          id="email" 
-                          className={styles.input} 
-                          placeholder="name@example.com" 
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                        />
+                        <label htmlFor="email">Email Address</label>
+                        <div className={styles.inputWrap}>
+                          <Mail size={18} className={styles.inputIcon} />
+                          <input 
+                            type="email" 
+                            id="email" 
+                            className={styles.input} 
+                            placeholder="name@example.com" 
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                          />
+                        </div>
                       </div>
 
                       <div style={{ display: 'flex', gap: '1rem' }}>
                         <div className={styles.formGroup} style={{ flex: 1 }}>
                           <label htmlFor="password">Password</label>
-                          <input 
-                            type="password" 
-                            id="password" 
-                            className={styles.input} 
-                            placeholder="••••••••" 
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            minLength={6}
-                          />
+                          <div className={styles.inputWrap}>
+                            <Lock size={18} className={styles.inputIcon} />
+                            <input 
+                              type="password" 
+                              id="password" 
+                              className={styles.input} 
+                              placeholder="••••••••" 
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              required
+                              minLength={6}
+                            />
+                          </div>
                         </div>
 
                         <div className={styles.formGroup} style={{ flex: 1 }}>
-                          <label htmlFor="confirmPassword">Confirm</label>
+                          <label htmlFor="confirmPassword">Confirm Password</label>
+                          <div className={styles.inputWrap}>
+                            <Lock size={18} className={styles.inputIcon} />
+                            <input 
+                              type="password" 
+                              id="confirmPassword" 
+                              className={styles.input} 
+                              placeholder="••••••••" 
+                              value={confirmPassword}
+                              onChange={(e) => setConfirmPassword(e.target.value)}
+                              required
+                              minLength={6}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <motion.button 
+                        type="submit" 
+                        className={styles.submitBtn} 
+                        disabled={loading}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <span>{loading ? 'Processing...' : role === 'organizer' ? 'Next Step' : 'Create Account'}</span>
+                        <ArrowRight size={18} />
+                      </motion.button>
+                    </motion.form>
+                  )}
+
+                  {/* STEP 3: ORGANIZER INFO */}
+                  {step === 3 && (
+                    <motion.form 
+                      key="step3"
+                      initial="hidden" animate="visible" exit="exit"
+                      variants={slideLeft}
+                      onSubmit={submitSignup}
+                    >
+                      <div className={styles.formGroup}>
+                        <label htmlFor="businessName">Organization / Brand Name</label>
+                        <div className={styles.inputWrap}>
+                          <Building2 size={18} className={styles.inputIcon} />
                           <input 
-                            type="password" 
-                            id="confirmPassword" 
+                            type="text" 
+                            id="businessName" 
                             className={styles.input} 
-                            placeholder="••••••••" 
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder="e.g. Accra Tech Wave & Events Ltd" 
+                            value={businessName}
+                            onChange={(e) => setBusinessName(e.target.value)}
                             required
-                            minLength={6}
                           />
                         </div>
                       </div>
 
-                      <button type="submit" className={styles.submitBtn} disabled={loading}>
-                        {loading ? 'Processing...' : role === 'organizer' ? 'Next Step →' : 'Complete Sign Up'}
-                      </button>
-                    </>
+                      <motion.button 
+                        type="submit" 
+                        className={styles.submitBtn} 
+                        disabled={loading}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <span>{loading ? 'Creating Account...' : 'Complete Sign Up'}</span>
+                        <ArrowRight size={18} />
+                      </motion.button>
+                    </motion.form>
                   )}
-                </motion.form>
-              )}
 
-              {/* STEP 3: ORGANIZER INFO */}
-              {step === 3 && (
-                <motion.form 
-                  key="step3"
-                  initial="hidden" animate="visible" exit="exit"
-                  variants={slideLeft}
-                  transition={{ duration: 0.3 }}
-                  onSubmit={submitSignup}
-                  style={{ marginTop: '2rem' }}
-                >
-                  {error && <div style={{ color: '#ff4d4d', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</div>}
-                  {success && <div style={{ color: '#4caf50', marginBottom: '1rem', fontSize: '0.9rem' }}>Account created! Check your email to confirm.</div>}
-                  
-                  {!success && (
-                    <>
-                      <div className={styles.formGroup}>
-                        <label htmlFor="businessName">Business Name / Organization Name</label>
-                        <input 
-                          type="text" 
-                          id="businessName" 
-                          className={styles.input} 
-                          placeholder="e.g. Rave Culture Ltd" 
-                          value={businessName}
-                          onChange={(e) => setBusinessName(e.target.value)}
-                          required
-                        />
-                      </div>
+                </AnimatePresence>
+              </div>
 
-                      <button type="submit" className={styles.submitBtn} disabled={loading}>
-                        {loading ? 'Creating account...' : 'Complete Sign Up'}
-                      </button>
-                    </>
-                  )}
-                </motion.form>
-              )}
+              <div className={styles.authPrompt}>
+                Already have an account? 
+                <Link href="/login">Log In</Link>
+              </div>
+            </>
+          )}
 
-            </AnimatePresence>
-          </div>
-
-          <motion.div initial="hidden" animate="visible" variants={fadeUp} className={styles.loginPrompt} style={{ marginTop: '2rem' }}>
-            Already have an account? 
-            <Link href="/login">Log in</Link>
-          </motion.div>
         </div>
       </div>
 

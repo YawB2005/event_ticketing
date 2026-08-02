@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Ticket, Calendar, MapPin, QrCode, ArrowRight } from 'lucide-react';
+import LoadingSpinner from '@/components/ui/LoadingSpinner/LoadingSpinner';
 import styles from './MyTickets.module.css';
 
-export default function MyTickEventixage() {
+export default function MyTicketsPage() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +29,11 @@ export default function MyTickEventixage() {
   }, []);
 
   if (loading) {
-    return <div className={styles.page} style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>Loading tickets...</div>;
+    return (
+      <div className={styles.page} style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
+        <LoadingSpinner text="Loading your digital passes..." />
+      </div>
+    );
   }
 
   return (
@@ -39,39 +44,63 @@ export default function MyTickEventixage() {
       </div>
 
       {tickets.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '4rem 1rem', background: '#fff', borderRadius: '12px', border: '1px dashed #cbd5e1' }}>
-          <Ticket size={48} style={{ color: '#94a3b8', margin: '0 auto 1rem' }} />
-          <h3 style={{ margin: '0 0 0.5rem', color: '#1e293b' }}>No tickets yet</h3>
-          <p style={{ color: '#64748b', margin: '0 0 1.5rem' }}>You haven't purchased any event tickets yet.</p>
-          <Link href="/events" style={{ background: '#3b82f6', color: '#fff', padding: '0.75rem 1.5rem', borderRadius: '8px', textDecoration: 'none', fontWeight: 500 }}>
-            Browse Events
+        <motion.div 
+          className={styles.emptyStateCard}
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className={styles.emptyIconWrap}>
+            <Ticket size={42} />
+          </div>
+          <h3 className={styles.emptyTitle}>No Tickets Found</h3>
+          <p className={styles.emptyText}>
+            You haven't registered for any events yet. Discover upcoming tech summits, music festivals, comedy shows, and sports to grab your passes.
+          </p>
+          <Link href="/events" className={styles.browseBtn}>
+            <span>Explore Events</span>
+            <ArrowRight size={18} />
           </Link>
-        </div>
+        </motion.div>
       ) : (
         <div className={styles.ticketsGrid}>
-          {tickets.map(ticket => (
-            <motion.div key={ticket.id} className={styles.ticketCard} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}>
+          {tickets.map((ticket, idx) => (
+            <motion.div 
+              key={ticket.id} 
+              className={styles.ticketCard} 
+              initial={{ opacity: 0, y: 15 }} 
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: idx * 0.1 }}
+            >
               <div className={styles.qrPreview}>
-                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticket.qr_verification_hash || ticket.id}`} alt="QR Code Pass" className={styles.qrImage} />
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${ticket.qr_verification_hash || ticket.id}`} 
+                  alt="QR Code Pass" 
+                  className={styles.qrImage} 
+                />
               </div>
 
               <div className={styles.ticketDetails}>
-                <h3>{ticket.events?.title || 'Unknown Event'}</h3>
+                <h3>{ticket.events?.title || 'Event Pass'}</h3>
                 <div className={styles.ticketMeta}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Calendar size={14} /> {ticket.events?.start_datetime ? new Date(ticket.events.start_datetime).toLocaleDateString() : 'TBA'} • {ticket.events?.start_datetime ? new Date(ticket.events.start_datetime).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : ''}
+                    <Calendar size={15} style={{ color: '#ff6b2c' }} /> 
+                    <span>{ticket.events?.start_datetime ? new Date(ticket.events.start_datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBA'} • {ticket.events?.start_datetime ? new Date(ticket.events.start_datetime).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : ''}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <MapPin size={14} /> {ticket.events?.venue_name || 'TBA'}
+                    <MapPin size={15} style={{ color: '#ff6b2c' }} /> 
+                    <span>{ticket.events?.venue_name || 'TBA'}</span>
                   </div>
-                  <div style={{ color: 'var(--dash-primary)', fontWeight: 600, marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Ticket size={14} /> {ticket.ticket_types?.name} (GH₵ {ticket.ticket_types?.price})
+                  <div style={{ color: '#2c1206', fontWeight: 600, marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Ticket size={15} style={{ color: '#ff6b2c' }} /> 
+                    <span>{ticket.ticket_types?.name || 'Standard Pass'} (GH₵ {ticket.ticket_types?.price || '0.00'})</span>
                   </div>
                 </div>
               </div>
 
               <Link href={`/dashboard/tickets/${ticket.id}`} className={styles.openBtn}>
-                <QrCode size={18} /> Open Ticket Pass
+                <QrCode size={18} /> 
+                <span>Open Digital Pass</span>
               </Link>
             </motion.div>
           ))}

@@ -3,84 +3,113 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 80px;
-  background: transparent;
+  height: 84px;
+  background: rgba(15, 6, 2, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 100;
   display: flex;
   align-items: center;
+  transition: all 0.3s ease;
 }
 
 .navContainer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 
 .logo {
-  font-family: var(--font-righteous);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.05em;
-  background: linear-gradient(90deg, #111, #555);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-family: var(--font-righteous), var(--font-outfit), sans-serif;
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.04em;
+  text-decoration: none;
 }
 
 .navLinks {
   display: flex;
-  gap: 2rem;
+  gap: 2.25rem;
   align-items: center;
 }
 
 .navLink {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 500;
   font-size: 0.95rem;
+  text-decoration: none;
+  transition: color 0.25s ease;
 }
 
 .navLink:hover {
-  color: var(--text-primary);
+  color: #ff6b2c;
 }
 
 .authActions {
   display: flex;
-  gap: 1rem;
+  gap: 1.25rem;
   align-items: center;
 }
 
-.authActions a {
-  color: #000;
+.loginBtn {
+  color: rgba(255, 255, 255, 0.92) !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  padding: 8px 16px;
+  transition: color 0.2s ease;
 }
 
-.authActions .btn-outline {
-  border-color: #e5e5e5;
+.loginBtn:hover {
+  color: #ff6b2c !important;
 }
-.authActions .btn-outline:hover {
-  background: #f5f5f5;
+
+.signUpBtn {
+  background: linear-gradient(135deg, #ff6b2c 0%, #e85d04 100%);
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 10px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(232, 93, 4, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-.authActions .btn-primary {
-  color: #fff;
+
+.signUpBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(232, 93, 4, 0.5);
+}
+
+.dashboardBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.dashboardBtn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: #ff6b2c;
+  color: #ff6b2c;
 }
 
 @media (max-width: 768px) {
   .navLinks {
     display: none;
   }
-}
-
-.accountIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  padding: 0.25rem;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.accountIcon:hover {
-  background: rgba(0, 0, 0, 0.05);
-  transform: scale(1.05);
 }

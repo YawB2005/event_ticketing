@@ -1,12 +1,13 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { ShoppingBag, CreditCard, Download, CheckCircle } from 'lucide-react';
+import { ShoppingBag, CreditCard, Download, CheckCircle2 } from 'lucide-react';
 import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './PurchaseHistory.module.css';
 
 export default function PurchaseHistoryPage() {
   const { showAlert } = useAlert();
+  
   const orders = [
     {
       id: 'ORD-9901',
@@ -44,41 +45,54 @@ export default function PurchaseHistoryPage() {
         <p className={styles.subText}>View receipts, transaction references, and payment methods for all registered tickets.</p>
       </div>
 
-      <motion.div className={styles.card} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Order Ref</th>
-              <th>Event</th>
-              <th>Purchase Date</th>
-              <th>Items</th>
-              <th>Payment Method</th>
-              <th>Total Paid</th>
-              <th>Status</th>
-              <th>Receipt</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map(order => (
-              <tr key={order.id}>
-                <td className={styles.orderId}>{order.id}</td>
-                <td style={{ fontWeight: 600, color: '#ffffff' }}>{order.event}</td>
-                <td style={{ color: '#94a3b8' }}>{order.date}</td>
-                <td>{order.items}</td>
-                <td style={{ color: '#cbd5e1' }}>{order.paymentMethod}</td>
-                <td style={{ fontWeight: 700, color: '#ffffff' }}>{order.total}</td>
-                <td>
-                  <span className={styles.statusCompleted}>✓ {order.status}</span>
-                </td>
-                <td>
-                  <button className={styles.receiptBtn} onClick={() => showAlert(`Downloading receipt for ${order.id}`, "info", "Download Started")}>
-                    <Download size={14} style={{ display: 'inline', marginRight: '4px' }} /> PDF
-                  </button>
-                </td>
+      <motion.div 
+        className={styles.card} 
+        initial={{ opacity: 0, y: 15 }} 
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className={styles.tableWrap}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Order Ref</th>
+                <th>Event Title</th>
+                <th>Purchase Date</th>
+                <th>Pass Type</th>
+                <th>Payment Method</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+                <th>Receipt</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {orders.map(order => (
+                <tr key={order.id}>
+                  <td className={styles.orderId}>{order.id}</td>
+                  <td style={{ fontWeight: 700, color: '#2c1206' }}>{order.event}</td>
+                  <td style={{ color: '#64748b' }}>{order.date}</td>
+                  <td>{order.items}</td>
+                  <td style={{ color: '#64748b' }}>{order.paymentMethod}</td>
+                  <td style={{ fontWeight: 800, color: '#2c1206' }}>{order.total}</td>
+                  <td>
+                    <span className={styles.statusCompleted}>
+                      <CheckCircle2 size={14} />
+                      <span>{order.status}</span>
+                    </span>
+                  </td>
+                  <td>
+                    <button 
+                      className={styles.receiptBtn} 
+                      onClick={() => showAlert(`Downloading PDF receipt for order ${order.id}`, "info", "Download Started")}
+                    >
+                      <Download size={14} /> PDF
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </motion.div>
     </div>
   );

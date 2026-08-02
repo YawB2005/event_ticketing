@@ -137,6 +137,17 @@ a {
   font-family: var(--font-yeseva), Georgia, serif;
 }
 
+/* Custom theme color utility helpers */
+:root {
+  --festino-brown: #2c1206;
+  --festino-brown-light: #3d1b09;
+  --festino-amber: #e85d04;
+  --festino-orange: #ff6b2c;
+  --festino-cream: #fcf8f2;
+  --festino-cream-dark: #f5eedf;
+  --festino-gold: #ffb703;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -147,8 +158,9 @@ a {
   animation: fadeIn 0.6s ease-out forwards;
 }
 
-/* Force all icons to be light grey as requested */
-svg.lucide {
-  color: #94a3b8 !important; /* slate-400 */
-  stroke: #94a3b8 !important;
+/* Marquee continuous scroll animation */
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
+

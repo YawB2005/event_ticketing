@@ -2,10 +2,20 @@
 
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, AlertTriangle, XCircle, Info } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, XCircle, Info, LogOut } from 'lucide-react';
 import styles from './AlertModal.module.css';
 
-export default function AlertModal({ isOpen, title, message, type, onClose }) {
+export default function AlertModal({ 
+  isOpen, 
+  title, 
+  message, 
+  type, 
+  isConfirm,
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
+  onConfirm,
+  onClose 
+}) {
   // Prevent scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -24,6 +34,11 @@ export default function AlertModal({ isOpen, title, message, type, onClose }) {
     warning: AlertTriangle,
     info: Info,
   }[type] || Info;
+
+  const handleConfirmClick = () => {
+    onClose();
+    if (onConfirm) onConfirm();
+  };
 
   return (
     <AnimatePresence>
@@ -50,9 +65,20 @@ export default function AlertModal({ isOpen, title, message, type, onClose }) {
             <h2 className={styles.title}>{title}</h2>
             <p className={styles.message}>{message}</p>
             
-            <button className={styles.button} onClick={onClose}>
-              Okay
-            </button>
+            {isConfirm ? (
+              <div className={styles.actionGrid}>
+                <button className={styles.cancelBtn} onClick={onClose}>
+                  {cancelText}
+                </button>
+                <button className={styles.confirmBtn} onClick={handleConfirmClick}>
+                  {confirmText}
+                </button>
+              </div>
+            ) : (
+              <button className={styles.button} onClick={onClose}>
+                Okay
+              </button>
+            )}
           </motion.div>
         </motion.div>
       )}

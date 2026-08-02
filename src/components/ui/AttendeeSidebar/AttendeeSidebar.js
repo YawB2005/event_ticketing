@@ -9,21 +9,31 @@ import {
   ShoppingBag, 
   User, 
   Settings, 
-  Globe, 
   LogOut 
 } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 import styles from './AttendeeSidebar.module.css';
 
 export default function AttendeeSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
+  const { showConfirm } = useAlert();
 
-  const handleLogout = async (e) => {
+  const handleLogoutClick = (e) => {
     e.preventDefault();
-    await supabase.auth.signOut();
-    router.push('/login');
-    router.refresh();
+    showConfirm({
+      title: "Log Out of Eventix",
+      message: "Are you sure you want to log out of your attendee account?",
+      confirmText: "Yes, Log Out",
+      cancelText: "Cancel",
+      type: "warning",
+      onConfirm: async () => {
+        await supabase.auth.signOut();
+        router.push('/login');
+        router.refresh();
+      }
+    });
   };
 
   return (
@@ -66,10 +76,7 @@ export default function AttendeeSidebar() {
       </nav>
 
       <div className={styles.sidebarBottom}>
-        <Link href="/events" className={styles.navItem}>
-          <Globe size={20} /> Explore Events
-        </Link>
-        <a href="#" onClick={handleLogout} className={styles.navItem}>
+        <a href="#" onClick={handleLogoutClick} className={styles.navItem}>
           <LogOut size={20} /> Log Out
         </a>
       </div>

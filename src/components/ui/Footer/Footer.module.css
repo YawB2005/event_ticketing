@@ -13,9 +13,11 @@
 }
 
 .brandCol .logo {
-  font-family: var(--font-righteous);
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: var(--font-righteous), var(--font-outfit), sans-serif;
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: -0.04em;
   margin-bottom: 1rem;
 }
 

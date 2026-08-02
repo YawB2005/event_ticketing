@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import styles from './Settings.module.css';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Lock, CreditCard, Phone, Building, ShieldCheck } from 'lucide-react';
+import { User, Lock, CreditCard, Phone, Building, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 
 const fadeUp = {
@@ -77,7 +77,6 @@ export default function SettingsPage() {
         const data = await res.json();
         if (res.ok && data.banks) {
           setAvailableBanks(data.banks);
-          // Set default bank code if none is set
           if (!orgProfile?.settlement_bank && data.banks.length > 0) {
             setBankCode(data.banks[0].code);
           }
@@ -99,7 +98,6 @@ export default function SettingsPage() {
   const handleSaveProfile = async () => {
     setSaving(true);
     try {
-      // Update profiles table
       const { error: profileError } = await supabase
         .from('profiles')
         .update({ full_name: fullName, phone_number: phoneNumber })
@@ -107,7 +105,6 @@ export default function SettingsPage() {
       
       if (profileError) throw profileError;
 
-      // Update or insert organizer_profiles
       const { error: orgError } = await supabase
         .from('organizer_profiles')
         .upsert({ 
@@ -148,19 +145,17 @@ export default function SettingsPage() {
   };
 
   useEffect(() => {
-    // Only auto-resolve if it's 10-15 characters long
     if (payoutAccount && payoutAccount.length >= 10 && payoutAccount.length <= 15) {
       const selectedBank = availableBanks.find(b => b.code === bankCode);
       const isMobileMoney = selectedBank ? selectedBank.type === 'mobile_money' : ['MTN', 'VOD', 'ATL'].includes(bankCode);
       
       if (!isMobileMoney) {
         const timer = setTimeout(() => {
-          handleResolveAccount(true); // Pass true to do it silently without toasts
-        }, 800); // 800ms debounce
+          handleResolveAccount(true);
+        }, 800);
         return () => clearTimeout(timer);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payoutAccount, bankCode, availableBanks]);
 
   const handleLinkPaystack = async () => {
@@ -220,27 +215,32 @@ export default function SettingsPage() {
   };
 
   if (loading) {
-    return <div className={styles.page} style={{ padding: '2rem' }}>Loading settings...</div>;
+    return <div className={styles.page} style={{ padding: '3rem 0', textAlign: 'center', color: '#64748b' }}>Loading settings...</div>;
   }
 
   return (
     <div className={styles.page}>
       
       <div className={styles.header}>
-        <h1>Settings</h1>
-        <p>Manage your account preferences and billing details</p>
+        <h1>Account Settings</h1>
+        <p>Manage your account preferences, payout bank details, and security.</p>
       </div>
 
       {message.text && (
         <div style={{
-          padding: '1rem',
-          marginBottom: '1rem',
-          borderRadius: '8px',
-          background: message.type === 'error' ? '#fee2e2' : '#dcfce7',
-          color: message.type === 'error' ? '#ef4444' : '#16a34a',
-          fontWeight: 500
+          padding: '1rem 1.25rem',
+          marginBottom: '1.75rem',
+          borderRadius: '16px',
+          background: message.type === 'error' ? '#fef2f2' : '#f0fdf4',
+          border: message.type === 'error' ? '1px solid #fecaca' : '1px solid #bbf7d0',
+          color: message.type === 'error' ? '#dc2626' : '#16a34a',
+          fontWeight: 600,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
         }}>
-          {message.text}
+          <CheckCircle2 size={18} />
+          <span>{message.text}</span>
         </div>
       )}
 
@@ -264,7 +264,7 @@ export default function SettingsPage() {
             className={`${styles.navBtn} ${activeSection === "Billing" ? styles.active : ''}`}
             onClick={() => setActiveSection("Billing")}
           >
-            <CreditCard size={18} /> Billing & Payouts
+            <CreditCard size={18} /> Payout Methods
           </button>
         </div>
 
@@ -279,44 +279,46 @@ export default function SettingsPage() {
                 initial="hidden" animate="visible" exit="hidden" variants={fadeUp} transition={{ duration: 0.3 }}
               >
                 <div className={styles.sectionHeader}>
-                  <h2>Organization Details</h2>
-                  <p>Update your public facing organization information.</p>
+                  <h2>Organization & Contact Profile</h2>
+                  <p>Update your public brand name and primary contact details.</p>
                 </div>
 
                 <div className={styles.formGrid}>
                   <div className={styles.formGroup}>
-                    <label>Organization Name</label>
+                    <label>Organization / Brand Name</label>
                     <div className={styles.inputWrapper}>
                       <Building size={18} className={styles.inputIcon} />
                       <input 
                         type="text" 
                         value={businessName} 
                         onChange={(e) => setBusinessName(e.target.value)} 
-                        placeholder="e.g. Rave Culture Ltd" 
+                        placeholder="e.g. Accra Festival Productions" 
                       />
                     </div>
                   </div>
+
                   <div className={styles.formGroup}>
-                    <label>Full Name (Contact Person)</label>
+                    <label>Contact Person Full Name</label>
                     <div className={styles.inputWrapper}>
                       <User size={18} className={styles.inputIcon} />
                       <input 
                         type="text" 
                         value={fullName} 
                         onChange={(e) => setFullName(e.target.value)} 
-                        placeholder="John Doe" 
+                        placeholder="e.g. Kwame Mensah" 
                       />
                     </div>
                   </div>
-                  <div className={styles.formGroup}>
-                    <label>Phone Number</label>
+
+                  <div className={styles.formGroup} style={{ gridColumn: '1 / -1' }}>
+                    <label>Phone Number (Gatekeeper & SMS Notifications)</label>
                     <div className={styles.inputWrapper}>
                       <Phone size={18} className={styles.inputIcon} />
                       <input 
                         type="tel" 
                         value={phoneNumber} 
                         onChange={(e) => setPhoneNumber(e.target.value)} 
-                        placeholder="+233 55 123 4567" 
+                        placeholder="+233 24 123 4567" 
                       />
                     </div>
                   </div>
@@ -324,7 +326,7 @@ export default function SettingsPage() {
 
                 <div className={styles.btnRow}>
                   <button className={styles.saveBtn} onClick={handleSaveProfile} disabled={saving}>
-                    {saving ? 'Saving...' : 'Save Changes'}
+                    {saving ? 'Saving...' : 'Save Profile Details'}
                   </button>
                 </div>
               </motion.div>
@@ -338,22 +340,10 @@ export default function SettingsPage() {
               >
                 <div className={styles.sectionHeader}>
                   <h2>Change Password</h2>
-                  <p>Ensure your account is using a long, random password to stay secure.</p>
+                  <p>Ensure your account is protected with a strong, secure password.</p>
                 </div>
 
                 <div className={`${styles.formGrid} ${styles.full}`}>
-                  <div className={styles.formGroup}>
-                    <label>Current Password (Optional)</label>
-                    <div className={styles.inputWrapper}>
-                      <Lock size={18} className={styles.inputIcon} />
-                      <input 
-                        type="password" 
-                        placeholder="••••••••" 
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                      />
-                    </div>
-                  </div>
                   <div className={styles.formGroup}>
                     <label>New Password</label>
                     <div className={styles.inputWrapper}>
@@ -363,9 +353,11 @@ export default function SettingsPage() {
                         placeholder="••••••••" 
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
+                        minLength={6}
                       />
                     </div>
                   </div>
+
                   <div className={styles.formGroup}>
                     <label>Confirm New Password</label>
                     <div className={styles.inputWrapper}>
@@ -375,6 +367,7 @@ export default function SettingsPage() {
                         placeholder="••••••••" 
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        minLength={6}
                       />
                     </div>
                   </div>
@@ -395,17 +388,17 @@ export default function SettingsPage() {
                 initial="hidden" animate="visible" exit="hidden" variants={fadeUp} transition={{ duration: 0.3 }}
               >
                 <div className={styles.sectionHeader}>
-                  <h2>Payout Methods</h2>
-                  <p>Where should we send the money you earn from ticket sales? We partner with Paystack for secure, automated payouts.</p>
+                  <h2>Paystack Payout Account</h2>
+                  <p>Automated settlement bank or MoMo account for ticket revenue payouts.</p>
                 </div>
 
                 {subaccountCode ? (
-                  <div style={{ padding: '1.5rem', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', marginBottom: '1.5rem' }}>
-                    <h3 style={{ color: '#16a34a', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.1rem' }}>
-                      <ShieldCheck size={20} /> Paystack Subaccount Linked
+                  <div style={{ padding: '1.25rem 1.5rem', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '16px', marginBottom: '1.75rem' }}>
+                    <h3 style={{ color: '#16a34a', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.05rem', fontWeight: 700 }}>
+                      <ShieldCheck size={20} /> Paystack Payout Subaccount Linked
                     </h3>
-                    <p style={{ color: '#15803d', fontSize: '0.95rem' }}>
-                      Your ticket sales will be automatically routed to <strong>{accountName}</strong> ({bankCode} - {payoutAccount}).
+                    <p style={{ color: '#15803d', fontSize: '0.92rem', margin: 0 }}>
+                      Ticket revenue payouts are automatically routed to <strong>{accountName}</strong> ({bankCode} - {payoutAccount}).
                     </p>
                   </div>
                 ) : null}
@@ -416,10 +409,8 @@ export default function SettingsPage() {
                     <div className={styles.inputWrapper}>
                       <Building size={18} className={styles.inputIcon} />
                       <select 
-                        className={styles.input} 
                         value={bankCode} 
                         onChange={(e) => { setBankCode(e.target.value); setAccountName(''); setSubaccountCode(''); }}
-                        style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem', border: '1px solid #e2e8f0', borderRadius: '8px', outline: 'none', appearance: 'none', background: '#fff' }}
                       >
                         {availableBanks.length > 0 ? (
                           availableBanks.map((bank, index) => (
@@ -448,17 +439,16 @@ export default function SettingsPage() {
                         <CreditCard size={18} className={styles.inputIcon} />
                         <input 
                           type="text" 
-                          placeholder="e.g. 0551234567" 
+                          placeholder="e.g. 0241234567" 
                           value={payoutAccount}
                           onChange={(e) => { setPayoutAccount(e.target.value); setAccountName(''); setSubaccountCode(''); }}
-                          style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem', border: '1px solid #e2e8f0', borderRadius: '8px', outline: 'none' }}
                         />
                       </div>
                       {(!availableBanks.find(b => b.code === bankCode)?.type || availableBanks.find(b => b.code === bankCode)?.type !== 'mobile_money') && !['MTN', 'VOD', 'ATL'].includes(bankCode) && (
                         <button 
                           onClick={() => handleResolveAccount(false)} 
                           disabled={resolving || !payoutAccount || payoutAccount.length < 10}
-                          style={{ padding: '0 1.5rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, whiteSpace: 'nowrap', opacity: (resolving || !payoutAccount || payoutAccount.length < 10) ? 0.6 : 1 }}
+                          style={{ padding: '0 1.5rem', background: 'linear-gradient(135deg, #ff6b2c 0%, #e85d04 100%)', color: '#fff', border: 'none', borderRadius: '50px', cursor: 'pointer', fontWeight: 700, whiteSpace: 'nowrap', opacity: (resolving || !payoutAccount || payoutAccount.length < 10) ? 0.6 : 1 }}
                         >
                           {resolving ? 'Verifying...' : 'Verify'}
                         </button>
@@ -467,22 +457,21 @@ export default function SettingsPage() {
                   </div>
 
                   {(availableBanks.find(b => b.code === bankCode)?.type === 'mobile_money' || ['MTN', 'VOD', 'ATL'].includes(bankCode)) ? (
-                    <div className={styles.formGroup}>
+                    <div className={styles.formGroup} style={{ gridColumn: '1 / -1' }}>
                       <label>Registered Account Name</label>
                       <div className={styles.inputWrapper}>
                         <User size={18} className={styles.inputIcon} />
                         <input 
                           type="text" 
-                          placeholder="e.g. John Doe"
+                          placeholder="e.g. Kwame Mensah"
                           value={accountName}
                           onChange={(e) => setAccountName(e.target.value)}
-                          style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem', border: '1px solid #e2e8f0', borderRadius: '8px', outline: 'none' }}
                         />
                       </div>
                     </div>
                   ) : (
                     accountName && (
-                      <div className={styles.formGroup}>
+                      <div className={styles.formGroup} style={{ gridColumn: '1 / -1' }}>
                         <label>Verified Account Name</label>
                         <div className={styles.inputWrapper}>
                           <User size={18} className={styles.inputIcon} />
@@ -490,7 +479,7 @@ export default function SettingsPage() {
                             type="text" 
                             value={accountName}
                             disabled
-                            style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem', border: '1px solid #e2e8f0', borderRadius: '8px', background: '#f8fafc', color: '#334155' }}
+                            style={{ background: '#f8fafc', color: '#64748b' }}
                           />
                         </div>
                       </div>
@@ -503,9 +492,9 @@ export default function SettingsPage() {
                     className={styles.saveBtn} 
                     onClick={handleLinkPaystack} 
                     disabled={saving || !accountName || subaccountCode !== ''}
-                    style={{ opacity: (!accountName || subaccountCode !== '') ? 0.5 : 1, width: '100%' }}
+                    style={{ opacity: (!accountName || subaccountCode !== '') ? 0.55 : 1, width: '100%' }}
                   >
-                    {saving ? 'Linking...' : subaccountCode ? 'Paystack Successfully Linked!' : 'Create Paystack Subaccount'}
+                    {saving ? 'Linking Account...' : subaccountCode ? 'Paystack Subaccount Linked' : 'Link Paystack Payout Account'}
                   </button>
                 </div>
               </motion.div>

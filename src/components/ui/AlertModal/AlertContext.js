@@ -11,10 +11,13 @@ export function AlertProvider({ children }) {
     title: '',
     message: '',
     type: 'info', // 'info', 'success', 'warning', 'error'
+    isConfirm: false,
+    confirmText: 'Confirm',
+    cancelText: 'Cancel',
+    onConfirm: null,
   });
 
   const showAlert = useCallback((message, type = 'info', title = null) => {
-    // Default titles based on type if not provided
     let defaultTitle = 'Notification';
     if (type === 'success') defaultTitle = 'Success';
     if (type === 'error') defaultTitle = 'Error';
@@ -25,6 +28,28 @@ export function AlertProvider({ children }) {
       title: title || defaultTitle,
       message,
       type,
+      isConfirm: false,
+      onConfirm: null
+    });
+  }, []);
+
+  const showConfirm = useCallback(({ 
+    title = 'Confirm Action', 
+    message = 'Are you sure you want to proceed?', 
+    confirmText = 'Log Out', 
+    cancelText = 'Cancel', 
+    type = 'warning',
+    onConfirm 
+  }) => {
+    setAlertState({
+      isOpen: true,
+      title,
+      message,
+      type,
+      isConfirm: true,
+      confirmText,
+      cancelText,
+      onConfirm
     });
   }, []);
 
@@ -33,13 +58,17 @@ export function AlertProvider({ children }) {
   }, []);
 
   return (
-    <AlertContext.Provider value={{ showAlert, hideAlert }}>
+    <AlertContext.Provider value={{ showAlert, showConfirm, hideAlert }}>
       {children}
       <AlertModal 
         isOpen={alertState.isOpen}
         title={alertState.title}
         message={alertState.message}
         type={alertState.type}
+        isConfirm={alertState.isConfirm}
+        confirmText={alertState.confirmText}
+        cancelText={alertState.cancelText}
+        onConfirm={alertState.onConfirm}
         onClose={hideAlert}
       />
     </AlertContext.Provider>

@@ -17,8 +17,17 @@ export default function EventDetail({ params }) {
   const [selectedTickets, setSelectedTickets] = useState({});
 
   useEffect(() => {
-    async function fetchEvent() {
+    const supabase = createClient();
+    
+    async function checkAuthAndFetchEvent() {
       try {
+        const { data: userData } = await supabase.auth.getUser();
+        if (!userData?.user) {
+          // Redirect unauthenticated visitors to login page
+          router.push(`/login?next=/events/${id}`);
+          return;
+        }
+
         const res = await fetch(`/api/events/${id}`);
         if (!res.ok) throw new Error('Event not found');
         
@@ -44,7 +53,7 @@ export default function EventDetail({ params }) {
               name: t.name,
               price: parseFloat(t.price || 0),
               available: maxQty > 0,
-              maxQty: maxQty > 10 ? 10 : maxQty // Cap selection at 10 per order for UX
+              maxQty: maxQty > 10 ? 10 : maxQty
             };
           })
         };
@@ -57,12 +66,59 @@ export default function EventDetail({ params }) {
       }
     }
     
-    fetchEvent();
-  }, [id]);
+    checkAuthAndFetchEvent();
+  }, [id, router]);
+
+  const handleQuantityChange = (ticketTypeId, delta, maxQty) => {
+    setSelectedTickets(prev => {
+      const current = prev[ticketTypeId] || 0;
+      const next = current + delta;
+      if (next < 0) return prev;
+      if (next > maxQty) return prev;
+      return { ...prev, [ticketTypeId]: next };
+    });
+  };
+
+  const calculateTotal = () => {
+    if (!event) return 0;
+    return event.ticketTypes.reduce((sum, ticket) => {
+      const qty = selectedTickets[ticket.id] || 0;
+      return sum + (qty * ticket.price);
+    }, 0);
+  };
+
+  const totalTicketsSelected = Object.values(selectedTickets).reduce((a, b) => a + b, 0);
+
+  const handleCheckout = () => {
+    if (totalTicketsSelected === 0) return;
+    
+    // Construct items array for checkout
+    const items = Object.entries(selectedTickets)
+      .filter(([_, qty]) => qty > 0)
+      .map(([ticketTypeId, qty]) => {
+        const tt = event.ticketTypes.find(t => t.id === ticketTypeId);
+        return {
+          id: ticketTypeId,
+          name: tt.name,
+          price: tt.price,
+          quantity: qty
+        };
+      });
+
+    sessionStorage.setItem(`checkout_draft_${event.id}`, JSON.stringify({
+      eventId: event.id,
+      eventTitle: event.title,
+      eventDate: event.date,
+      items,
+      totalAmount: calculateTotal()
+    }));
+
+    router.push(`/checkout/${event.id}`);
+  };
 
   if (loading) {
     return (
-      <div className={styles.page}>
+      <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <LoadingSpinner text="Loading event details..." />
       </div>
     );
@@ -70,130 +126,138 @@ export default function EventDetail({ params }) {
 
   if (!event) {
     return (
-      <div className={styles.page} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', flexDirection: 'column', gap: '1rem' }}>
-        <h2>Event not found</h2>
-        <Link href="/events" className="btn btn-primary">Back to Events</Link>
+      <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+        <h2>Event Not Found</h2>
+        <Link href="/events" style={{ color: '#4f46e5', fontWeight: 600 }}>← Back to Events</Link>
       </div>
     );
   }
 
-  const handleTicketChange = (ticketId, qty) => {
-    setSelectedTickets(prev => ({
-      ...prev,
-      [ticketId]: parseInt(qty, 10)
-    }));
-  };
-
-  const totalAmount = event.ticketTypes.reduce((total, ticket) => {
-    const qty = selectedTickets[ticket.id] || 0;
-    return total + (qty * ticket.price);
-  }, 0);
-
   return (
-    <div className={styles.page}>
-      {/* Event Header Hero */}
-      <div className={styles.hero} style={{ background: event.image ? `url(${event.image}) center/cover no-repeat` : event.color }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}></div>
-        <div className={`container ${styles.heroContainer}`} style={{ position: 'relative', zIndex: 1 }}>
-          <div className={styles.heroContent}>
+    <div className={styles.pageContainer}>
+      <div className={styles.contentWrapper}>
+        
+        {/* Back Link */}
+        <Link href="/events" className={styles.backBtn}>
+          <ArrowLeft size={16} /> Back to Events
+        </Link>
+
+        {/* Hero Section */}
+        <div className={styles.heroSection}>
+          <div className={styles.imageContainer}>
+            {event.image ? (
+              <img src={event.image} alt={event.title} className={styles.eventImage} />
+            ) : (
+              <div className={styles.placeholderImage} style={{ background: event.color }}></div>
+            )}
             <span className={styles.categoryBadge}>{event.category}</span>
+          </div>
+
+          <div className={styles.heroContent}>
             <h1 className={styles.title}>{event.title}</h1>
-            <p className={styles.subtitle}>{event.date} &bull; {event.location}</p>
-          </div>
-        </div>
-      </div>
+            <p className={styles.organizerBy}>Organized by <span>{event.organizer}</span></p>
 
-      <div className={`container ${styles.mainGrid}`}>
-        {/* Left Column: Details */}
-        <div className={styles.detailsCol}>
-          <section className={styles.section}>
-            <h2>About this Event</h2>
-            <p className={styles.description} style={{ whiteSpace: 'pre-wrap' }}>{event.description}</p>
-          </section>
-
-          <section className={styles.section}>
-            <h2>When & Where</h2>
-            <div className={styles.infoGrid}>
-              <div className={styles.infoItem}>
-                <h3>Date & Time</h3>
-                <p>{event.date}</p>
-                <p>{event.time}</p>
+            <div className={styles.metaList}>
+              <div className={styles.metaItem}>
+                <Calendar size={18} className={styles.metaIcon} />
+                <div>
+                  <strong>{event.date}</strong>
+                  <span>{event.time}</span>
+                </div>
               </div>
-              <div className={styles.infoItem}>
-                <h3>Location</h3>
-                <p>{event.location}</p>
+
+              <div className={styles.metaItem}>
+                <MapPin size={18} className={styles.metaIcon} />
+                <div>
+                  <strong>{event.location}</strong>
+                  <span>Main Arena / Venue Gate</span>
+                </div>
               </div>
             </div>
-          </section>
+          </div>
+        </div>
+
+        {/* Main Grid: Details + Ticket Selector */}
+        <div className={styles.mainGrid}>
           
-          <section className={styles.section}>
-            <h2>Organizer</h2>
-            <div className={styles.organizerCard}>
-              <div className={styles.organizerAvatar}>
-                {event.organizer.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <h3>{event.organizer}</h3>
-                <p>Event Host</p>
-              </div>
-            </div>
-          </section>
-        </div>
+          {/* Left Column: Description & Venue */}
+          <div className={styles.detailsCol}>
+            <section className={styles.sectionCard}>
+              <h3 className={styles.sectionTitle}>About This Event</h3>
+              <p className={styles.description}>{event.description}</p>
+            </section>
 
-        {/* Right Column: Ticket Selection */}
-        <div className={styles.ticketCol}>
-          <div className={`glass-panel ${styles.ticketCard}`}>
-            <h2>Select Tickets</h2>
-            <div className={styles.ticketList}>
-              {event.ticketTypes.length === 0 ? (
-                <p style={{ color: '#64748b' }}>No tickets available yet.</p>
-              ) : (
-                event.ticketTypes.map(ticket => (
-                  <div key={ticket.id} className={`${styles.ticketType} ${!ticket.available ? styles.soldOut : ''}`}>
-                    <div className={styles.ticketInfo}>
-                      <h4>{ticket.name}</h4>
-                      <p className={styles.ticketPrice}>
-                        {ticket.available ? (ticket.price === 0 ? 'Free' : `GH₵ ${ticket.price.toLocaleString()}`) : 'Sold Out'}
-                      </p>
-                    </div>
-                    {ticket.available && (
-                      <div className={styles.quantitySelector}>
-                        <select 
-                          value={selectedTickets[ticket.id] || 0}
-                          onChange={(e) => handleTicketChange(ticket.id, e.target.value)}
-                        >
-                          {[...Array(ticket.maxQty + 1).keys()].map(num => (
-                            <option key={num} value={num}>{num}</option>
-                          ))}
-                        </select>
+            <section className={styles.sectionCard}>
+              <h3 className={styles.sectionTitle}>Venue & Gate Access</h3>
+              <p className={styles.description}>
+                Present your digital QR e-ticket at the venue gate for instant check-in scanning. Doors open 1 hour prior to event start time.
+              </p>
+            </section>
+          </div>
+
+          {/* Right Column: Ticket Selector Card */}
+          <div className={styles.ticketsCol}>
+            <div className={styles.ticketCard}>
+              <h3 className={styles.ticketCardTitle}>Select Tickets</h3>
+              
+              <div className={styles.ticketTypeList}>
+                {event.ticketTypes.length > 0 ? (
+                  event.ticketTypes.map(ticket => (
+                    <div key={ticket.id} className={styles.ticketRow}>
+                      <div className={styles.ticketInfo}>
+                        <h4 className={styles.ticketName}>{ticket.name}</h4>
+                        <span className={styles.ticketPrice}>
+                          {ticket.price === 0 ? 'Free' : `GH₵ ${ticket.price.toLocaleString()}`}
+                        </span>
                       </div>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-            
-            <div className={styles.checkoutSection}>
-              <div className={styles.totalRow}>
-                <span>Total</span>
-                <span>GH₵ {totalAmount.toLocaleString()}</span>
+
+                      <div className={styles.counterGroup}>
+                        <button 
+                          className={styles.counterBtn} 
+                          onClick={() => handleQuantityChange(ticket.id, -1, ticket.maxQty)}
+                          disabled={!selectedTickets[ticket.id]}
+                        >
+                          -
+                        </button>
+                        <span className={styles.counterValue}>
+                          {selectedTickets[ticket.id] || 0}
+                        </span>
+                        <button 
+                          className={styles.counterBtn} 
+                          onClick={() => handleQuantityChange(ticket.id, 1, ticket.maxQty)}
+                          disabled={!ticket.available || (selectedTickets[ticket.id] || 0) >= ticket.maxQty}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p style={{ color: '#64748b', fontSize: '0.9rem' }}>No ticket tiers available for this event.</p>
+                )}
               </div>
-              <button 
-                className={`btn btn-primary ${styles.checkoutBtn}`}
-                disabled={totalAmount === 0 && Object.values(selectedTickets).every(v => v === 0)}
-                onClick={() => {
-                  const tickEventixaram = Object.entries(selectedTickets)
-                    .filter(([_, qty]) => qty > 0)
-                    .map(([id, qty]) => `${id}:${qty}`)
-                    .join(',');
-                  router.push(`/checkout/${id}?tickets=${tickEventixaram}`);
-                }}
-              >
-                Proceed to Checkout
-              </button>
+
+              {/* Total & Checkout CTA */}
+              <div className={styles.summaryBox}>
+                <div className={styles.totalRow}>
+                  <span>Total Amount</span>
+                  <span className={styles.totalAmount}>GH₵ {calculateTotal().toLocaleString()}</span>
+                </div>
+
+                <button 
+                  className={styles.checkoutBtn} 
+                  disabled={totalTicketsSelected === 0}
+                  onClick={handleCheckout}
+                >
+                  Proceed to Checkout ({totalTicketsSelected})
+                </button>
+              </div>
+
             </div>
           </div>
+
         </div>
+
       </div>
     </div>
   );

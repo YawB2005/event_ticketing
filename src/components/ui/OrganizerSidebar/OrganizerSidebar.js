@@ -6,25 +6,32 @@ import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { 
   LayoutDashboard, 
-  MessageSquare, 
   Ticket, 
-  FileText,
-  User,
   Settings, 
-  Globe,
   LogOut
 } from 'lucide-react';
+import { useAlert } from '@/components/ui/AlertModal/AlertContext';
 
 export default function OrganizerSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
+  const { showConfirm } = useAlert();
 
-  const handleLogout = async (e) => {
+  const handleLogoutClick = (e) => {
     e.preventDefault();
-    await supabase.auth.signOut();
-    router.push('/login');
-    router.refresh();
+    showConfirm({
+      title: "Log Out of Eventix",
+      message: "Are you sure you want to log out of your Event Host account?",
+      confirmText: "Yes, Log Out",
+      cancelText: "Cancel",
+      type: "warning",
+      onConfirm: async () => {
+        await supabase.auth.signOut();
+        router.push('/login');
+        router.refresh();
+      }
+    });
   };
 
   return (
@@ -38,25 +45,13 @@ export default function OrganizerSidebar() {
         <Link href="/organizer/events" className={`${styles.navItem} ${pathname.startsWith('/organizer/events') ? styles.active : ''}`}>
           <Ticket size={20} /> Events
         </Link>
-        {/* <Link href="/organizer/reports" className={`${styles.navItem} ${pathname.startsWith('/organizer/reports') ? styles.active : ''}`}>
-          <FileText size={20} /> Reports
-        </Link>
-        <Link href="/organizer/messages" className={`${styles.navItem} ${pathname.startsWith('/organizer/messages') ? styles.active : ''}`}>
-          <MessageSquare size={20} /> Messages
-        </Link> */}
-        {/* <Link href="/organizer/profile" className={`${styles.navItem} ${pathname === '/organizer/profile' ? styles.active : ''}`}>
-          <User size={20} /> Profile
-        </Link> */}
         <Link href="/organizer/settings" className={`${styles.navItem} ${pathname.startsWith('/organizer/settings') ? styles.active : ''}`}>
           <Settings size={20} /> Settings
         </Link>
       </div>
 
       <div className={styles.sidebarBottom}>
-        <Link href="/" className={styles.navItem}>
-          <Globe size={20} /> Go to Website
-        </Link>
-        <a href="#" onClick={handleLogout} className={styles.navItem}>
+        <a href="#" onClick={handleLogoutClick} className={styles.navItem}>
           <LogOut size={20} /> Log Out
         </a>
       </div>

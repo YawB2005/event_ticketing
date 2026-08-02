@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { User, Mail, Phone, MapPin, Save } from 'lucide-react';
+import { User, Mail, Phone, Save, CheckCircle2 } from 'lucide-react';
 import styles from './AttendeeProfile.module.css';
 import { createClient } from '@/utils/supabase/client';
 
@@ -81,20 +81,37 @@ export default function AttendeeProfilePage() {
         <p className={styles.subText}>Manage your contact info used for electronic ticket delivery and SMS order confirmations.</p>
       </div>
 
-      <motion.div className={styles.card} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}>
+      <motion.div 
+        className={styles.card} 
+        initial={{ opacity: 0, y: 15 }} 
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className={styles.avatarHeader}>
           <div className={styles.avatarCircle}>
-            {profile.fullName ? profile.fullName.charAt(0).toUpperCase() : <User size={24} />}
+            {profile.fullName ? profile.fullName.charAt(0).toUpperCase() : <User size={32} />}
           </div>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#ffffff' }}>{profile.fullName || 'Attendee'}</h2>
-            <span style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Attendee Account</span>
+            <h2 className={styles.avatarName}>{profile.fullName || 'Attendee'}</h2>
+            <span style={{ color: '#64748b', fontSize: '0.92rem', fontWeight: 500 }}>Attendee Account</span>
           </div>
         </div>
 
         {message && (
-          <div style={{ padding: '1rem', marginBottom: '1.5rem', borderRadius: '8px', background: message.includes('Error') ? '#fee2e2' : '#dcfce7', color: message.includes('Error') ? '#ef4444' : '#16a34a', fontWeight: 500 }}>
-            {message}
+          <div style={{ 
+            padding: '1rem 1.25rem', 
+            marginBottom: '1.75rem', 
+            borderRadius: '14px', 
+            background: message.includes('Error') ? '#fef2f2' : '#f0fdf4', 
+            border: message.includes('Error') ? '1px solid #fecaca' : '1px solid #bbf7d0',
+            color: message.includes('Error') ? '#dc2626' : '#16a34a', 
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <CheckCircle2 size={18} />
+            <span>{message}</span>
           </div>
         )}
 
@@ -106,7 +123,7 @@ export default function AttendeeProfilePage() {
                 type="text" 
                 value={profile.fullName} 
                 onChange={e => setProfile({...profile, fullName: e.target.value})} 
-                placeholder="e.g. Alex Morgan"
+                placeholder="e.g. Kwame Mensah"
               />
             </div>
 
@@ -116,13 +133,13 @@ export default function AttendeeProfilePage() {
                 type="email" 
                 value={profile.email} 
                 disabled
-                style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                style={{ opacity: 0.65, cursor: 'not-allowed', background: '#f8fafc' }}
                 title="Email cannot be changed directly"
               />
             </div>
 
-            <div className={styles.inputGroup}>
-              <label>Phone Number (SMS Confirmation)</label>
+            <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
+              <label>Phone Number (Instant SMS Ticket Confirmation)</label>
               <input 
                 type="text" 
                 value={profile.phone} 
@@ -133,7 +150,8 @@ export default function AttendeeProfilePage() {
           </div>
 
           <button type="submit" className={styles.saveBtn} disabled={saving}>
-            <Save size={18} /> {saving ? "Saving..." : "Save Profile Changes"}
+            <Save size={18} /> 
+            <span>{saving ? "Saving Changes..." : "Save Profile Changes"}</span>
           </button>
         </form>
       </motion.div>

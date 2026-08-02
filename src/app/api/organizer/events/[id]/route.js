@@ -111,7 +111,6 @@ export async function PUT(request, { params }) {
           .eq('id', idToDelete);
 
         if (deleteError) {
-          // Typically implies a foreign key constraint violation (tickets already sold).
           return NextResponse.json({ 
             error: 'Cannot delete a ticket tier that has already been purchased.' 
           }, { status: 400 });
@@ -143,5 +142,48 @@ export async function PUT(request, { params }) {
   } catch (err) {
     console.error('PUT Organizer Event Error:', err);
     return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request, { params }) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id: eventId } = await params;
+    const adminSupabase = createAdminClient();
+
+    // Verify ownership
+    const { data: existingEvent, error: authError } = await adminSupabase
+      .from('events')
+      .select('id')
+      .eq('id', eventId)
+      .eq('organizer_id', user.id)
+      .single();
+
+    if (authError || !existingEvent) {
+      return NextResponse.json({ error: 'Unauthorized or Event not found' }, { status: 403 });
+    }
+
+    // 1. Delete associated tickets and ticket_types first
+    await adminSupabase.from('tickets').delete().eq('event_id', eventId);
+    await adminSupabase.from('ticket_types').delete().eq('event_id', eventId);
+
+    // 2. Delete event from database
+    const { error: deleteError } = await adminSupabase
+      .from('events')
+      .delete()
+      .eq('id', eventId);
+
+    if (deleteError) throw deleteError;
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('DELETE Organizer Event Error:', err);
+    return NextResponse.json({ error: err.message || 'Failed to delete event' }, { status: 500 });
   }
 }
