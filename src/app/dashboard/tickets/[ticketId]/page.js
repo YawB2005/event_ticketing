@@ -2,6 +2,7 @@
 
 import { use } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Download, Calendar, MapPin, Ticket, User, CheckCircle } from 'lucide-react';
 import { useAlert } from '@/components/ui/AlertModal/AlertContext';
@@ -43,7 +44,7 @@ export default function TicketPassPage({ params: paramsPromise }) {
 
         <div className={styles.ticketBody}>
           <div className={styles.qrWrapper}>
-            <img src={ticketData.qrCodeUrl} alt="Gate QR Scanner Pass" className={styles.qrImage} />
+            <Image src={ticketData.qrCodeUrl} alt="Gate QR Scanner Pass" width={210} height={210} className={styles.qrImage} priority />
           </div>
 
           <div className={styles.ticketIdText}>PASS ID: {ticketData.id}</div>

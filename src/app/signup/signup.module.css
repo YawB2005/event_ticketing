@@ -324,7 +324,7 @@
   width: 100%;
   padding: 14px;
   border-radius: 50px;
-  background: linear-gradient(135deg, #ff6b2c 0%, #e85d04 100%);
+  background: linear-gradient(135deg, #e05a20 0%, #cc4a00 100%);
   color: #ffffff;
   border: none;
   font-weight: 800;
@@ -369,16 +369,26 @@
 
 /* RESPONSIVE BREAKPOINTS */
 @media (max-width: 960px) {
+  .authContainer {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100dvh;
+  }
+  
   .visualSide {
     display: none;
   }
 
   .formSide {
     padding: 2.5rem 1.25rem;
+    height: auto;
+    min-height: 100%;
+    overflow-y: visible;
   }
 
   .formWrapper {
     padding: 1.75rem;
     border-radius: 24px;
+    margin: auto;
   }
 }

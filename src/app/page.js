@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { 
   Search, 
@@ -395,26 +396,26 @@ export default function Home() {
               variants={slideInRight}
             >
               <div className={styles.editorialCollage}>
-                <motion.img 
-                  src="/images/collage_tech_summit.png" 
-                  alt="Tech Summits & Conferences" 
+                <motion.div 
                   className={styles.collageImg1}
                   initial={{ opacity: 0, scale: 0.9, y: 35 }}
                   whileInView={{ opacity: 1, scale: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
                   whileHover={{ scale: 1.04, rotate: -1 }}
-                />
-                <motion.img 
-                  src="/images/collage_arts_festival.png" 
-                  alt="Arts & Cultural Festivals" 
+                >
+                  <Image src="/images/collage_tech_summit.png" alt="Tech Summits & Conferences" fill style={{ objectFit: 'cover', borderRadius: '20px' }} />
+                </motion.div>
+                <motion.div 
                   className={styles.collageImg2}
                   initial={{ opacity: 0, scale: 0.9, y: 45 }}
                   whileInView={{ opacity: 1, scale: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1], delay: 0.45 }}
                   whileHover={{ scale: 1.04, rotate: 1 }}
-                />
+                >
+                  <Image src="/images/collage_arts_festival.png" alt="Arts & Cultural Festivals" fill style={{ objectFit: 'cover', borderRadius: '20px' }} />
+                </motion.div>
                 <motion.div 
                   className={styles.collageBadge}
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -494,7 +495,7 @@ export default function Home() {
                 >
                   <Link href={`/events/${evt.id}`} className={styles.eventCard}>
                     <div className={styles.cardImgWrap}>
-                      <img src={evt.image} alt={evt.title} className={styles.cardImg} />
+                      <Image src={evt.image} alt={evt.title} className={styles.cardImg} fill />
                       <span className={styles.categoryTag}>{evt.category}</span>
                       <span className={styles.priceTag}>{evt.price}</span>
                     </div>

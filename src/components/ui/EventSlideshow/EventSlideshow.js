@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Calendar, MapPin } from 'lucide-react';
+import Image from 'next/image';
 import styles from './EventSlideshow.module.css';
 
 export default function EventSlideshow({ events, onEventClick }) {
@@ -45,11 +46,13 @@ export default function EventSlideshow({ events, onEventClick }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
+          <Image 
             src={currentSlide.image || "https://images.unsplash.com/photo-1540039155732-d674d6e120a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"} 
             alt={currentSlide.title} 
             className={styles.slideImage} 
+            fill
+            style={{ objectFit: 'cover' }}
+            priority
           />
           <div className={styles.slideContent}>
             <span className={styles.categoryBadge}>{currentSlide.category || 'Featured Event'}</span>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Ticket, Calendar, MapPin, QrCode, ArrowRight } from 'lucide-react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner/LoadingSpinner';
@@ -73,9 +74,11 @@ export default function MyTicketsPage() {
               transition={{ duration: 0.4, delay: idx * 0.1 }}
             >
               <div className={styles.qrPreview}>
-                <img 
+                <Image 
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${ticket.qr_verification_hash || ticket.id}`} 
                   alt="QR Code Pass" 
+                  width={160}
+                  height={160}
                   className={styles.qrImage} 
                 />
               </div>

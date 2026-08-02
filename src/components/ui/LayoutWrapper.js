@@ -12,7 +12,7 @@ export default function LayoutWrapper({ children }) {
   const isDashboard = pathname.startsWith('/dashboard') || pathname.startsWith('/organizer');
 
   // Specific routes that hide the footer
-  const hideFooter = isDashboard || pathname.startsWith('/events');
+  const hideFooter = isDashboard || pathname.startsWith('/events') || pathname.startsWith('/login') || pathname.startsWith('/signup');
 
   return (
     <AlertProvider>

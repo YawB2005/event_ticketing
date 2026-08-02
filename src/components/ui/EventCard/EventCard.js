@@ -7,7 +7,7 @@ export default function EventCard({ event, onClick }) {
     <>
       <div className={styles.imageContainer}>
         {event.image ? (
-          <img src={event.image} alt={event.title} className={styles.eventImage} />
+          <Image src={event.image} alt={event.title} className={styles.eventImage} fill style={{ objectFit: 'cover' }} />
         ) : (
           <div className={styles.imagePlaceholder} style={{ background: event.color || '#f1f5f9' }}></div>
         )}

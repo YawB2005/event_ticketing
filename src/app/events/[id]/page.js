@@ -6,6 +6,7 @@ import { createClient } from '@/utils/supabase/client';
 import LoadingSpinner from '@/components/ui/LoadingSpinner/LoadingSpinner';
 import styles from './EventDetail.module.css';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 export default function EventDetail({ params }) {
@@ -144,7 +145,7 @@ export default function EventDetail({ params }) {
         {/* Hero Section */}
         <div className={styles.heroSection}>
           <div className={styles.imageContainer}>
-            <img src={event.image} alt={event.title} className={styles.eventImage} />
+            <Image src={event.image} alt={event.title} className={styles.eventImage} fill style={{ objectFit: 'cover' }} priority />
             <span className={styles.categoryBadge}>{event.category}</span>
           </div>
 

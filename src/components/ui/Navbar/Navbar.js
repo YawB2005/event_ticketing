@@ -53,8 +53,8 @@ export default function Navbar() {
     });
   };
 
-  // The landing page navbar should ONLY be displayed on the root landing page ('/')
-  if (pathname !== '/') {
+  // Don't render the navbar on auth pages
+  if (isAuthPage) {
     return null;
   }
 
