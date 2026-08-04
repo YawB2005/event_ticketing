@@ -4,10 +4,10 @@ import styles from './OrganizerSidebar.module.css';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
-import { 
-  LayoutDashboard, 
-  Ticket, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Ticket,
+  Settings,
   LogOut
 } from 'lucide-react';
 import { useAlert } from '@/components/ui/AlertModal/AlertContext';
@@ -37,22 +37,22 @@ export default function OrganizerSidebar() {
   return (
     <div className={styles.sidebar}>
       <Link href="/" className={styles.brandLogo}>Eventix</Link>
-      
+
       <div className={styles.sidebarNav}>
         <Link href="/organizer" className={`${styles.navItem} ${pathname === '/organizer' ? styles.active : ''}`}>
-          <LayoutDashboard size={20} /> 
+          <LayoutDashboard size={20} />
           <span>Dashboard</span>
         </Link>
         <Link href="/organizer/events" className={`${styles.navItem} ${pathname.startsWith('/organizer/events') ? styles.active : ''}`}>
-          <Ticket size={20} /> 
+          <Ticket size={20} />
           <span>Events</span>
         </Link>
         <Link href="/organizer/my-tickets" className={`${styles.navItem} ${pathname.startsWith('/organizer/my-tickets') ? styles.active : ''}`}>
-          <Ticket size={20} /> 
+          <Ticket size={20} />
           <span>My Tickets</span>
         </Link>
         <Link href="/organizer/settings" className={`${styles.navItem} ${pathname.startsWith('/organizer/settings') ? styles.active : ''}`}>
-          <Settings size={20} /> 
+          <Settings size={20} />
           <span>Settings</span>
         </Link>
       </div>
@@ -65,3 +65,6 @@ export default function OrganizerSidebar() {
     </div>
   );
 }
+
+
+
