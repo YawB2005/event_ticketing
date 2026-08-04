@@ -47,6 +47,10 @@ export default function OrganizerSidebar() {
           <Ticket size={20} /> 
           <span>Events</span>
         </Link>
+        <Link href="/organizer/my-tickets" className={`${styles.navItem} ${pathname.startsWith('/organizer/my-tickets') ? styles.active : ''}`}>
+          <Ticket size={20} /> 
+          <span>My Tickets</span>
+        </Link>
         <Link href="/organizer/settings" className={`${styles.navItem} ${pathname.startsWith('/organizer/settings') ? styles.active : ''}`}>
           <Settings size={20} /> 
           <span>Settings</span>
